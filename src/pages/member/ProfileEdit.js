@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, Grid2, Alert, InputAdornment, IconButton } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import Axios from "axios";
+import React, { useState, useEffect } from "react"
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Grid2,
+  Alert,
+  InputAdornment,
+  IconButton,
+} from "@mui/material"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
+import Axios from "axios"
 
-import Layout from "../../components/layout";
+import Layout from "../../components/layout"
 
 export default function ProfileEdit() {
   const [memberData, setMemberData] = useState({
@@ -13,43 +22,49 @@ export default function ProfileEdit() {
     whatsApp: "",
     email: "",
     address: "",
-  });
+  })
 
-  const [feedback, setFeedback] = useState({ type: "", message: "" });
-  const [passwordError, setPasswordError] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State to toggle confirm password visibility
+  const [feedback, setFeedback] = useState({ type: "", message: "" })
+  const [passwordError, setPasswordError] = useState("")
+  const [showPassword, setShowPassword] = useState(false) // State to toggle password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false) // State to toggle confirm password visibility
 
   useEffect(() => {
     // Fetch current member data from API
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken")
 
     Axios.get("http://localhost:3001/member/profile", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((response) => {
-        console.log('response.data :', response.data);
-        setMemberData(response.data);
+      .then(response => {
+        // console.log("response.data :", response.data)
+        setMemberData(prev => ({
+          ...prev,
+          mobile: response.data.mobile || "",
+          whatsApp: response.data.whatsApp || "",
+          email: response.data.email || "",
+          address: response.data.address || "",
+        }))
       })
-      .catch((error) => {
-        console.error("Error fetching member data:", error);
-      });
-  }, []);
+      .catch(error => {
+        console.error("Error fetching member data:", error)
+      })
+  }, [])
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setMemberData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleInputChange = e => {
+    const { name, value } = e.target
+    setMemberData(prev => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = () => {
     if (memberData.password !== memberData.confirmPassword) {
-      setPasswordError("Passwords do not match!");
-      return;
+      setPasswordError("Passwords do not match!")
+      return
     }
 
-    const { confirmPassword, ...dataToUpdate } = memberData; // Remove confirmPassword from the data to send
+    const { confirmPassword, ...dataToUpdate } = memberData // Remove confirmPassword from the data to send
 
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken")
 
     Axios.put("http://localhost:3001/member/profile", dataToUpdate, {
       headers: { Authorization: `Bearer ${token}` },
@@ -58,33 +73,33 @@ export default function ProfileEdit() {
         setFeedback({
           type: "success",
           message: "Profile updated successfully!",
-        });
+        })
       })
-      .catch((error) => {
-        console.error("Error updating profile:", error);
+      .catch(error => {
+        console.error("Error updating profile:", error)
         setFeedback({
           type: "error",
           message: "Failed to update profile. Please try again.",
-        });
-      });
-  };
+        })
+      })
+  }
 
   // Toggle password visibility
   const handleClickShowPassword = () => {
-    setShowPassword((prev) => !prev);
-  };
+    setShowPassword(prev => !prev)
+  }
 
   const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword((prev) => !prev);
-  };
+    setShowConfirmPassword(prev => !prev)
+  }
 
   // Clear password field on focus
-  const handleFocus = (e) => {
-    const { name } = e.target;
+  const handleFocus = e => {
+    const { name } = e.target
     if (name === "password" || name === "confirmPassword") {
-      setMemberData((prev) => ({ ...prev, [name]: "" }));
+      setMemberData(prev => ({ ...prev, [name]: "" }))
     }
-  };
+  }
 
   return (
     <Layout>
@@ -118,7 +133,7 @@ export default function ProfileEdit() {
         )}
 
         <Grid2 container spacing={3}>
-          <Grid2 item size={12}>
+          <Grid2 size={12}>
             <TextField
               fullWidth
               label="New Password"
@@ -139,7 +154,7 @@ export default function ProfileEdit() {
               }}
             />
           </Grid2>
-          <Grid2 item size={12}>
+          <Grid2 size={12}>
             <TextField
               fullWidth
               label="Confirm Password"
@@ -160,7 +175,7 @@ export default function ProfileEdit() {
               }}
             />
           </Grid2>
-          <Grid2 item size={12}>
+          <Grid2 size={12}>
             <TextField
               fullWidth
               label="Mobile Number"
@@ -171,7 +186,7 @@ export default function ProfileEdit() {
               placeholder="Enter mobile number"
             />
           </Grid2>
-          <Grid2 item size={12}>
+          <Grid2 size={12}>
             <TextField
               fullWidth
               label="whatsApp Number"
@@ -182,7 +197,7 @@ export default function ProfileEdit() {
               placeholder="Enter whatsApp number"
             />
           </Grid2>
-          <Grid2 item size={12}>
+          <Grid2 size={12}>
             <TextField
               fullWidth
               label="Email"
@@ -193,7 +208,7 @@ export default function ProfileEdit() {
               placeholder="Enter email"
             />
           </Grid2>
-          <Grid2 item size={12}>
+          <Grid2 size={12}>
             <TextField
               fullWidth
               label="Address"
@@ -206,7 +221,7 @@ export default function ProfileEdit() {
               rows={3}
             />
           </Grid2>
-          <Grid2 item size={12} sx={{ textAlign: "center" }}>
+          <Grid2 size={12} sx={{ textAlign: "center" }}>
             <Button
               variant="contained"
               color="primary"
@@ -219,5 +234,5 @@ export default function ProfileEdit() {
         </Grid2>
       </Box>
     </Layout>
-  );
+  )
 }
