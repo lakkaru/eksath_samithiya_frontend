@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   AppBar,
   Box,
@@ -7,43 +7,63 @@ import {
   Button,
   Menu,
   MenuItem,
-} from "@mui/material";
-import { navigate } from "gatsby";
-const { jwtDecode } = require("jwt-decode");
+} from "@mui/material"
+import { navigate } from "gatsby"
+const { jwtDecode } = require("jwt-decode")
 
 const Header = ({ siteTitle }) => {
-  const [roles, setRoles] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [roles, setRoles] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   // Menu states
-  const [memberAnchorEl, setMemberAnchorEl] = useState(null);
+  const [memberAnchorEl, setMemberAnchorEl] = useState(null)
 
-  const memberMenuOpen = Boolean(memberAnchorEl);
+  const memberMenuOpen = Boolean(memberAnchorEl)
 
   // Handlers for menus
-  const handleMemberMenuOpen = (event) => setMemberAnchorEl(event.currentTarget);
-  const handleMemberMenuClose = () => setMemberAnchorEl(null);
+  const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
+  const handleMemberMenuClose = () => setMemberAnchorEl(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken")
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);  // Decode using the corrected import
-        setRoles(decodedToken.roles || []);
-        setIsAuthenticated(true);
+        const decodedToken = jwtDecode(token) // Decode using the corrected import
+        setRoles(decodedToken.roles || [])
+        setIsAuthenticated(true)
       } catch (error) {
-        console.error("Error decoding token:", error);
-        setIsAuthenticated(false);
+        console.error("Error decoding token:", error)
+        setIsAuthenticated(false)
       }
     }
-  }, []);
+    //customizing url for better visibility
+    const pathname = window.location.pathname
+    const fileName = pathname.split("/").filter(Boolean).pop()
+
+    if (fileName) {
+      window.history.replaceState(null, "", `/${fileName}`)
+    }
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setRoles([]);
-    setIsAuthenticated(false);
-    navigate("/login/UserLogin");
-  };
+    localStorage.removeItem("authToken")
+    setRoles([])
+    setIsAuthenticated(false)
+    navigate("/login/UserLogin")
+  }
+
+  const routeLabels = {
+    "/": "Home",
+    "/profile/EditProfile": "Edit Profile",
+    "/login/UserLogin": "User Login",
+    // "/members/addNewMember": "Add New Member",
+    // "/members/editMember": "Edit Member",
+    // "/funerals/viewFunerals": "View Funerals",
+  }
+
+  const pathname = window.location.pathname
+  const displayName =
+    routeLabels[pathname] || pathname.split("/").filter(Boolean).pop() || "Home"
 
   return (
     <header>
@@ -83,8 +103,8 @@ const Header = ({ siteTitle }) => {
                   {/* Profile Edit */}
                   <MenuItem
                     onClick={() => {
-                      navigate("/profile/edit"); // Redirect to profile edit page
-                      handleMemberMenuClose();
+                      navigate("/profile/ProfileEdit") // Redirect to profile edit page
+                      handleMemberMenuClose()
                     }}
                   >
                     Edit Profile
@@ -93,8 +113,8 @@ const Header = ({ siteTitle }) => {
                   {/* Logout */}
                   <MenuItem
                     onClick={() => {
-                      handleLogout();
-                      handleMemberMenuClose();
+                      handleLogout()
+                      handleMemberMenuClose()
                     }}
                   >
                     Logout
@@ -127,11 +147,11 @@ const Header = ({ siteTitle }) => {
         }}
       >
         <Typography variant="body2" color="textSecondary">
-          Samithiya {window.location.pathname}
+          Samithiya/ {displayName}
         </Typography>
       </Box>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

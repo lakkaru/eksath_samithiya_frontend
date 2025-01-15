@@ -17,7 +17,7 @@ export default function UserLogin() {
 
     Axios.post(`http://localhost:3001/auth/login`, credentials)
       .then(response => {
-        console.log(response)
+        // console.log(response)
         localStorage.setItem("authToken", response.data.token)
         setError("") // Clear error on success
         navigate("/") // Redirect to index page after login
@@ -83,7 +83,7 @@ export default function UserLogin() {
           <Typography>සාමාජික අංකය</Typography>
           <TextField
             id="outlined-basic"
-            label="Your ID"
+            label="සාමාජික අංකය"
             variant="outlined"
             type="number"
             name="member_id"
@@ -105,7 +105,7 @@ export default function UserLogin() {
           <Typography>මුරපදය</Typography>
           <TextField
             id="outlined-basic"
-            label="User Password"
+            label="මුරපදය"
             variant="outlined"
             type="password"
             name="password"
