@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import Layout from "../../components/layout"
-import { Box, Button, TextField, Typography, Alert } from "@mui/material"
+import { Box, Button, TextField, Alert } from "@mui/material"
 import Axios from "axios"
 import { navigate } from "gatsby" // Import navigate
 
@@ -20,7 +20,7 @@ export default function UserLogin() {
         // console.log(response)
         localStorage.setItem("authToken", response.data.token)
         setError("") // Clear error on success
-        navigate("/") // Redirect to index page after login
+        navigate("/member/home") // Redirect to index page after login
       })
       .catch(error => {
         setIsLoading(false) // Hide loading indicator
@@ -80,7 +80,7 @@ export default function UserLogin() {
             padding: "20px",
           }}
         >
-          <Typography>සාමාජික අංකය</Typography>
+          {/* <Typography>සාමාජික අංකය</Typography> */}
           <TextField
             id="outlined-basic"
             label="සාමාජික අංකය"
@@ -102,7 +102,7 @@ export default function UserLogin() {
             padding: "20px",
           }}
         >
-          <Typography>මුරපදය</Typography>
+          {/* <Typography>මුරපදය</Typography> */}
           <TextField
             id="outlined-basic"
             label="මුරපදය"

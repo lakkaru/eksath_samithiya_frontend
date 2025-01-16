@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   AppBar,
   Box,
@@ -7,56 +7,79 @@ import {
   Button,
   Menu,
   MenuItem,
-} from "@mui/material";
-import { navigate } from "gatsby";
-const { jwtDecode } = require("jwt-decode");
+} from "@mui/material"
+import { navigate } from "gatsby"
+const { jwtDecode } = require("jwt-decode")
 
 const Header = ({ siteTitle }) => {
-  const [roles, setRoles] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [memberName, setMemberName] = useState(""); // State to store member's name
+  const [roles, setRoles] = useState([]) // Store roles
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [memberName, setMemberName] = useState("") // State to store member's name
 
   // Menu states
-  const [memberAnchorEl, setMemberAnchorEl] = useState(null);
+  const [memberAnchorEl, setMemberAnchorEl] = useState(null)
+  const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null) // Loan Scheme Menu
 
-  const memberMenuOpen = Boolean(memberAnchorEl);
+  const memberMenuOpen = Boolean(memberAnchorEl)
+  const loanSchemeMenuOpen = Boolean(loanSchemeAnchorEl)
 
   // Handlers for menus
-  const handleMemberMenuOpen = (event) => setMemberAnchorEl(event.currentTarget);
-  const handleMemberMenuClose = () => setMemberAnchorEl(null);
+  const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
+  const handleMemberMenuClose = () => setMemberAnchorEl(null)
+
+  const handleLoanSchemeMenuOpen = event =>
+    setLoanSchemeAnchorEl(event.currentTarget)
+  const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken")
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        // console.log('decodedToken: ', decodedToken)
-        setRoles(decodedToken.roles || []);
-        setMemberName(decodedToken.name || ""); // Extract and set the member's name
-        setIsAuthenticated(true);
+        const decodedToken = jwtDecode(token)
+        const expirationTime = decodedToken.exp * 1000 // Convert to milliseconds
+        const timeRemaining = expirationTime - Date.now()
+        setRoles(decodedToken.roles || [])
+        setMemberName(decodedToken.name || "") // Set the member's name
+        console.log("timeRemaining: ", timeRemaining)
+        if (timeRemaining > 0) {
+          // Set a timeout to log out the user
+          // const timeoutId = setTimeout(() => {
+          //   handleLogout()
+            setIsAuthenticated(true)
+          // }, timeRemaining)
+
+          // return () => clearTimeout(timeoutId) // Cleanup timeout on component unmount
+        } else {
+          // Token already expired, log out immediately
+          handleLogout()
+        }
       } catch (error) {
-        console.error("Error decoding token:", error);
-        setIsAuthenticated(false);
+        console.error("Error decoding token:", error)
+        setIsAuthenticated(false)
       }
     }
-  }, []);
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setRoles([]);
-    setIsAuthenticated(false);
-    navigate("/login/UserLogin");
-  };
+    localStorage.removeItem("authToken")
+    setRoles([])
+    setIsAuthenticated(false)
+    navigate("/login/user-login")
+  }
 
   const routeLabels = {
-    "/": "Home",
-    "/member/ProfileEdit": "Profile Edit",
+    "/member/ProfileEdit/": "Member Profile Edit",
+    "/member/Home/": "Member Home",
     "/login/UserLogin": "User Login",
-  };
+  }
 
-  const pathname = window.location.pathname;
+  const pathname = window.location.pathname
   const displayName =
-    routeLabels[pathname] || pathname.split("/").filter(Boolean).pop() || "Home";
+    routeLabels[pathname] || pathname.split("/").filter(Boolean).pop() || "Home"
+
+  // Admin menus based on roles
+  const isViceSecretary = roles.includes("vice-secretary")
+  const isLoanTreasurer = roles.includes("loan-treasurer")
 
   return (
     <header>
@@ -90,18 +113,62 @@ const Header = ({ siteTitle }) => {
                 </Button>
                 <Button
                   color="inherit"
-                  onClick={() => navigate("/membership")}
-                  sx={{ textTransform: "none" }}
-                >
-                  Membership
-                </Button>
-                <Button
-                  color="inherit"
                   onClick={() => navigate("/fines")}
                   sx={{ textTransform: "none" }}
                 >
                   Fines
                 </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => navigate("/loan")}
+                  sx={{ textTransform: "none" }}
+                >
+                  Loan
+                </Button>
+
+                {/* Role-specific Admin Menus */}
+                {isViceSecretary && (
+                  <Button
+                    color="inherit"
+                    onClick={() => navigate("/attendance")}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Attendance
+                  </Button>
+                )}
+                {isLoanTreasurer && (
+                  <>
+                    <Button
+                      color="inherit"
+                      onClick={handleLoanSchemeMenuOpen}
+                      sx={{ textTransform: "none" }}
+                    >
+                      Loan Schemes
+                    </Button>
+                    <Menu
+                      anchorEl={loanSchemeAnchorEl}
+                      open={loanSchemeMenuOpen}
+                      onClose={handleLoanSchemeMenuClose}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/loan/search")
+                          handleLoanSchemeMenuClose()
+                        }}
+                      >
+                        Loan Search
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/loan/active-loans")
+                          handleLoanSchemeMenuClose()
+                        }}
+                      >
+                        Active Loans
+                      </MenuItem>
+                    </Menu>
+                  </>
+                )}
 
                 {/* Profile Menu */}
                 <Button
@@ -118,16 +185,24 @@ const Header = ({ siteTitle }) => {
                 >
                   <MenuItem
                     onClick={() => {
-                      navigate("/member/ProfileEdit");
-                      handleMemberMenuClose();
+                      navigate("/member/home")
+                      handleMemberMenuClose()
+                    }}
+                  >
+                    Home
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/member/profile-edit")
+                      handleMemberMenuClose()
                     }}
                   >
                     Edit Profile
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      handleLogout();
-                      handleMemberMenuClose();
+                      handleLogout()
+                      handleMemberMenuClose()
                     }}
                   >
                     Logout
@@ -137,7 +212,7 @@ const Header = ({ siteTitle }) => {
             ) : (
               <Button
                 color="inherit"
-                onClick={() => navigate("/login/UserLogin")}
+                onClick={() => navigate("/login/user-login")}
                 sx={{ textTransform: "none" }}
               >
                 Login
@@ -172,7 +247,7 @@ const Header = ({ siteTitle }) => {
         )}
       </Box>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
