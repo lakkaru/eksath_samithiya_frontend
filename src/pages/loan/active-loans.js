@@ -3,14 +3,17 @@ import Layout from "../../components/layout"
 // import BasicDatePicker from "../../components/basicDatePicker"
 // import { Box, Button } from "@mui/material"
 import StickyHeadTable from "../../components/StickyHeadTable"
-import {Button, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 // import StickyHeadTable from "../../components/StickyHeadTable"
-import { navigate } from "gatsby"
+// import { navigate } from "gatsby"
 
-const Axios = require('axios')
+const Axios = require("axios")
+
+const baseUrl = process.env.GATSBY_API_BASE_URL
+const token = localStorage.getItem("authToken")
 
 export default function ActiveLoans() {
-  const [activeLoans, setActiveLoans]=useState([])
+  const [activeLoans, setActiveLoans] = useState([])
 
   const loanColumnsArray = [
     { id: "date", label: "Loan Date", minWidth: 50 },
@@ -24,11 +27,14 @@ export default function ActiveLoans() {
     // { id: "due", label: "Due Amount", minWidth: 50, align: "right" },
   ]
 
+  // const handleViewMore = memberId => {
+  //   // console.log(memberId)
+  //   navigate(`/loan/loanSearch?memberId=${memberId}`)
+  // }
   useEffect(() => {
-    const token = localStorage.getItem("authToken")
-    Axios.get(`http://127.0.0.1:3001/loan/active-loans`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    Axios.get(`${baseUrl}/loan/active-loans`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then(res => {
         // console.log(res.data.activeLoans)
         setActiveLoans(res.data.activeLoans)
@@ -37,22 +43,16 @@ export default function ActiveLoans() {
         console.error("Error fetching data:", error)
       })
   }, [])
-
-  const handleViewMore=(memberId)=>{
-    // console.log(memberId)
-    navigate(`/loan/loanSearch?memberId=${memberId}`);
-        
-}
   return (
     <Layout>
       <section>
-      <Typography>ක්‍රියාකාරී ණය</Typography>
+        <Typography>ක්‍රියාකාරී ණය</Typography>
         <StickyHeadTable
           columnsArray={loanColumnsArray}
           dataArray={activeLoans.map(val => ({
             date: new Date(val.loanDate).toLocaleDateString(),
             loanNumber: val.loanNumber,
-            memberId:val.memberId.member_id,
+            memberId: val.memberId.member_id,
             member: val.memberId.name,
             remaining: val.loanRemainingAmount,
             // view: (

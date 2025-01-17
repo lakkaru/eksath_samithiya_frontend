@@ -43,12 +43,7 @@ const Header = ({ siteTitle }) => {
         console.log("timeRemaining: ", timeRemaining)
         if (timeRemaining > 0) {
           // Set a timeout to log out the user
-          // const timeoutId = setTimeout(() => {
-          //   handleLogout()
             setIsAuthenticated(true)
-          // }, timeRemaining)
-
-          // return () => clearTimeout(timeoutId) // Cleanup timeout on component unmount
         } else {
           // Token already expired, log out immediately
           handleLogout()
@@ -108,6 +103,7 @@ const Header = ({ siteTitle }) => {
                   color="inherit"
                   onClick={() => navigate("/payments")}
                   sx={{ textTransform: "none" }}
+                  disabled
                 >
                   Payments
                 </Button>
@@ -115,6 +111,7 @@ const Header = ({ siteTitle }) => {
                   color="inherit"
                   onClick={() => navigate("/fines")}
                   sx={{ textTransform: "none" }}
+                  disabled
                 >
                   Fines
                 </Button>
@@ -122,6 +119,7 @@ const Header = ({ siteTitle }) => {
                   color="inherit"
                   onClick={() => navigate("/loan")}
                   sx={{ textTransform: "none" }}
+                  disabled
                 >
                   Loan
                 </Button>
@@ -150,6 +148,14 @@ const Header = ({ siteTitle }) => {
                       open={loanSchemeMenuOpen}
                       onClose={handleLoanSchemeMenuClose}
                     >
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/loan/new-loan")
+                          handleLoanSchemeMenuClose()
+                        }}
+                      >
+                        New Loan
+                      </MenuItem>
                       <MenuItem
                         onClick={() => {
                           navigate("/loan/search")

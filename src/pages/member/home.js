@@ -12,6 +12,9 @@ import Axios from "axios"
 
 import Layout from "../../components/layout"
 
+const baseUrl = process.env.GATSBY_API_BASE_URL
+const token = localStorage.getItem("authToken")
+
 const MemberHomePage = () => {
   const [memberData, setMemberData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -20,9 +23,7 @@ const MemberHomePage = () => {
   useEffect(() => {
     const fetchMemberData = async () => {
       try {
-        const token = localStorage.getItem("authToken")
-
-        const response = await Axios.get("http://localhost:3001/member/info", {
+        const response = await Axios.get(`${baseUrl}/member/info`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         // console.log("response: ", response.data)
@@ -39,7 +40,11 @@ const MemberHomePage = () => {
   }, [])
 
   if (loading) {
-    return <Layout><Typography>Loading...</Typography></Layout>
+    return (
+      <Layout>
+        <Typography>Loading...</Typography>
+      </Layout>
+    )
   }
 
   if (error) {
@@ -145,30 +150,29 @@ const MemberHomePage = () => {
             <Divider />
             {/* Dependents */}
             <ListItem>
-              <ListItemText
-                primary="Dependents"
-                secondary={
-                  memberData?.dependents && memberData.dependents.length > 0 ? (
-                    <List>
-                      {memberData.dependents.map((dependent, index) => (
-                        <ListItem disableGutters key={index} sx={{py:'3px', my:'3px'}}>
-                          <ListItemText
-                            
-                            primary={`${index + 1}. ${dependent}${
-                              index !== memberData.dependents.length - 1
-                                ? ", "
-                                : ""
-                            }`}
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  ) : (
-                    "No dependents listed"
-                  )
-                }
-              />
+              <ListItemText primary="Dependents" />
             </ListItem>
+            {memberData?.dependents && memberData.dependents.length > 0 ? (
+              <List sx={{ pl: 4 }}>
+                {memberData.dependents.map((dependent, index) => (
+                  <ListItem
+                    disableGutters
+                    key={index}
+                    sx={{ py: "3px", my: "3px" }}
+                  >
+                    <ListItemText
+                      primary={`${index + 1}. ${dependent}${
+                        index !== memberData.dependents.length - 1 ? ", " : ""
+                      }`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <ListItem>
+                <ListItemText secondary="යැපෙන්නන් නොමැත." />
+              </ListItem>
+            )}
           </List>
         </Paper>
       </Box>

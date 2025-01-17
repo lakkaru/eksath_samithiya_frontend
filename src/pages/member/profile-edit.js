@@ -14,6 +14,9 @@ import Axios from "axios"
 
 import Layout from "../../components/layout"
 
+const baseUrl = process.env.GATSBY_API_BASE_URL
+const token = localStorage.getItem("authToken")
+
 export default function ProfileEdit() {
   const [memberData, setMemberData] = useState({
     password: "",
@@ -31,9 +34,7 @@ export default function ProfileEdit() {
 
   useEffect(() => {
     // Fetch current member data from API
-    const token = localStorage.getItem("authToken")
-
-    Axios.get("http://localhost:3001/member/profile", {
+     Axios.get(`${baseUrl}/member/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(response => {
@@ -63,10 +64,7 @@ export default function ProfileEdit() {
     }
 
     const { confirmPassword, ...dataToUpdate } = memberData // Remove confirmPassword from the data to send
-
-    const token = localStorage.getItem("authToken")
-
-    Axios.put("http://localhost:3001/member/profile", dataToUpdate, {
+    Axios.put(`${baseUrl}/member/profile`, dataToUpdate, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(() => {

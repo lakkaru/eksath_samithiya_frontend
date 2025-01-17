@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import Layout from "../../components/layout"
 import { Box, Button, TextField, Typography, Snackbar } from "@mui/material"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
@@ -10,7 +10,8 @@ import { useLocation } from "@reach/router"
 import Axios from "axios"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
-// console.log('baseUrl: ', baseUrl)
+const token = localStorage.getItem("authToken")
+
 export default function Search() {
   const [memberInputId, setMemberInputId] = useState("")
   const [member, setMember] = useState(null)
@@ -47,15 +48,7 @@ export default function Search() {
     { id: "actions", label: "", minWidth: 50 },
   ]
 
-  useEffect(() => {
-    //for searching loan when visit  from another page
-    if (memberId) {
-      setMemberInputId(memberId)
-      handleSearch(paymentDate)
-    }
-    // handleSearch(paymentDate)
-  }, [memberId])
-
+ 
   //calculating interest for loan according to payment date
   const calculateInterest = (
     loanDate,
@@ -65,11 +58,11 @@ export default function Search() {
   ) => {
     if (!loanDate || !remainingAmount || !paymentDate)
       return { int: 0, penInt: 0 }
-    // console.log("paymentDate: ", paymentDate)
+    console.log("paymentDate: ", paymentDate)
     const loanDateObj = new Date(loanDate)
     const lastIntPayDateObj = new Date(lastInterestPaymentDate || loanDate)
     const currentDate = new Date(paymentDate)
-    // console.log("currentDate :", currentDate)
+    console.log("currentDate :", currentDate)
     const monthlyInterestRate = 0.03
     const loanPeriodMonths = 10
 
@@ -104,7 +97,7 @@ export default function Search() {
         penaltyMonths = interestUnpaidMonths
       }
     }
-    // console.log('penaltyMonths: ', penaltyMonths)
+    console.log('penaltyMonths: ', penaltyMonths)
     const interest =
       remainingAmount * interestUnpaidMonths * monthlyInterestRate
     const penaltyInterest =
@@ -112,17 +105,15 @@ export default function Search() {
     return { int: Math.round(interest), penInt: Math.round(penaltyInterest) }
   }
 
-  const handleSearch = async date => {
+  const handleSearch =useCallback( async date => {
     console.log("date on handle search: ", date)
     if (!memberInputId) return
     setLoading(true)
     try {
-      const token = localStorage.getItem("authToken")
-
       // Fetch member info
       const {
         data: { member },
-      } = await Axios.get(`${baseUrl}/member/_id/${memberInputId}`, {
+      } = await Axios.get(`${baseUrl}/member/getMemberById/${memberInputId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -175,7 +166,7 @@ export default function Search() {
     } finally {
       setLoading(false)
     }
-  }
+  },[memberInputId])
 
   const resetPaymentFields = () => {
     setPayingPrincipal(0)
@@ -224,7 +215,6 @@ export default function Search() {
     // console.log("payingPrincipal: ", payingPrincipal)
     // console.log("payingInterest: ", payingInterest)
     // console.log("payingPenaltyInterest: ", payingPenaltyInterest)
-    const token = localStorage.getItem("authToken")
     try {
       await Axios.post(
         `${baseUrl}/loan/payments`,
@@ -240,37 +230,25 @@ export default function Search() {
         {
           headers: { Authorization: `Bearer ${token}` },
         }
-      ).then((res)=>{
+      ).then(res => {
         console.log(res)
       })
       resetPaymentFields()
       setSnackbarOpen(true)
       await handleSearch()
-      //   await Axios.post(`${baseUrl}/loan-interest-payment`, {
-      //     loanId: loan._id,
-      //     amount: parseFloat(payingInterest),
-      //     date: paymentDate,
-      //   })
-
-      //   if (payingPenaltyInterest > 0) {
-      //     await Axios.post(`${baseUrl}/penalty-interest-payment`, {
-      //       loanId: loan._id,
-      //       amount: parseFloat(payingPenaltyInterest),
-      //       date: paymentDate,
-      //     })
-      // }
-
-      //   await Axios.put(`${baseUrl}/loan/${loan._id}`, {
-      //     loanRemainingAmount: loan.loanRemainingAmount - payingPrincipal,
-      //   })
-
-      //   resetPaymentFields()
-      //   setSnackbarOpen(true)
-      //   await handleSearch()
     } catch (error) {
       console.error("Error recording payment:", error)
     }
   }
+
+  useEffect(() => {
+    //for searching loan when visit  from another page
+    if (memberId) {
+      setMemberInputId(memberId)
+      handleSearch(paymentDate)
+    }
+    // handleSearch(paymentDate)
+  }, [memberId, handleSearch, paymentDate])
 
   return (
     <Layout>
