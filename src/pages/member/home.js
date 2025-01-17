@@ -9,6 +9,7 @@ import {
   Divider,
 } from "@mui/material"
 import Axios from "axios"
+import { navigate } from "gatsby"
 
 import Layout from "../../components/layout"
 
@@ -48,6 +49,7 @@ const MemberHomePage = () => {
   }
 
   if (error) {
+    navigate("../404")
     return <Typography color="error">{error}</Typography>
   }
 

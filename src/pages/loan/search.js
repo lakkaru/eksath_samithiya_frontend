@@ -6,7 +6,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import StickyHeadTable from "../../components/StickyHeadTable"
 import dayjs from "dayjs"
 import { useLocation } from "@reach/router"
-// import { navigate } from "gatsby"
+import { navigate } from "gatsby"
 import Axios from "axios"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
@@ -161,8 +161,7 @@ export default function Search() {
       }
     } catch (error) {
       console.error("Error fetching data:", error)
-
-      // Don't set loan to null in case of errors; leave the state unchanged
+      navigate('../404')
     } finally {
       setLoading(false)
     }

@@ -5,7 +5,7 @@ import Layout from "../../components/layout"
 import StickyHeadTable from "../../components/StickyHeadTable"
 import { Typography } from "@mui/material"
 // import StickyHeadTable from "../../components/StickyHeadTable"
-// import { navigate } from "gatsby"
+import { navigate } from "gatsby"
 
 const Axios = require("axios")
 
@@ -41,6 +41,7 @@ export default function ActiveLoans() {
       })
       .catch(error => {
         console.error("Error fetching data:", error)
+        navigate('../404')
       })
   }, [])
   return (

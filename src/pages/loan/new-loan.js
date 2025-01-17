@@ -13,6 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import dayjs from "dayjs"
 import Axios from "axios"
+import { navigate } from "gatsby"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 const token = localStorage.getItem("authToken")
@@ -52,7 +53,9 @@ export default function NewLoan() {
 
           console.error("Axios error : ", error)
         })
-    } catch (error) {}
+    } catch (error) {
+      navigate('../404')
+    }
   }
 
   const getGuarantor1ById = e => {
