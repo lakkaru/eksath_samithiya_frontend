@@ -4,6 +4,8 @@ import { Box, Button, TextField, Alert } from "@mui/material"
 import Axios from "axios"
 import { navigate } from "gatsby" // Import navigate
 
+const baseUrl = process.env.GATSBY_API_BASE_URL
+
 export default function UserLogin() {
   const [member_id, setMember_id] = useState("")
   const [password, setPassword] = useState("")
@@ -15,7 +17,7 @@ export default function UserLogin() {
     const credentials = { member_id, password }
     setIsLoading(true) // Show loading indicator
 
-    Axios.post(`http://localhost:3001/auth/login`, credentials)
+    Axios.post(`${baseUrl}/auth/login`, credentials)
       .then(response => {
         // console.log(response)
         localStorage.setItem("authToken", response.data.token)
