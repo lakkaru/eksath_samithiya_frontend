@@ -10,7 +10,13 @@ import { Typography } from "@mui/material"
 const Axios = require("axios")
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
-const token = localStorage.getItem("authToken")
+// const token = localStorage.getItem("authToken")
+let token = null;
+
+if (typeof window !== "undefined") {
+  token = localStorage.getItem("authToken");
+}
+
 
 export default function ActiveLoans() {
   const [activeLoans, setActiveLoans] = useState([])

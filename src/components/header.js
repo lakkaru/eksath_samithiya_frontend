@@ -32,7 +32,11 @@ const Header = ({ siteTitle }) => {
   const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken")
+    let token = ""
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken")
+    }
+
     if (token) {
       try {
         const decodedToken = jwtDecode(token)
@@ -43,7 +47,7 @@ const Header = ({ siteTitle }) => {
         console.log("timeRemaining: ", timeRemaining)
         if (timeRemaining > 0) {
           // Set a timeout to log out the user
-            setIsAuthenticated(true)
+          setIsAuthenticated(true)
         } else {
           // Token already expired, log out immediately
           handleLogout()
@@ -68,10 +72,15 @@ const Header = ({ siteTitle }) => {
     "/login/UserLogin": "User Login",
   }
 
-  const pathname = window.location.pathname
-  const displayName =
-    routeLabels[pathname] || pathname.split("/").filter(Boolean).pop() || "Home"
-
+  // if (typeof window === "undefined") {
+  //   return null
+  // } else {
+  //   const pathname = window.location.pathname
+  //   const displayName =
+  //     routeLabels[pathname] ||
+  //     pathname.split("/").filter(Boolean).pop() ||
+  //     "Home"
+  // }
   // Admin menus based on roles
   const isViceSecretary = roles.includes("vice-secretary")
   const isLoanTreasurer = roles.includes("loan-treasurer")
@@ -244,7 +253,7 @@ const Header = ({ siteTitle }) => {
         }}
       >
         <Typography variant="body2" color="textSecondary">
-          Samithiya/ {displayName}
+          Samithiya/ 
         </Typography>
         {isAuthenticated && (
           <Typography variant="body2" color="textSecondary">

@@ -16,7 +16,13 @@ import Axios from "axios"
 // import { navigate } from "gatsby"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
-const token = localStorage.getItem("authToken")
+// const token = localStorage.getItem("authToken")
+let token = null;
+
+if (typeof window !== "undefined") {
+  token = localStorage.getItem("authToken");
+}
+
 
 export default function NewLoan() {
   const [member_id, setMember_id] = useState("")

@@ -14,7 +14,13 @@ import { navigate } from "gatsby"
 import Layout from "../../components/layout"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
-const token = localStorage.getItem("authToken")
+// const token = localStorage.getItem("authToken")
+let token = null;
+
+if (typeof window !== "undefined") {
+  token = localStorage.getItem("authToken");
+}
+
 
 const MemberHomePage = () => {
   const [memberData, setMemberData] = useState(null)

@@ -14,6 +14,7 @@ export default function UserLogin() {
 
   // Function to handle login
   const getAuthentication = e => {
+    console.log('Login Page')
     const credentials = { member_id, password }
     setIsLoading(true) // Show loading indicator
 
