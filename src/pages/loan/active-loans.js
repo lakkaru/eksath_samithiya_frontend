@@ -3,11 +3,11 @@ import Layout from "../../components/layout"
 // import BasicDatePicker from "../../components/basicDatePicker"
 // import { Box, Button } from "@mui/material"
 import StickyHeadTable from "../../components/StickyHeadTable"
-import { Typography } from "@mui/material"
-// import StickyHeadTable from "../../components/StickyHeadTable"
-// import { navigate } from "gatsby"
+import { Button, Typography } from "@mui/material"
 
-const Axios = require("axios")
+import { navigate } from "gatsby"
+import api from '../../utils/api'
+// const Axios = require("axios")
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
@@ -27,22 +27,24 @@ export default function ActiveLoans() {
     { id: "memberId", label: "ID", minWidth: 50 },
     { id: "member", label: "Member", minWidth: 50 },
     { id: "remaining", label: "Remaining Amount", minWidth: 50 },
+    { id: "unpaidMonths", label: "Unpaid Months", minWidth: 50 },
     { id: "view", label: "", minWidth: 50, align: "right" },
     // { id: "interest", label: "Interest", minWidth: 50 },
     // { id: "penaltyInterest", label: "Penalty Int.", minWidth: 50 },
     // { id: "due", label: "Due Amount", minWidth: 50, align: "right" },
   ]
 
-  // const handleViewMore = memberId => {
-  //   // console.log(memberId)
-  //   navigate(`/loan/loanSearch?memberId=${memberId}`)
-  // }
+  const handleViewMore = memberId => {
+    // console.log(memberId)
+    navigate(`/loan/search?memberId=${memberId}`)
+  }
+
   useEffect(() => {
-    Axios.get(`${baseUrl}/loan/active-loans`, {
+    api.get(`${baseUrl}/loan/active-loans`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => {
-        // console.log(res.data.activeLoans)
+        console.log(res.data)
         setActiveLoans(res.data.activeLoans)
       })
       .catch(error => {
@@ -62,14 +64,15 @@ export default function ActiveLoans() {
             memberId: val.memberId.member_id,
             member: val.memberId.name,
             remaining: val.loanRemainingAmount,
-            // view: (
-            //   <Button
-            //   variant="contained"
-            //     onClick={() => handleViewMore(val.memberId.member_id)} // Pass the loan ID to the handler
-            //   >
-            //     View
-            //   </Button>
-            // ),
+            unpaidMonths: val.unpaidDuration,
+            view: (
+              <Button
+              variant="contained"
+                onClick={() => handleViewMore(val.memberId.member_id)} // Pass the loan ID to the handler
+              >
+                View
+              </Button>
+            ),
           }))}
           headingAlignment={"left"}
           dataAlignment={"left"}

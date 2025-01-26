@@ -8,36 +8,38 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material"
-import Axios from "axios"
+// import Axios from "axios"
+import api from '../../utils/api'
 import { navigate } from "gatsby"
 
 import Layout from "../../components/layout"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
-let token = null;
+// let token = null;
 
-if (typeof window !== "undefined") {
-  token = localStorage.getItem("authToken");
-}
+// if (typeof window !== "undefined") {
+//   token = localStorage.getItem("authToken");
+// }
 
 
 const MemberHomePage = () => {
   const [memberData, setMemberData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  // console.log('memberData: ', memberData)
 
   useEffect(() => {
+    
     const fetchMemberData = async () => {
       try {
-        const response = await Axios.get(`${baseUrl}/member/info`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const response = await api.get(`${baseUrl}/member/info`)
         // console.log("response: ", response.data)
         setMemberData(response.data)
       } catch (err) {
         console.error("Error fetching member data:", err)
         setError("Failed to load member data. Please try again later.")
+        setMemberData(null)
       } finally {
         setLoading(false)
       }
@@ -45,7 +47,7 @@ const MemberHomePage = () => {
 
     fetchMemberData()
   }, [])
-
+// console.log('memberData: ', memberData)
   if (loading) {
     return (
       <Layout>
@@ -119,7 +121,7 @@ const MemberHomePage = () => {
                 primary="Previous Due"
                 secondary={`${
                   memberData?.previousDue
-                    ? `LKR ${memberData?.previousDue}`
+                    ? `LKR ${memberData?.previousDue.totalDue}`
                     : "N/A"
                 }`}
               />
@@ -129,7 +131,7 @@ const MemberHomePage = () => {
               <ListItemText
                 primary="Fine Total"
                 secondary={`${
-                  memberData?.fineTotal ? `LKR ${memberData?.fineTotal}` : "N/A"
+                  memberData?.fineTotal ? `LKR ${memberData?.fineTotal}` : 0
                 }`}
               />
             </ListItem>
@@ -140,7 +142,7 @@ const MemberHomePage = () => {
                 secondary={`${
                   memberData?.membershipDue
                     ? `LKR ${memberData?.membershipDue}`
-                    : "N/A"
+                    : 0
                 }`}
               />
             </ListItem>

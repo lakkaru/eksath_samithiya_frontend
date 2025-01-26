@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 import Layout from "../../components/layout"
 import { Box, Button, TextField, Alert } from "@mui/material"
-import Axios from "axios"
+// import Axios from "axios"
 import { navigate } from "gatsby" // Import navigate
+import api from '../../utils/api'
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 
@@ -18,7 +19,7 @@ export default function UserLogin() {
     const credentials = { member_id, password }
     setIsLoading(true) // Show loading indicator
 
-    Axios.post(`${baseUrl}/auth/login`, credentials)
+    api.post(`${baseUrl}/auth/login`, credentials)
       .then(response => {
         // console.log(response)
         localStorage.setItem("authToken", response.data.token)
@@ -51,7 +52,7 @@ export default function UserLogin() {
     <Layout>
       <Box
         sx={{
-          maxWidth: "50%",
+          maxWidth: { xs: '100%', sm: '80%', md: '50%' },
           margin: "auto",
           border: "1px solid gray",
           borderRadius: "20px",

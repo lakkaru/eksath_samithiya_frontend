@@ -12,7 +12,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import dayjs from "dayjs"
-import Axios from "axios"
+// import Axios from "axios"
+import api from '../../utils/api'
 // import { navigate } from "gatsby"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
@@ -43,7 +44,7 @@ export default function NewLoan() {
 
   const getMemberInfoById = async e => {
     try {
-      await Axios.get(`${baseUrl}/loan/memberInfo/${member_id}`, {
+      await api.get(`${baseUrl}/loan/memberInfo/${member_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(response => {
@@ -57,7 +58,7 @@ export default function NewLoan() {
             message: "No member Found.",
           })
 
-          console.error("Axios error : ", error)
+          console.error("api error : ", error)
         })
     } catch (error) {
       // navigate('../404')
@@ -66,7 +67,7 @@ export default function NewLoan() {
 
   const getGuarantor1ById = e => {
     // console.log("guarantor 1 :", guarantor1_id)
-    Axios.get(`${baseUrl}/member/getMemberById/${guarantor1_id}`, {
+    api.get(`${baseUrl}/member/getMemberById/${guarantor1_id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(response => {
@@ -74,7 +75,7 @@ export default function NewLoan() {
         setGuarantor1(response?.data?.member)
       })
       .catch(error => {
-        console.error("Axios error : ", error)
+        console.error("api error : ", error)
         setAlert({
           open: true,
           severity: "error",
@@ -83,7 +84,7 @@ export default function NewLoan() {
       })
   }
   const getGuarantor2ById = e => {
-    Axios.get(`${baseUrl}/member/getMemberById/${guarantor2_id}`, {
+    api.get(`${baseUrl}/member/getMemberById/${guarantor2_id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(response => {
@@ -115,7 +116,7 @@ export default function NewLoan() {
       loanDate: loanDate.toISOString(), // Ensure ISO format for the date
     }
 
-    Axios.post(`${baseUrl}/loan/create`, postData, {
+    api.post(`${baseUrl}/loan/create`, postData, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(response => {

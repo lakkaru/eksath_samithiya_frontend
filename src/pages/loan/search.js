@@ -7,7 +7,8 @@ import StickyHeadTable from "../../components/StickyHeadTable"
 import dayjs from "dayjs"
 import { useLocation } from "@reach/router"
 // import { navigate } from "gatsby"
-import Axios from "axios"
+// import Axios from "axios"
+import api from '../../utils/api'
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
@@ -64,11 +65,11 @@ export default function Search() {
   ) => {
     if (!loanDate || !remainingAmount || !paymentDate)
       return { int: 0, penInt: 0 }
-    console.log("paymentDate: ", paymentDate)
+    // console.log("paymentDate: ", paymentDate)
     const loanDateObj = new Date(loanDate)
     const lastIntPayDateObj = new Date(lastInterestPaymentDate || loanDate)
     const currentDate = new Date(paymentDate)
-    console.log("currentDate :", currentDate)
+    // console.log("currentDate :", currentDate)
     const monthlyInterestRate = 0.03
     const loanPeriodMonths = 10
 
@@ -79,7 +80,7 @@ export default function Search() {
     if (currentDate.getDate() - loanDateObj.getDate() > 0) {
       totalMonths = totalMonths + 1
     }
-    console.log("totalMonths :", totalMonths)
+    // console.log("totalMonths :", totalMonths)
     let lastPaymentMonths =
       (lastIntPayDateObj.getFullYear() - loanDateObj.getFullYear()) * 12 +
       (lastIntPayDateObj.getMonth() - loanDateObj.getMonth())
@@ -87,10 +88,10 @@ export default function Search() {
     // if ((lastIntPayDateObj.getDate() - loanDateObj.getDate())>0) {
     //   lastPaymentMonths=lastPaymentMonths+1
     // }
-    console.log("lastPaymentMonths :", lastPaymentMonths)
+    // console.log("lastPaymentMonths :", lastPaymentMonths)
 
     const interestUnpaidMonths = Math.max(totalMonths - lastPaymentMonths, 0)
-    console.log("interestUnpaidMonths: ", interestUnpaidMonths)
+    // console.log("interestUnpaidMonths: ", interestUnpaidMonths)
     let penaltyMonths = 0
     //checking loan is over due
     if (totalMonths > 10) {
@@ -103,7 +104,7 @@ export default function Search() {
         penaltyMonths = interestUnpaidMonths
       }
     }
-    console.log('penaltyMonths: ', penaltyMonths)
+    // console.log('penaltyMonths: ', penaltyMonths)
     const interest =
       remainingAmount * interestUnpaidMonths * monthlyInterestRate
     const penaltyInterest =
@@ -112,14 +113,14 @@ export default function Search() {
   }
 
   const handleSearch =useCallback( async date => {
-    console.log("date on handle search: ", date)
+    // console.log("date on handle search: ", date)
     if (!memberInputId) return
     setLoading(true)
     try {
       // Fetch member info
       const {
         data: { member },
-      } = await Axios.get(`${baseUrl}/member/getMemberById/${memberInputId}`, {
+      } = await api.get(`${baseUrl}/member/getMemberById/${memberInputId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -128,7 +129,7 @@ export default function Search() {
 
       // If the member exists, fetch the loan data
       if (memberResponse?._id) {
-        const { data: loanResponse } = await Axios.get(
+        const { data: loanResponse } = await api.get(
           `${baseUrl}/loan/member/${memberResponse._id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -221,7 +222,7 @@ export default function Search() {
     // console.log("payingInterest: ", payingInterest)
     // console.log("payingPenaltyInterest: ", payingPenaltyInterest)
     try {
-      await Axios.post(
+      await api.post(
         `${baseUrl}/loan/payments`,
         {
           loanId: loan._id,

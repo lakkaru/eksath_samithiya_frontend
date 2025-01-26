@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import {
   AppBar,
   Box,
@@ -9,84 +9,53 @@ import {
   MenuItem,
 } from "@mui/material"
 import { navigate } from "gatsby"
-const { jwtDecode } = require("jwt-decode")
+import loadable from "@loadable/component"
+
+const AuthComponent = loadable(() => import("./common/AuthComponent"))
+// import AuthComponent from "./common/AuthComponent"
 
 const Header = ({ siteTitle }) => {
-  const [roles, setRoles] = useState([]) // Store roles
+  const [roles, setRoles] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [memberName, setMemberName] = useState("") // State to store member's name
-
-  // Menu states
+  const [memberName, setMemberName] = useState("")
   const [memberAnchorEl, setMemberAnchorEl] = useState(null)
-  const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null) // Loan Scheme Menu
+  const [membersAnchorEl, setMembersAnchorEl] = useState(null)
+  const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
 
   const memberMenuOpen = Boolean(memberAnchorEl)
+  // const membersMenuOpen = Boolean(membersAnchorEl)
   const loanSchemeMenuOpen = Boolean(loanSchemeAnchorEl)
 
-  // Handlers for menus
   const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
   const handleMemberMenuClose = () => setMemberAnchorEl(null)
+  // const handleMembersMenuOpen = event => setMembersAnchorEl(event.currentTarget)
+  // const handleMembersMenuClose = () => setMembersAnchorEl(null)
 
   const handleLoanSchemeMenuOpen = event =>
     setLoanSchemeAnchorEl(event.currentTarget)
   const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
 
-  useEffect(() => {
-    let token = ""
-    if (typeof window !== "undefined") {
-      token = localStorage.getItem("authToken")
-    }
-
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token)
-        const expirationTime = decodedToken.exp * 1000 // Convert to milliseconds
-        const timeRemaining = expirationTime - Date.now()
-        setRoles(decodedToken.roles || [])
-        setMemberName(decodedToken.name || "") // Set the member's name
-        console.log("timeRemaining: ", timeRemaining)
-        if (timeRemaining > 0) {
-          // Set a timeout to log out the user
-          setIsAuthenticated(true)
-        } else {
-          // Token already expired, log out immediately
-          handleLogout()
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error)
-        setIsAuthenticated(false)
-      }
-    }
-  }, [])
+  const handleAuthStateChange = ({ isAuthenticated, roles, memberName }) => {
+    // console.log('member-name:', memberName)
+    setIsAuthenticated(isAuthenticated)
+    setRoles(roles)
+    setMemberName(memberName)
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("authToken")
     setRoles([])
     setIsAuthenticated(false)
+    setMemberName('')
     navigate("/login/user-login")
   }
 
-  const routeLabels = {
-    "/member/ProfileEdit/": "Member Profile Edit",
-    "/member/Home/": "Member Home",
-    "/login/UserLogin": "User Login",
-  }
-
-  // if (typeof window === "undefined") {
-  //   return null
-  // } else {
-  //   const pathname = window.location.pathname
-  //   const displayName =
-  //     routeLabels[pathname] ||
-  //     pathname.split("/").filter(Boolean).pop() ||
-  //     "Home"
-  // }
-  // Admin menus based on roles
   const isViceSecretary = roles.includes("vice-secretary")
   const isLoanTreasurer = roles.includes("loan-treasurer")
 
   return (
     <header>
+      <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <Box
         sx={{
           flexGrow: 1,
@@ -100,19 +69,18 @@ const Header = ({ siteTitle }) => {
             <Typography
               variant="h6"
               sx={{ flexGrow: 1, cursor: "pointer" }}
-              onClick={() => navigate("/")}
+              onClick={() =>{navigate("/")}}
             >
               {siteTitle}
             </Typography>
 
             {isAuthenticated ? (
               <>
-                {/* Member Menus */}
                 <Button
                   color="inherit"
-                  onClick={() => navigate("/payments")}
+                  onClick={() => navigate("/member/payments")}
                   sx={{ textTransform: "none" }}
-                  disabled
+                
                 >
                   Payments
                 </Button>
@@ -132,8 +100,46 @@ const Header = ({ siteTitle }) => {
                 >
                   Loan
                 </Button>
+                {/* <>
+                    <Button
+                      color="inherit"
+                      onClick={handleMembersMenuOpen}
+                      sx={{ textTransform: "none" }}
+                    >
+                      Members
+                    </Button>
+                    <Menu
+                      anchorEl={membersAnchorEl}
+                      open={membersMenuOpen}
+                      onClose={handleMembersMenuClose}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          navigate("#")
+                          handleLoanSchemeMenuClose()
+                        }}
+                      >
+                        Members of Area
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/loan/search")
+                          handleLoanSchemeMenuClose()
+                        }}
+                      >
+                        Loan Search
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/loan/active-loans")
+                          handleLoanSchemeMenuClose()
+                        }}
+                      >
+                        Active Loans
+                      </MenuItem>
+                    </Menu>
+                  </> */}
 
-                {/* Role-specific Admin Menus */}
                 {isViceSecretary && (
                   <Button
                     color="inherit"
@@ -185,7 +191,6 @@ const Header = ({ siteTitle }) => {
                   </>
                 )}
 
-                {/* Profile Menu */}
                 <Button
                   color="inherit"
                   onClick={handleMemberMenuOpen}
@@ -236,8 +241,6 @@ const Header = ({ siteTitle }) => {
           </Toolbar>
         </AppBar>
       </Box>
-
-      {/* Current Route Display with Member Name */}
       <Box
         sx={{
           width: "100%",
@@ -248,12 +251,12 @@ const Header = ({ siteTitle }) => {
           background: "#f5f5f5",
           borderTop: "1px solid #ddd",
           display: "flex",
-          justifyContent: "space-between", // Aligns name to the right
+          justifyContent: "space-between",
           alignItems: "center",
         }}
       >
         <Typography variant="body2" color="textSecondary">
-          Samithiya/ 
+          
         </Typography>
         {isAuthenticated && (
           <Typography variant="body2" color="textSecondary">

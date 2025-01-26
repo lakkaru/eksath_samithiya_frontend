@@ -10,18 +10,19 @@ import {
   IconButton,
 } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
-import Axios from "axios"
+// import Axios from "axios"
+import api from '../../utils/api'
 // import { navigate } from "gatsby"
 
 import Layout from "../../components/layout"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
-let token = null;
+// let token = null;
 
-if (typeof window !== "undefined") {
-  token = localStorage.getItem("authToken");
-}
+// if (typeof window !== "undefined") {
+//   token = localStorage.getItem("authToken");
+// }
 
 
 export default function ProfileEdit() {
@@ -41,9 +42,7 @@ export default function ProfileEdit() {
 
   useEffect(() => {
     // Fetch current member data from API
-     Axios.get(`${baseUrl}/member/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+     api.get(`${baseUrl}/member/profile`)
       .then(response => {
         // console.log("response.data :", response.data)
         setMemberData(prev => ({
@@ -71,9 +70,7 @@ export default function ProfileEdit() {
     }
 
     const { confirmPassword, ...dataToUpdate } = memberData // Remove confirmPassword from the data to send
-    Axios.put(`${baseUrl}/member/profile`, dataToUpdate, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    api.put(`${baseUrl}/member/profile`, dataToUpdate)
       .then(() => {
         setFeedback({
           type: "success",
@@ -194,7 +191,7 @@ export default function ProfileEdit() {
           <Grid2 size={12}>
             <TextField
               fullWidth
-              label="whatsApp Number"
+              label="WhatsApp Number"
               name="whatsApp"
               type="text"
               value={memberData.whatsApp}
