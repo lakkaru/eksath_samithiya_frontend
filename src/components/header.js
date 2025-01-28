@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Divider,
 } from "@mui/material"
 import { navigate } from "gatsby"
 import loadable from "@loadable/component"
@@ -25,6 +26,7 @@ const Header = ({ siteTitle }) => {
 
   const isViceSecretary = roles.includes("vice-secretary")
   const isLoanTreasurer = roles.includes("loan-treasurer")
+  const isTreasurer = roles.includes("treasurer")
 
   const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
   const handleMemberMenuClose = () => setMemberAnchorEl(null)
@@ -88,30 +90,21 @@ const Header = ({ siteTitle }) => {
             <Box sx={{ display: { xs: "none", sm: "flex" } }}>
               {isAuthenticated && (
                 <>
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/member/payments")}
-                    sx={{ textTransform: "none" }}
-                  >
-                    Payments
-                  </Button>
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/loan")}
-                    sx={{ textTransform: "none" }}
-                    disabled
-                  >
-                    Loan
-                  </Button>
-
                   {isViceSecretary && (
-                    <Button
-                      color="inherit"
-                      onClick={() => navigate("/attendance")}
-                      sx={{ textTransform: "none" }}
-                    >
-                      Attendance
-                    </Button>
+                    <>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/attendance")}
+                        sx={{ textTransform: "none" }}
+                      >
+                        Attendance
+                      </Button>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ bgcolor: "white", mx: 2 }}
+                      />
+                    </>
                   )}
 
                   {isLoanTreasurer && (
@@ -153,8 +146,41 @@ const Header = ({ siteTitle }) => {
                           Active Loans
                         </MenuItem>
                       </Menu>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ bgcolor: "white", mx: 2 }}
+                      />
                     </>
                   )}
+                  <Button
+                    color="inherit"
+                    onClick={() => navigate("/account/receipts")}
+                    sx={{ textTransform: "none" }}
+                  >
+                    මුදල් ලැබීම්
+                  </Button>
+
+                  <Button
+                    color="inherit"
+                    onClick={() => navigate("/member/payments")}
+                    sx={{ textTransform: "none" }}
+                  >
+                    මුදල් ගෙවීම්
+                  </Button>
+                  <Button
+                    color="inherit"
+                    onClick={() => navigate("/loan")}
+                    sx={{ textTransform: "none" }}
+                    disabled
+                  >
+                    Loan
+                  </Button>
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ bgcolor: "white", mx: 2 }}
+                  />
 
                   <Button
                     color="inherit"
@@ -167,7 +193,7 @@ const Header = ({ siteTitle }) => {
                     anchorEl={memberAnchorEl}
                     open={Boolean(memberAnchorEl)}
                     onClose={handleMemberMenuClose}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                   >
                     <MenuItem
                       onClick={() => {
@@ -215,14 +241,46 @@ const Header = ({ siteTitle }) => {
                   top: "64px",
                   right: "0",
                   width: "100%",
-                  backgroundColor: "white",
+                  backgroundColor: "#f5f5f5",
                   color: "black",
                   boxShadow: 3,
+                  zIndex: 1000,
                   display: { xs: "block", sm: "none" },
                 }}
               >
                 {isAuthenticated && (
                   <>
+                    {isViceSecretary && (
+                      <>
+                        <Typography sx={{ textAlign: "center", color: "teal" }}>
+                          Admin area
+                        </Typography>
+                        <Button
+                          color="inherit"
+                          onClick={() => navigate("/attendance")}
+                          sx={{ textTransform: "none", width: "100%" }}
+                        >
+                          Attendance
+                        </Button>
+                        <hr />
+                      </>
+                    )}
+                    {isLoanTreasurer && (
+                      <>
+                        <Typography sx={{ textAlign: "center", color: "teal" }}>
+                          Admin area
+                        </Typography>
+                        <Button
+                          color="inherit"
+                          onClick={handleLoanSchemeMenuOpen}
+                          sx={{ textTransform: "none", width: "100%" }}
+                        >
+                          Loan Schemes
+                        </Button>
+                        <hr />
+                      </>
+                    )}
+
                     <Button
                       color="inherit"
                       onClick={() => navigate("/member/payments")}
@@ -238,24 +296,7 @@ const Header = ({ siteTitle }) => {
                     >
                       Loan
                     </Button>
-                    {isViceSecretary && (
-                      <Button
-                        color="inherit"
-                        onClick={() => navigate("/attendance")}
-                        sx={{ textTransform: "none", width: "100%" }}
-                      >
-                        Attendance
-                      </Button>
-                    )}
-                    {isLoanTreasurer && (
-                      <Button
-                        color="inherit"
-                        onClick={handleLoanSchemeMenuOpen}
-                        sx={{ textTransform: "none", width: "100%" }}
-                      >
-                        Loan Schemes
-                      </Button>
-                    )}
+                    <hr />
                     <Button
                       color="inherit"
                       onClick={handleMemberMenuOpen}
@@ -269,7 +310,12 @@ const Header = ({ siteTitle }) => {
                   <Button
                     color="inherit"
                     onClick={() => navigate("/login/user-login")}
-                    sx={{ textTransform: "none" , marginLeft:'auto'}}
+                    sx={{
+                      textTransform: "none",
+                      marginLeft: "auto",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
                   >
                     Login
                   </Button>
@@ -285,12 +331,12 @@ const Header = ({ siteTitle }) => {
           width: "100%",
           maxWidth: "1024px",
           margin: "0 auto",
-          textAlign: "left",
+          justifyContent: "flex-end",
           padding: "8px",
           background: "#f5f5f5",
           borderTop: "1px solid #ddd",
           display: "flex",
-          justifyContent: "space-between",
+          // justifyContent: "space-between",
           alignItems: "center",
         }}
       >

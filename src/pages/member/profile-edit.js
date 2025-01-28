@@ -11,10 +11,11 @@ import {
 } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 // import Axios from "axios"
-import api from '../../utils/api'
+import api from "../../utils/api"
 // import { navigate } from "gatsby"
 
 import Layout from "../../components/layout"
+import { navigate } from "gatsby"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
@@ -23,7 +24,6 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
 // if (typeof window !== "undefined") {
 //   token = localStorage.getItem("authToken");
 // }
-
 
 export default function ProfileEdit() {
   const [memberData, setMemberData] = useState({
@@ -42,7 +42,8 @@ export default function ProfileEdit() {
 
   useEffect(() => {
     // Fetch current member data from API
-     api.get(`${baseUrl}/member/profile`)
+    api
+      .get(`${baseUrl}/member/profile`)
       .then(response => {
         // console.log("response.data :", response.data)
         setMemberData(prev => ({
@@ -70,18 +71,21 @@ export default function ProfileEdit() {
     }
 
     const { confirmPassword, ...dataToUpdate } = memberData // Remove confirmPassword from the data to send
-    api.put(`${baseUrl}/member/profile`, dataToUpdate)
+    api
+      .put(`${baseUrl}/member/profile`, dataToUpdate)
       .then(() => {
+        navigate("/member/home")
         setFeedback({
           type: "success",
-          message: "Profile updated successfully!",
+          message: "අලුත් තොරතුරු සාර්ථකව ඇතුලත් කරන ලදී !",
         })
       })
       .catch(error => {
         console.error("Error updating profile:", error)
         setFeedback({
           type: "error",
-          message: "Failed to update profile. Please try again.",
+          message:
+            "තොරතුරු ඇතුලත් කිරීම අසාර්ථක විය.  කරුණාකර නැවත උත්සහ කරන්න. ",
         })
       })
   }
@@ -119,7 +123,7 @@ export default function ProfileEdit() {
           variant="h5"
           sx={{ marginBottom: "20px", textAlign: "center" }}
         >
-          Edit Profile
+          සාමාජික තොරතුරු වෙනස් කිරීම
         </Typography>
 
         {feedback.message && (
@@ -138,13 +142,13 @@ export default function ProfileEdit() {
           <Grid2 size={12}>
             <TextField
               fullWidth
-              label="New Password"
+              label="නව මුර පදය"
               name="password"
               type={showPassword ? "text" : "password"}
               value={memberData.password}
               onChange={handleInputChange}
               onFocus={handleFocus}
-              placeholder="Enter new password"
+              placeholder="නව මුර පදය ඇතුලත් කරන්න"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -159,13 +163,13 @@ export default function ProfileEdit() {
           <Grid2 size={12}>
             <TextField
               fullWidth
-              label="Confirm Password"
+              label="නව මුර පදය"
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               value={memberData.confirmPassword}
               onChange={handleInputChange}
               onFocus={handleFocus}
-              placeholder="Confirm your password"
+              placeholder="නව මුර පදය තහවුරු කරන්න"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -180,23 +184,23 @@ export default function ProfileEdit() {
           <Grid2 size={12}>
             <TextField
               fullWidth
-              label="Mobile Number"
+              label="ජංගම දුරකථන"
               name="mobile"
               type="text"
               value={memberData.mobile}
               onChange={handleInputChange}
-              placeholder="Enter mobile number"
+              placeholder="ජංගම දුරකථන අංකය ඇතුලත් කරන්න"
             />
           </Grid2>
           <Grid2 size={12}>
             <TextField
               fullWidth
-              label="WhatsApp Number"
+              label="WhatsApp අංකය"
               name="whatsApp"
               type="text"
               value={memberData.whatsApp}
               onChange={handleInputChange}
-              placeholder="Enter whatsApp number"
+              placeholder="WhatsApp අංකය ඇතුලත් කරන්න"
             />
           </Grid2>
           <Grid2 size={12}>
@@ -207,18 +211,18 @@ export default function ProfileEdit() {
               type="text"
               value={memberData.email}
               onChange={handleInputChange}
-              placeholder="Enter email"
+              placeholder=" Email ඇතුලත් කරන්න"
             />
           </Grid2>
           <Grid2 size={12}>
             <TextField
               fullWidth
-              label="Address"
+              label="ලිපිනය"
               name="address"
               type="text"
               value={memberData.address}
               onChange={handleInputChange}
-              placeholder="Enter address"
+              placeholder="ලිපිනය ඇතුලත් කරන්න"
               multiline
               rows={3}
             />
@@ -230,7 +234,7 @@ export default function ProfileEdit() {
               onClick={handleSubmit}
               sx={{ textTransform: "none" }}
             >
-              Update Profile
+              නව තොරතුරු ඇතුලත් කරන්න
             </Button>
           </Grid2>
         </Grid2>

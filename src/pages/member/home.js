@@ -71,8 +71,8 @@ const MemberHomePage = () => {
           padding: "16px",
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          Member Details
+        <Typography variant="h5" gutterBottom>
+        සාමාජික තොරතුරු
         </Typography>
         <Paper
           elevation={3}
@@ -84,87 +84,87 @@ const MemberHomePage = () => {
           <List>
             <ListItem>
               <ListItemText
-                primary="Area"
-                secondary={memberData?.area || "N/A"}
+                primary="බල ප්‍රදේශය"
+                secondary={memberData?.area || "ලබා දී නැත"}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Address"
-                secondary={memberData?.address || "N/A"}
+                primary="ලිපිනය"
+                secondary={memberData?.address || "ලබා දී නැත"}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Mobile Number"
-                secondary={memberData?.mobile || "N/A"}
+                primary="ජංගම දුරකථන අංකය"
+                secondary={memberData?.mobile || "ලබා දී නැත"}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="WhatsApp Number"
-                secondary={memberData?.whatsApp || "N/A"}
+                primary="WhatsApp අංකය"
+                secondary={memberData?.whatsApp || "ලබා දී නැත"}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
                 primary="Email"
-                secondary={memberData?.email || "N/A"}
+                secondary={memberData?.email || "ලබා දී නැත"}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Previous Due"
+                primary="පසුගිය වසර හිඟ"
                 secondary={`${
                   memberData?.previousDue
                     ? `LKR ${memberData?.previousDue.totalDue}`
-                    : "N/A"
+                    : "නැත"
                 }`}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Fine Total"
+                primary="දඩ මුදල් එකතුව"
                 secondary={`${
-                  memberData?.fineTotal ? `LKR ${memberData?.fineTotal}` : 0
+                  memberData?.fineTotal ? `LKR ${memberData?.fineTotal}` : 'නැත'
                 }`}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Membership Due"
+                primary="සාමාජික මුදල් හිඟ"
                 secondary={`${
                   memberData?.membershipDue
                     ? `LKR ${memberData?.membershipDue}`
-                    : 0
+                    : 'නැත'
                 }`}
               />
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="Meeting Absents"
+                primary="මහාසභාවට නොපැමිණිම්"
                 secondary={
                   memberData?.meetingAbsents
                     ? `${memberData?.meetingAbsents} times`
-                    : "N/A"
+                    : "නැත"
                 }
               />
             </ListItem>
             <Divider />
             {/* Dependents */}
             <ListItem>
-              <ListItemText primary="Dependents" />
+              <ListItemText primary="යැපෙන්නන් ලේඛනය" sx={{textDecoration:'underline', textAlign: 'left'}}/>
             </ListItem>
             {memberData?.dependents && memberData.dependents.length > 0 ? (
-              <List sx={{ pl: 4 }}>
+              <List sx={{ pl: 2 }}>
                 {memberData.dependents.map((dependent, index) => (
                   <ListItem
                     disableGutters
