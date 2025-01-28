@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react"
 import Layout from "../../components/layout"
 import StickyHeadTable from "../../components/StickyHeadTable"
-import { Box, Button, TextField, Typography, Paper } from "@mui/material"
+import { Box, Typography, Paper } from "@mui/material"
 
 import api from "../../utils/api"
+import { useMember } from "../../context/MemberContext"
 const baseUrl = process.env.GATSBY_API_BASE_URL
 
 export default function Payments() {
-    
-    const [loading, setLoading] = useState(true); // Handle loading state
-    const [error, setError] = useState(null); 
+  const { memberData } = useMember()
+  const [memberInfo, setMemberInfo] = useState(memberData)
+  const [loading, setLoading] = useState(true) // Handle loading state
+  const [error, setError] = useState(null)
   const [groupedPayments, setGroupedPayments] = useState({})
-  const [perviousDue, setPerviousDue] = useState()
-  const [member, setMember] = useState({})
+//   const [perviousDue, setPerviousDue] = useState()
+//   const [member, setMember] = useState({})
   // console.log(member)
 
   const columnsArray = [
@@ -97,24 +99,43 @@ export default function Payments() {
   //   const totalFines = fines.reduce((total, fine) => total + fine.amount, 0)
   //   // console.log("membershipDue:", membershipDue)
   //   const totalDue = (perviousDue + membershipDue)||0
-  let membershipDue = 0
-  let totalFines = 0
-  let totalDue = 0
+//   let membershipDue = 0
+//   let totalFines = 0
+//   let totalDue = 0
+
+//   console.log("memberInfo :", memberInfo)
   useEffect(() => {
-    const fetchMemberPayments = async () => {
+    if (!memberData) {
+      //get memberData if page reload and context is empty
+      const fetchMemberData = async () => {
         try {
-          const response = await api.get(`${baseUrl}/member/payments`);
-          setGroupedPayments(response.data.previousDue); // Set payment data
-          console.log((response.data.previousDue))
-        } catch (error) {
-          console.error("Error fetching payment data:", error);
-          setError("Failed to fetch payment data."); // Set error message
+          const response = await api.get(`${baseUrl}/member/info`)
+          // console.log("response: ", response.data)
+          setMemberInfo(response.data)
+        } catch (err) {
+          console.error("Error fetching member data:", err)
+          setError("Failed to load member data. Please try again later.")
+          setMemberInfo(null)
         } finally {
-          setLoading(false); // Set loading to false
+          setLoading(false)
         }
-      };
-  
-      fetchMemberPayments(); 
+      }
+      fetchMemberData()
+    }
+    //getting payments of member
+    const fetchPayments = async () => {
+      try {
+        const response = await api.get(`${baseUrl}/member/payments`)
+        console.log("response: ", response.data)
+        setGroupedPayments(response.data.payments)
+      } catch (err) {
+        console.error("Error fetching payments:", err)
+        setError("Failed to load payments. Please try again later.")
+        setGroupedPayments(null)
+      }
+    }
+   
+    fetchPayments()
   }, [])
 
   return (
@@ -184,48 +205,58 @@ export default function Payments() {
             gap: "20px",
           }}
         >
-          <Typography>පැරණි හිඟ රු. {perviousDue}</Typography>
           <Typography
             sx={{
-              fontWeight: member.siblingsCount ? "800" : "inherit",
-              color: member.siblingsCount ? "teal" : "inherit",
+              fontWeight: "800",
+              fontSize:{xs:".6rem",sm:"1rem"}
+            }}
+          >
+            පැරණි හිඟ රු. {memberInfo?.previousDue?.totalDue}
+          </Typography>
+          <Typography
+            sx={{
+              fontWeight: "800",
+              fontSize:{xs:".6rem",sm:"1rem"}
             }}
           >
             සාමාජික මුදල් හිඟ රු.
-            {membershipDue}
+            {memberInfo?.membershipDue}
           </Typography>
 
-          <Typography sx={{ fontWeight: "800", color: "orange" }}>
+          <Typography sx={{ fontWeight: "800" , fontSize:{xs:".6rem",sm:"1rem"}}}>
             දඩ මුදල් රු.
-            {totalFines}
+            {memberInfo?.fineTotal || "0"}
           </Typography>
-          <Typography sx={{ fontWeight: "800", color: "red" }}>
+          <Typography sx={{ fontWeight: "800", color: "orange" , fontSize:{xs:".6rem",sm:"1rem"}}}>
             හිඟ එකතුව රු.
-            {totalDue}
+            {memberInfo?.previousDue?.totalDue +
+              memberInfo?.membershipDue +
+              memberInfo?.fineTotal || "0"}
           </Typography>
         </Box>
       </section>
-      {Object.keys(groupedPayments)
-        .sort((a, b) => b - a) // Sort years in descending order
-        .map(year => (
-          <Box key={year} sx={{ marginBottom: "20px" }}>
-            <Typography
-              variant="h6"
-              align="center"
-              sx={{ marginBottom: "10px" }}
-            >
-              Payments for {year}
-            </Typography>
-            <Paper elevation={3} sx={{ padding: "20px" }}>
-              <StickyHeadTable
-                columnsArray={columnsArray}
-                dataArray={groupedPayments[year].payments} // Include totals
-                headingAlignment={"left"}
-                dataAlignment={"left"}
-              />
-            </Paper>
-          </Box>
-        ))}
+      {groupedPayments &&
+        Object.keys(groupedPayments)
+          .sort((a, b) => b - a) // Sort years in descending order
+          .map(year => (
+            <Box key={year} sx={{ marginBottom: "20px" }}>
+              <Typography
+                variant="h6"
+                align="center"
+                sx={{ marginBottom: "10px" }}
+              >
+                Payments for {year}
+              </Typography>
+              <Paper elevation={3} sx={{ padding: "20px" }}>
+                <StickyHeadTable
+                  columnsArray={columnsArray}
+                  dataArray={groupedPayments[year]?.payments || []} // Ensure `payments` is defined
+                  headingAlignment={"left"}
+                  dataAlignment={"left"}
+                />
+              </Paper>
+            </Box>
+          ))}
     </Layout>
   )
 }

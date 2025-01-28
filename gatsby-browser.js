@@ -1,7 +1,13 @@
-/**
- * Implement Gatsby's Browser APIs in this file.
- *
- * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-browser/
- */
+import React from "react";
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { MemberProvider } from "./src/context/MemberContext";
 
-// You can delete this file if you're not using it
+// Create an Emotion cache instance
+const cache = createCache({ key: "css", prepend: true });
+
+export const wrapRootElement = ({ element }) => (
+  <CacheProvider value={cache}>
+    <MemberProvider>{element}</MemberProvider>
+  </CacheProvider>
+);

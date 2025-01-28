@@ -12,6 +12,7 @@ import {
 import api from '../../utils/api'
 import { navigate } from "gatsby"
 
+import { useMember } from "../../context/MemberContext";
 import Layout from "../../components/layout"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
@@ -24,7 +25,7 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
 
 
 const MemberHomePage = () => {
-  const [memberData, setMemberData] = useState(null)
+  const { memberData, setMemberData } = useMember();
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   // console.log('memberData: ', memberData)
