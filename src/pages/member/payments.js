@@ -13,8 +13,8 @@ export default function Payments() {
   const [loading, setLoading] = useState(true) // Handle loading state
   const [error, setError] = useState(null)
   const [groupedPayments, setGroupedPayments] = useState({})
-//   const [perviousDue, setPerviousDue] = useState()
-//   const [member, setMember] = useState({})
+  //   const [perviousDue, setPerviousDue] = useState()
+  //   const [member, setMember] = useState({})
   // console.log(member)
 
   const columnsArray = [
@@ -99,11 +99,11 @@ export default function Payments() {
   //   const totalFines = fines.reduce((total, fine) => total + fine.amount, 0)
   //   // console.log("membershipDue:", membershipDue)
   //   const totalDue = (perviousDue + membershipDue)||0
-//   let membershipDue = 0
-//   let totalFines = 0
-//   let totalDue = 0
+  //   let membershipDue = 0
+  //   let totalFines = 0
+  //   let totalDue = 0
 
-//   console.log("memberInfo :", memberInfo)
+  console.log("groupedPayments :", groupedPayments)
   useEffect(() => {
     if (!memberData) {
       //get memberData if page reload and context is empty
@@ -134,68 +134,19 @@ export default function Payments() {
         setGroupedPayments(null)
       }
     }
-   
+
     fetchPayments()
   }, [])
+  // console.log(memberInfo?.previousDue?.totalDue<0).
+  const membershipDue = memberInfo?.membershipDue
+  const totalDue =
+    memberInfo?.previousDue?.totalDue +
+      memberInfo?.membershipDue +
+      memberInfo?.fineTotal || "0"
 
   return (
     <Layout>
       <section>
-        {/* <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            padding: "20px",
-            gap: "50px",
-          }}
-        >
-          <Typography>සාමාජික අංකය</Typography>
-          <TextField
-            id="outlined-basic"
-            label="Your ID"
-            variant="outlined"
-            type="number"
-            value={memberId}
-            onChange={e => {
-              setMemberId(e.target.value)
-            }}
-          />
-          <Button variant="contained" onClick={getMemberAccountById}>
-            Search
-          </Button>
-        </Box> */}
-        {/* <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "20px",
-            gap: "20px",
-          }}
-        >
-          <Typography
-            sx={{ color: member.status === "convenient" ? "blue" : "inherit" }}
-          >
-            {" "}
-            {member.name || "N/A"}
-          </Typography>
-          <Typography
-            sx={{ color: member.status === "convenient" ? "blue" : "inherit" }}
-          >
-            {member.area || "N/A"}
-          </Typography>
-          <Typography
-            sx={{ color: member.status === "convenient" ? "blue" : "inherit" }}
-          >
-            {member.mob_tel || "N/A"}
-          </Typography>
-          <Typography
-            sx={{ color: member.status === "convenient" ? "blue" : "inherit" }}
-          >
-            {member.res_tel || "N/A"}
-          </Typography>
-        </Box> */}
         <Box
           sx={{
             display: "flex",
@@ -208,7 +159,7 @@ export default function Payments() {
           <Typography
             sx={{
               fontWeight: "800",
-              fontSize:{xs:".6rem",sm:"1rem"}
+              fontSize: { xs: ".6rem", sm: "1rem" },
             }}
           >
             පැරණි හිඟ රු. {memberInfo?.previousDue?.totalDue}
@@ -216,22 +167,28 @@ export default function Payments() {
           <Typography
             sx={{
               fontWeight: "800",
-              fontSize:{xs:".6rem",sm:"1rem"}
+              fontSize: { xs: ".6rem", sm: "1rem" },
             }}
           >
             සාමාජික මුදල් හිඟ රු.
-            {memberInfo?.membershipDue}
+            {membershipDue}
           </Typography>
 
-          <Typography sx={{ fontWeight: "800" , fontSize:{xs:".6rem",sm:"1rem"}}}>
+          <Typography
+            sx={{ fontWeight: "800", fontSize: { xs: ".6rem", sm: "1rem" } }}
+          >
             දඩ මුදල් රු.
             {memberInfo?.fineTotal || "0"}
           </Typography>
-          <Typography sx={{ fontWeight: "800", color: "orange" , fontSize:{xs:".6rem",sm:"1rem"}}}>
+          <Typography
+            sx={{
+              fontWeight: "800",
+              fontSize: { xs: ".6rem", sm: "1rem" },
+              color: totalDue < 0 ? "green" : "orange",
+            }}
+          >
             හිඟ එකතුව රු.
-            {memberInfo?.previousDue?.totalDue +
-              memberInfo?.membershipDue +
-              memberInfo?.fineTotal || "0"}
+            {totalDue}
           </Typography>
         </Box>
       </section>

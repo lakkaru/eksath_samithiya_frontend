@@ -6,20 +6,29 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import StickyHeadTable from "../../components/StickyHeadTable"
 import dayjs from "dayjs"
 import { useLocation } from "@reach/router"
-// import { navigate } from "gatsby"
-// import Axios from "axios"
-import api from '../../utils/api'
+import { navigate } from "gatsby"
+
+import api from "../../utils/api"
+//un authorized access preventing
+import loadable from "@loadable/component"
+const AuthComponent = loadable(() =>
+  import("../../components/common/AuthComponent")
+)
+
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
-let token = null;
+// let token = null
 
-if (typeof window !== "undefined") {
-  token = localStorage.getItem("authToken");
-}
-
+// if (typeof window !== "undefined") {
+//   token = localStorage.getItem("authToken")
+// }
 
 export default function Search() {
+  //un authorized access preventing
+  const [roles, setRoles] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const [memberInputId, setMemberInputId] = useState("")
   const [member, setMember] = useState(null)
   const [loan, setLoan] = useState(null)
@@ -37,25 +46,25 @@ export default function Search() {
   const memberId = queryParams.get("memberId")
 
   const loanColumns = [
-    { id: "date", label: "Loan Date", minWidth: 50 },
-    { id: "id", label: "Loan ID", minWidth: 50 },
-    { id: "amount", label: "Loan Amount", minWidth: 50 },
-    { id: "remaining", label: "Remaining Amount", minWidth: 50 },
-    { id: "interest", label: "Interest", minWidth: 50 },
-    { id: "penaltyInterest", label: "Penalty Int.", minWidth: 50 },
-    { id: "due", label: "Due Amount", minWidth: 50, align: "right" },
+    { id: "date", label: "ණය වු දිනය", minWidth: 50 },
+    { id: "id", label: "අංකය", minWidth: 50 },
+    // { id: "amount", label: "Loan Amount", minWidth: 50 },
+    { id: "remaining", label: "ඉතිරි මුදල", minWidth: 50 },
+    { id: "interest", label: "පොලිය", minWidth: 50 },
+    { id: "penaltyInterest", label: "දඩ පොලිය", minWidth: 50 },
+    { id: "installment", label: "වාරිකය", minWidth: 50 },
+    { id: "due", label: "මුළු මුදල", minWidth: 50, align: "right" },
   ]
 
   const paymentColumns = [
-    { id: "date", label: "Payment Date", minWidth: 50 },
-    { id: "payedTotal", label: "Paid Total", minWidth: 50 },
-    { id: "amount", label: "Paid Amount", minWidth: 50 },
-    { id: "interest", label: "Paid Interest", minWidth: 50 },
-    { id: "penaltyInterest", label: "Paid Penalty Int.", minWidth: 50 },
+    { id: "date", label: "දිනය", minWidth: 50 },
+    { id: "payedTotal", label: "මුළු මුදල", minWidth: 50 },
+    { id: "amount", label: "ණය මුදල", minWidth: 50 },
+    { id: "interest", label: "පොලිය", minWidth: 50 },
+    { id: "penaltyInterest", label: "දඩ පොලිය", minWidth: 50 },
     { id: "actions", label: "", minWidth: 50 },
   ]
 
- 
   //calculating interest for loan according to payment date
   const calculateInterest = (
     loanDate,
@@ -80,6 +89,19 @@ export default function Search() {
     if (currentDate.getDate() - loanDateObj.getDate() > 0) {
       totalMonths = totalMonths + 1
     }
+    //getting installment
+    let loanInstallment=0
+    // console.log('totalMonths:', totalMonths)
+    // console.log('remainingAmount:', remainingAmount)
+    if (totalMonths<=10) {
+      loanInstallment=(totalMonths*1000)-(10000-remainingAmount)
+      // console.log(loanInstallment)
+    } else {
+      loanInstallment=(10000-remainingAmount)
+      // console.log(loanInstallment)
+    }
+
+    
     // console.log("totalMonths :", totalMonths)
     let lastPaymentMonths =
       (lastIntPayDateObj.getFullYear() - loanDateObj.getFullYear()) * 12 +
@@ -109,70 +131,70 @@ export default function Search() {
       remainingAmount * interestUnpaidMonths * monthlyInterestRate
     const penaltyInterest =
       remainingAmount * penaltyMonths * monthlyInterestRate
-    return { int: Math.round(interest), penInt: Math.round(penaltyInterest) }
+    return { int: Math.round(interest), penInt: Math.round(penaltyInterest), installment:Math.round(loanInstallment+interest+penaltyInterest) }
   }
 
-  const handleSearch =useCallback( async date => {
-    // console.log("date on handle search: ", date)
-    if (!memberInputId) return
-    setLoading(true)
-    try {
-      // Fetch member info
-      const {
-        data: { member },
-      } = await api.get(`${baseUrl}/member/getMemberById/${memberInputId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+  const handleSearch = useCallback(
+    async date => {
+      // console.log("date on handle search: ", date)
+      if (!memberInputId) return
+      setLoading(true)
+      try {
+        // Fetch member info
+        const {
+          data: { member },
+        } = await api.get(`${baseUrl}/member/getMemberById/${memberInputId}`)
 
-      const memberResponse = member
-      setMember(memberResponse)
+        const memberResponse = member
+        setMember(memberResponse)
 
-      // If the member exists, fetch the loan data
-      if (memberResponse?._id) {
-        const { data: loanResponse } = await api.get(
-          `${baseUrl}/loan/member/${memberResponse._id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
-
-        const loanData = loanResponse?.loan
-
-        if (loanData) {
-          const allPayments = loanResponse?.groupedPayments || []
-          const lastInterestPaymentDate = loanResponse?.lastIntPaymentDate?.date
-
-          setEarlyPayments(allPayments)
-
-          const calculatedInterest = calculateInterest(
-            loanData.loanDate,
-            loanData.loanRemainingAmount,
-            lastInterestPaymentDate,
-            date
+        // If the member exists, fetch the loan data
+        if (memberResponse?._id) {
+          const { data: loanResponse } = await api.get(
+            `${baseUrl}/loan/member/${memberResponse._id}`
           )
 
-          setLoan({
-            ...loanData,
-            interest: calculatedInterest.int,
-            penaltyInterest: calculatedInterest.penInt,
-            dueAmount:
-              loanData.loanRemainingAmount +
-              calculatedInterest.int +
-              calculatedInterest.penInt,
-          })
-        } else {
-          // Set loan to null explicitly only when loanData is not present
-          console.warn("No loan data found.")
-          setLoan(null)
+          const loanData = loanResponse?.loan
+
+          if (loanData) {
+            const allPayments = loanResponse?.groupedPayments || []
+            const lastInterestPaymentDate =
+              loanResponse?.lastIntPaymentDate?.date
+
+            setEarlyPayments(allPayments)
+
+            const calculatedInterest = calculateInterest(
+              loanData.loanDate,
+              loanData.loanRemainingAmount,
+              lastInterestPaymentDate,
+              date
+            )
+
+            setLoan({
+              ...loanData,
+              interest: calculatedInterest.int,
+              penaltyInterest: calculatedInterest.penInt,
+              installment:calculatedInterest.installment,
+              dueAmount:
+                loanData.loanRemainingAmount +
+                calculatedInterest.int +
+                calculatedInterest.penInt,
+            })
+          } else {
+            // Set loan to null explicitly only when loanData is not present
+            console.warn("No loan data found.")
+            setLoan(null)
+          }
         }
+      } catch (error) {
+        console.error("Error fetching data:", error)
+        // navigate('../404')
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("Error fetching data:", error)
-      // navigate('../404')
-    } finally {
-      setLoading(false)
-    }
-  },[memberInputId])
+    },
+    [memberInputId]
+  )
 
   const resetPaymentFields = () => {
     setPayingPrincipal(0)
@@ -222,28 +244,36 @@ export default function Search() {
     // console.log("payingInterest: ", payingInterest)
     // console.log("payingPenaltyInterest: ", payingPenaltyInterest)
     try {
-      await api.post(
-        `${baseUrl}/loan/payments`,
-        {
-          loanId: loan._id,
-          amounts: {
-            principle: parseFloat(payingPrincipal),
-            interest: parseFloat(payingInterest),
-            penaltyInterest: parseFloat(payingPenaltyInterest),
-          },
-          date: paymentDate,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      ).then(res => {
-        console.log(res)
-      })
+      await api
+        .post(
+          `${baseUrl}/loan/payments`,
+          {
+            loanId: loan._id,
+            amounts: {
+              principle: parseFloat(payingPrincipal),
+              interest: parseFloat(payingInterest),
+              penaltyInterest: parseFloat(payingPenaltyInterest),
+            },
+            date: paymentDate,
+          }
+        )
+        .then(res => {
+          // console.log(res)
+        })
       resetPaymentFields()
       setSnackbarOpen(true)
       await handleSearch()
     } catch (error) {
       console.error("Error recording payment:", error)
+    }
+  }
+
+  //un authorized access preventing
+  const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+    setIsAuthenticated(isAuthenticated)
+    setRoles(roles)
+    if (!isAuthenticated || !roles.includes("loan-treasurer")) {
+      navigate("/login/user-login")
     }
   }
 
@@ -258,6 +288,7 @@ export default function Search() {
 
   return (
     <Layout>
+      <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <section>
         <Box
           sx={{
@@ -315,16 +346,18 @@ export default function Search() {
                 {
                   date: new Date(loan.loanDate).toLocaleDateString("en-CA"),
                   id: loan.loanNumber,
-                  amount: loan.loanAmount,
+                  // amount: loan.loanAmount,
                   remaining: loan.loanRemainingAmount || "-",
                   interest: loan.interest || "-",
                   penaltyInterest: loan.penaltyInterest || "-",
+                  installment:loan.installment||'',
                   due: loan.dueAmount || "-",
                 },
               ]}
             />
-            <Typography>Payment History</Typography>
-            <StickyHeadTable
+            <hr></hr>
+            <Typography>ණය ආපසු ගෙවීම් </Typography>
+            <StickyHeadTable 
               columnsArray={paymentColumns}
               dataArray={earlyPayments.map(val => ({
                 date: new Date(val.date).toLocaleDateString("en-CA"),

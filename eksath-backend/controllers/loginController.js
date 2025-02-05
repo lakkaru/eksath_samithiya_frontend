@@ -6,7 +6,7 @@ const Member = require("../models/Member");
 exports.login = async (req, res) => {
   const { member_id, password } = req.body;
   // console.log(req.body.data.token);
-  console.log(member_id)
+  // console.log(member_id)
   try {
     // Find member by member_id
     const member = await Member.findOne({ member_id });

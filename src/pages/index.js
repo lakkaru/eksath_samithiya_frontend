@@ -24,7 +24,17 @@ export default function Index() {
         </Typography>
         <Typography sx={{ fontSize: { xs: ".8rem", sm: "1rem" } }}>
           ඔබ මෙම පද්ධතිය භාවිතයේදී සිදුවිය යුතු වෙනස් කමක් දකින්නේ නම් කරුණාකර
-          අපව (WhatsApp- 0715316597) දැනුවත් කරන්න.{" "}
+          අපව{" "}
+          <Link
+            href="https://wa.me/94715316597"
+            target="_blank"
+            rel="noopener noreferrer"
+            underline="hover"
+            color="primary"
+          >
+            (WhatsApp- 0715316597)
+          </Link>{" "}
+          දැනුවත් කරන්න.{" "}
         </Typography>
       </Grid2>{" "}
     </Layout>

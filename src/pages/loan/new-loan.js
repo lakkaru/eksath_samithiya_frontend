@@ -12,20 +12,28 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import dayjs from "dayjs"
-// import Axios from "axios"
-import api from '../../utils/api'
-// import { navigate } from "gatsby"
 
+import { navigate } from "gatsby"
+import api from "../../utils/api"
+
+//un authorized access preventing
+import loadable from "@loadable/component"
+const AuthComponent = loadable(() =>
+  import("../../components/common/AuthComponent")
+)
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
-let token = null;
+let token = null
 
 if (typeof window !== "undefined") {
-  token = localStorage.getItem("authToken");
+  token = localStorage.getItem("authToken")
 }
 
-
 export default function NewLoan() {
+  //un authorized access preventing
+  const [roles, setRoles] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const [member_id, setMember_id] = useState("")
   const [member, setMember] = useState("")
   const [existingLoan, setExistingLoan] = useState(false)
@@ -38,15 +46,16 @@ export default function NewLoan() {
   const [guarantor2, setGuarantor2] = useState("")
 
   const [alert, setAlert] = useState({ open: false, severity: "", message: "" }) // Alert state
-  
+
   const handleCloseAlert = () =>
     setAlert({ open: false, severity: "", message: "" })
 
   const getMemberInfoById = async e => {
     try {
-      await api.get(`${baseUrl}/loan/memberInfo/${member_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await api
+        .get(`${baseUrl}/loan/memberInfo/${member_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then(response => {
           // console.log(response.data)
           setMember(response.data.member)
@@ -67,9 +76,10 @@ export default function NewLoan() {
 
   const getGuarantor1ById = e => {
     // console.log("guarantor 1 :", guarantor1_id)
-    api.get(`${baseUrl}/member/getMemberById/${guarantor1_id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    api
+      .get(`${baseUrl}/member/getMemberById/${guarantor1_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(response => {
         // console.log("gu1: ", response.data)
         setGuarantor1(response?.data?.member)
@@ -84,9 +94,10 @@ export default function NewLoan() {
       })
   }
   const getGuarantor2ById = e => {
-    api.get(`${baseUrl}/member/getMemberById/${guarantor2_id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    api
+      .get(`${baseUrl}/member/getMemberById/${guarantor2_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(response => {
         setGuarantor2(response?.data?.member)
       })
@@ -116,9 +127,10 @@ export default function NewLoan() {
       loanDate: loanDate.toISOString(), // Ensure ISO format for the date
     }
 
-    api.post(`${baseUrl}/loan/create`, postData, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    api
+      .post(`${baseUrl}/loan/create`, postData, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(response => {
         console.log("Loan recorded successfully:", response.data)
 
@@ -159,9 +171,20 @@ export default function NewLoan() {
     setGuarantor2_id("")
     setGuarantor2("")
   }
+
+   //un authorized access preventing
+    const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+      setIsAuthenticated(isAuthenticated)
+      setRoles(roles)
+      if (!isAuthenticated || !roles.includes("loan-treasurer")) {
+        navigate("/login/user-login")
+      }
+    }
+
   // console.log('existingLoan: ', existingLoan)
   return (
     <Layout>
+      <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <section>
         <Snackbar
           open={alert.open}

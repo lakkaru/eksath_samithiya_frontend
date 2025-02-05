@@ -15,7 +15,7 @@ export default function UserLogin() {
 
   // Function to handle login
   const getAuthentication = e => {
-    console.log('Login Page')
+    // console.log('Login Page')
     const credentials = { member_id, password }
     setIsLoading(true) // Show loading indicator
 
@@ -47,6 +47,13 @@ export default function UserLogin() {
       setPassword("") // Clear password field
     }
   }
+
+  // Handle Enter key press
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      getAuthentication(); // Trigger login when Enter is pressed
+    }
+  };
 
   return (
     <Layout>
@@ -94,6 +101,7 @@ export default function UserLogin() {
             value={member_id}
             onChange={e => setMember_id(e.target.value)}
             onFocus={handleFocus} // Clear the field on focus
+            onKeyDown={handleKeyDown} // Listen for Enter key
           />
         </Box>
 
@@ -116,6 +124,7 @@ export default function UserLogin() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             onFocus={handleFocus} // Clear the field on focus
+            onKeyDown={handleKeyDown} // Listen for Enter key
           />
         </Box>
 

@@ -22,6 +22,7 @@ const Header = ({ siteTitle }) => {
   const [memberName, setMemberName] = useState("")
   const [memberAnchorEl, setMemberAnchorEl] = useState(null)
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
+  const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isViceSecretary = roles.includes("vice-secretary")
@@ -33,6 +34,8 @@ const Header = ({ siteTitle }) => {
   const handleLoanSchemeMenuOpen = event =>
     setLoanSchemeAnchorEl(event.currentTarget)
   const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
+  const handleReceiptMenuOpen = event => setReceiptAnchorEl(event.currentTarget)
+  const handleReceiptMenuClose = () => setReceiptAnchorEl(null)
 
   const handleAuthStateChange = ({ isAuthenticated, roles, memberName }) => {
     setIsAuthenticated(isAuthenticated)
@@ -153,14 +156,39 @@ const Header = ({ siteTitle }) => {
                       />
                     </>
                   )}
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/account/receipts")}
-                    sx={{ textTransform: "none" }}
-                  >
-                    මුදල් ලැබීම්
-                  </Button>
 
+                  {isTreasurer && (
+                    <>
+                      <Button
+                        color="inherit"
+                        // onClick={() => navigate("/member/payments")}
+                        onClick={handleReceiptMenuOpen}
+                        sx={{ textTransform: "none" }}
+                      >
+                        මුදල් ලැබීම්
+                      </Button>
+                      <Menu
+                        anchorEl={receiptAnchorEl}
+                        open={Boolean(receiptAnchorEl)}
+                        onClose={handleReceiptMenuClose}
+                       
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/account/receipts")
+                            handleReceiptMenuClose()
+                          }}
+                        >
+                          Add Receipts
+                        </MenuItem>
+                      </Menu>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ bgcolor: "white", mx: 2 }}
+                      />
+                    </>
+                  )}
                   <Button
                     color="inherit"
                     onClick={() => navigate("/member/payments")}
@@ -168,6 +196,7 @@ const Header = ({ siteTitle }) => {
                   >
                     මුදල් ගෙවීම්
                   </Button>
+
                   <Button
                     color="inherit"
                     onClick={() => navigate("/loan")}
@@ -280,13 +309,46 @@ const Header = ({ siteTitle }) => {
                         <hr />
                       </>
                     )}
-
+                    {isTreasurer && (
+                      <>
+                        <Typography sx={{ textAlign: "center", color: "teal" }}>
+                          Admin area
+                        </Typography>
+                        <Button
+                          color="inherit"
+                          // onClick={() => navigate("/member/payments")}
+                          onClick={handleReceiptMenuOpen}
+                          sx={{ textTransform: "none", width: "100%" }}
+                        >
+                          මුදල් ලැබීම්
+                        </Button>
+                        <hr />
+                        {/* <Menu
+                          anchorEl={receiptAnchorEl}
+                          open={Boolean(receiptAnchorEl)}
+                          onClose={handleReceiptMenuClose}
+                          anchorOrigin={{
+                            horizontal: "right",
+                            vertical: "bottom",
+                          }}
+                        >
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/receipts")
+                              handleReceiptMenuClose()
+                            }}
+                          >
+                            Add Receipts
+                          </MenuItem>
+                        </Menu> */}
+                      </>
+                    )}
                     <Button
                       color="inherit"
                       onClick={() => navigate("/member/payments")}
                       sx={{ textTransform: "none", width: "100%" }}
                     >
-                      Payments
+                      මුදල් ගෙවීම්
                     </Button>
                     <Button
                       color="inherit"
@@ -294,7 +356,7 @@ const Header = ({ siteTitle }) => {
                       sx={{ textTransform: "none", width: "100%" }}
                       disabled
                     >
-                      Loan
+                      ණය
                     </Button>
                     <hr />
                     <Button

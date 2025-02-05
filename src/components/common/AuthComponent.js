@@ -1,10 +1,11 @@
-import  { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 const { jwtDecode } = require("jwt-decode")
 
 const AuthComponent = ({ onAuthStateChange }) => {
   const [roles, setRoles] = useState([])
   const [memberName, setMemberName] = useState("")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  // const [loggingOut, setLoggingOut] = useState()
 
   useEffect(() => {
     let token = ""
@@ -19,7 +20,8 @@ const AuthComponent = ({ onAuthStateChange }) => {
         const timeRemaining = expirationTime - Date.now()
 
         if (timeRemaining > 0) {
-        //   setRoles(decodedToken.roles || [])
+          // setLoggingOut(() => handleLogout)
+          setRoles(decodedToken.roles || [])
           setMemberName(decodedToken.name || "")
           setIsAuthenticated(true)
           if (onAuthStateChange) {
@@ -27,6 +29,7 @@ const AuthComponent = ({ onAuthStateChange }) => {
               isAuthenticated: true,
               roles: decodedToken.roles || [],
               memberName: decodedToken.name || "",
+              // loggingOut: () => handleLogout,
             })
           }
         } else {

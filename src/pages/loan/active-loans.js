@@ -6,19 +6,26 @@ import StickyHeadTable from "../../components/StickyHeadTable"
 import { Button, Typography } from "@mui/material"
 
 import { navigate } from "gatsby"
-import api from '../../utils/api'
-// const Axios = require("axios")
+import api from "../../utils/api"
 
+//un authorized access preventing
+import loadable from "@loadable/component"
+const AuthComponent = loadable(() =>
+  import("../../components/common/AuthComponent")
+)
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
-let token = null;
+// let token = null
 
-if (typeof window !== "undefined") {
-  token = localStorage.getItem("authToken");
-}
-
+// if (typeof window !== "undefined") {
+//   token = localStorage.getItem("authToken")
+// }
 
 export default function ActiveLoans() {
+  //un authorized access preventing
+  const [roles, setRoles] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const [activeLoans, setActiveLoans] = useState([])
 
   const loanColumnsArray = [
@@ -39,12 +46,19 @@ export default function ActiveLoans() {
     navigate(`/loan/search?memberId=${memberId}`)
   }
 
+  //un authorized access preventing
+  const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+    setIsAuthenticated(isAuthenticated)
+    setRoles(roles)
+    if (!isAuthenticated || !roles.includes("loan-treasurer")) {
+      navigate("/login/user-login")
+    }
+  }
   useEffect(() => {
-    api.get(`${baseUrl}/loan/active-loans`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    api
+      .get(`${baseUrl}/loan/active-loans`)
       .then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         setActiveLoans(res.data.activeLoans)
       })
       .catch(error => {
@@ -54,6 +68,7 @@ export default function ActiveLoans() {
   }, [])
   return (
     <Layout>
+      <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <section>
         <Typography>ක්‍රියාකාරී ණය</Typography>
         <StickyHeadTable
@@ -67,7 +82,7 @@ export default function ActiveLoans() {
             unpaidMonths: val.unpaidDuration,
             view: (
               <Button
-              variant="contained"
+                variant="contained"
                 onClick={() => handleViewMore(val.memberId.member_id)} // Pass the loan ID to the handler
               >
                 View

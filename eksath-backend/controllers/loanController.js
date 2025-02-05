@@ -196,9 +196,9 @@ exports.getLoanOfMember = async (req, res) => {
 // creating all payments for a loan
 exports.createLoanPayments = async (req, res) => {
   const { loanId, amounts, date } = req.body;
-  console.log("loanId: ", loanId);
-  console.log("amounts: ", amounts);
-  console.log("date: ", date);
+  // console.log("loanId: ", loanId);
+  // console.log("amounts: ", amounts);
+  // console.log("date: ", date);
   try {
     //creating new payments on loanPayments, loanInterestPayment, and loanPenaltyIntPayment
     const newPrinciplePayment = new LoanPrinciplePayment({

@@ -1,15 +1,22 @@
 import React, { useEffect, useState, useRef } from "react"
 import Layout from "../../components/layout"
 import StickyHeadTable from "../../components/StickyHeadTable"
-import { Box, Button, TextField, Typography } from "@mui/material"
+import { Box, Button, TextField } from "@mui/material"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs"
+import { navigate } from "gatsby"
 
 import api from "../../utils/api"
+//un authorized access preventing
+import loadable from "@loadable/component"
+const AuthComponent = loadable(() =>
+  import("../../components/common/AuthComponent")
+)
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
+
 
 export default function Receipts() {
   const columnsArray = [
@@ -20,17 +27,31 @@ export default function Receipts() {
     { id: "totPayment", label: "එකතුව" },
     { id: "delete", label: "Delete" }, // Add delete column
   ]
+  //un authorized access preventing
+  const [roles, setRoles] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const [memberId, setMemberId] = useState("")
   const [memberData, setMemberData] = useState()
-  const [membershipPayment, setMembershipPayment] = useState('')
-  const [finePayment, setFinePayment] = useState('')
+  const [membershipPayment, setMembershipPayment] = useState("")
+  const [finePayment, setFinePayment] = useState("")
   const [paymentsArray, setPaymentsArray] = useState([])
   const [paymentDate, setPaymentDate] = useState(dayjs())
   const [savingData, setSavingData] = useState(false)
 
   const inputRef = useRef(null)
 
+  //un authorized access preventing
+  const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+    setIsAuthenticated(isAuthenticated)
+    setRoles(roles)
+    if (!isAuthenticated || !roles.includes("treasurer")) {
+      navigate("/login/user-login")
+    }
+  }
+  // console.log('logout:', logout)
+  // console.log("isAuthenticated:", isAuthenticated)
+  // console.log("roles:", roles)
   useEffect(() => {
     // if (memberData?.member?._id) {
     //   Axios.get(`${baseUrl}/member/due?member_id=${memberData._id}`)
@@ -70,7 +91,7 @@ export default function Receipts() {
       finePayment: finePayment,
       id: Date.now(),
     }
-    console.log('newEntry:', newEntry)
+    // console.log("newEntry:", newEntry)
     setPaymentsArray(prevArray => [...prevArray, newEntry])
 
     if (inputRef.current) {
@@ -92,13 +113,15 @@ export default function Receipts() {
   const handleAddRecords = async () => {
     setSavingData(true)
     try {
-      await api.post(`${baseUrl}/account/receipts`, {
-        date: paymentDate,
-        paymentsArray: paymentsArray,
-      }).then(response => {
-        console.log("response:", response, paymentsArray)
-        setPaymentsArray([])
-      })
+      await api
+        .post(`${baseUrl}/account/receipts`, {
+          date: paymentDate,
+          paymentsArray: paymentsArray,
+        })
+        .then(response => {
+          // console.log("response:", response, paymentsArray)
+          setPaymentsArray([])
+        })
     } catch (error) {
       console.error("Error recording payment:", error)
     }
@@ -124,7 +147,9 @@ export default function Receipts() {
   let dataArray = [
     ...[...paymentsArray].reverse().map(payment => ({
       ...payment,
-      totPayment: parseFloat(payment.finePayment || 0) + parseFloat(payment.memPayment || 0),
+      totPayment:
+        parseFloat(payment.finePayment || 0) +
+        parseFloat(payment.memPayment || 0),
       delete: (
         <Button
           variant="contained"
@@ -151,6 +176,7 @@ export default function Receipts() {
 
   return (
     <Layout>
+      <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <section>
         <Box
           sx={{
@@ -189,7 +215,7 @@ export default function Receipts() {
                 ? memberData?.membershipDue
                 : "සාමාජික මුදල්"
             }
-            placeholder={String(memberData?.membershipDue|| "")}
+            placeholder={String(memberData?.membershipDue || "")}
             variant="outlined"
             type="number"
             value={membershipPayment}
