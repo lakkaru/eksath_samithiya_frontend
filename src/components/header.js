@@ -68,10 +68,10 @@ const Header = ({ siteTitle }) => {
   }
   useEffect(() => {
     api
-      .get(`${baseUrl}/member/hasLoan?member_id=${memberId}`)
+      .get(`${baseUrl}/member/hasLoan`)
       .then(response => {
-        // console.log(response?.data)
-        setHasLoan(response?.data)
+        console.log(response?.data.loan)
+        setHasLoan(response?.data.loan)
       })
       .catch(error => {
         console.error("Axios error: ", error)
@@ -221,9 +221,9 @@ const Header = ({ siteTitle }) => {
 
                   <Button
                     color="inherit"
-                    onClick={() => navigate("/loan")}
+                    onClick={() => navigate("/member/loan")}
                     sx={{ textTransform: "none" }}
-                    // disabled
+                    disabled={!hasLoan}
                   >
                     ණය
                   </Button>
@@ -244,7 +244,7 @@ const Header = ({ siteTitle }) => {
                     anchorEl={memberAnchorEl}
                     open={Boolean(memberAnchorEl)}
                     onClose={handleMemberMenuClose}
-                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
                   >
                     <MenuItem
                       onClick={() => {
@@ -376,7 +376,7 @@ const Header = ({ siteTitle }) => {
                       color="inherit"
                       onClick={() => navigate("/loan")}
                       sx={{ textTransform: "none", width: "100%" }}
-                      disabled
+                      disabled={!hasLoan}
                     >
                       ණය
                     </Button>
