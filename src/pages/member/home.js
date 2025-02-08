@@ -122,7 +122,7 @@ const MemberHomePage = () => {
                 primary="පසුගිය වසර හිඟ"
                 secondary={`${
                   memberData?.previousDue
-                    ? `LKR ${memberData?.previousDue.totalDue}`
+                    ? `LKR ${memberData?.previousDue}`
                     : "නැත"
                 }`}
               />

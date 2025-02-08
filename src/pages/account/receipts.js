@@ -164,10 +164,10 @@ export default function Receipts() {
   ]
 
   // Calculate dynamic states directly in the render logic
-  const memPayDisabled = !(
-    memberData?.totalDue === 0 ||
-    (finePayment && parseFloat(finePayment) >= memberData?.totalDue)
-  )
+  // const memPayDisabled = !(
+  //   memberData?.totalDue === 0 ||
+  //   (finePayment && parseFloat(finePayment) >= memberData?.totalDue)
+  // )
   const nextDisabled =
     !memberData ||
     (!finePayment && !membershipPayment) ||
@@ -221,7 +221,7 @@ export default function Receipts() {
             value={membershipPayment}
             onChange={e => setMembershipPayment(e.target.value)}
             sx={{ maxWidth: "120px" }}
-            disabled={memPayDisabled}
+            // disabled={memPayDisabled}
           />
           <Button
             variant="contained"

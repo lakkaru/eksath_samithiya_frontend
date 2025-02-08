@@ -140,7 +140,7 @@ export default function Payments() {
   // console.log(memberInfo?.previousDue?.totalDue<0).
   const membershipDue = memberInfo?.membershipDue
   const totalDue =
-    memberInfo?.previousDue?.totalDue +
+    memberInfo?.previousDue +
       memberInfo?.membershipDue +
       memberInfo?.fineTotal || "0"
 
@@ -160,22 +160,35 @@ export default function Payments() {
             sx={{
               fontWeight: "800",
               fontSize: { xs: ".6rem", sm: "1rem" },
+              color: memberInfo?.previousDue < 0 ? "green" : "orange"
+
             }}
           >
-            පැරණි හිඟ රු. {memberInfo?.previousDue?.totalDue}
+            {memberInfo?.previousDue < 0 && (
+              <>පැරණි ඉතිරිය රු. {Math.abs(memberInfo.previousDue)}</>
+            )}
+            {memberInfo?.previousDue >= 0 && (
+              <>පැරණි හිඟ රු. {Math.abs(memberInfo.previousDue)}</>
+            )}
           </Typography>
           <Typography
             sx={{
               fontWeight: "800",
               fontSize: { xs: ".6rem", sm: "1rem" },
+              color: membershipDue < 0 ? "green" : "orange"
             }}
           >
-            සාමාජික මුදල් හිඟ රු.
-            {membershipDue}
+            {membershipDue < 0 && (
+              <>සාමාජික මුදල් ඉතිරිය රු. {Math.abs(membershipDue)}</>
+            )}
+            {membershipDue >= 0 && (
+              <>සාමාජික මුදල් හිඟ රු. {Math.abs(membershipDue)}</>
+            )}
+            
           </Typography>
 
           <Typography
-            sx={{ fontWeight: "800", fontSize: { xs: ".6rem", sm: "1rem" } }}
+            sx={{ fontWeight: "800", fontSize: { xs: ".6rem", sm: "1rem" } , color:  "orange"}}
           >
             දඩ මුදල් රු.
             {memberInfo?.fineTotal || "0"}
@@ -187,8 +200,13 @@ export default function Payments() {
               color: totalDue < 0 ? "green" : "orange",
             }}
           >
-            හිඟ එකතුව රු.
-            {totalDue}
+            {totalDue < 0 && (
+              <>ඉතිරි මුදල රු. {Math.abs(totalDue)}</>
+            )}
+            {totalDue >= 0 && (
+              <>හිඟ එකතුව රු. {Math.abs(totalDue)}</>
+            )}
+           
           </Typography>
         </Box>
       </section>
@@ -202,7 +220,7 @@ export default function Payments() {
                 align="center"
                 sx={{ marginBottom: "10px" }}
               >
-                Payments for {year}
+                {year} - වසරේ ගෙවීම්
               </Typography>
               <Paper elevation={3} sx={{ padding: "20px" }}>
                 <StickyHeadTable

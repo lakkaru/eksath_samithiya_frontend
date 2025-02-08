@@ -29,8 +29,10 @@ const AuthComponent = ({ onAuthStateChange }) => {
               isAuthenticated: true,
               roles: decodedToken.roles || [],
               memberName: decodedToken.name || "",
+              member_id:decodedToken.member_id
               // loggingOut: () => handleLogout,
             })
+            // console.log(decodedToken)
           }
         } else {
           handleLogout()

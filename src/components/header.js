@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   AppBar,
   Box,
@@ -14,12 +14,18 @@ import { navigate } from "gatsby"
 import loadable from "@loadable/component"
 import MenuIcon from "@mui/icons-material/Menu" // For mobile menu icon
 
+import api from "../../src/utils/api"
+
 const AuthComponent = loadable(() => import("./common/AuthComponent"))
+
+const baseUrl = process.env.GATSBY_API_BASE_URL
 
 const Header = ({ siteTitle }) => {
   const [roles, setRoles] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [memberName, setMemberName] = useState("")
+  const [memberId, setMemberId] = useState()
+  const [hasLoan, setHasLoan] = useState(false)
   const [memberAnchorEl, setMemberAnchorEl] = useState(null)
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
@@ -37,10 +43,16 @@ const Header = ({ siteTitle }) => {
   const handleReceiptMenuOpen = event => setReceiptAnchorEl(event.currentTarget)
   const handleReceiptMenuClose = () => setReceiptAnchorEl(null)
 
-  const handleAuthStateChange = ({ isAuthenticated, roles, memberName }) => {
+  const handleAuthStateChange = ({
+    isAuthenticated,
+    roles,
+    memberName,
+    member_id,
+  }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
     setMemberName(memberName)
+    setMemberId(member_id)
   }
 
   const handleLogout = () => {
@@ -54,6 +66,17 @@ const Header = ({ siteTitle }) => {
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen)
   }
+  useEffect(() => {
+    api
+      .get(`${baseUrl}/member/hasLoan?member_id=${memberId}`)
+      .then(response => {
+        // console.log(response?.data)
+        setHasLoan(response?.data)
+      })
+      .catch(error => {
+        console.error("Axios error: ", error)
+      })
+  }, [])
 
   return (
     <header>
@@ -171,7 +194,6 @@ const Header = ({ siteTitle }) => {
                         anchorEl={receiptAnchorEl}
                         open={Boolean(receiptAnchorEl)}
                         onClose={handleReceiptMenuClose}
-                       
                       >
                         <MenuItem
                           onClick={() => {
@@ -201,9 +223,9 @@ const Header = ({ siteTitle }) => {
                     color="inherit"
                     onClick={() => navigate("/loan")}
                     sx={{ textTransform: "none" }}
-                    disabled
+                    // disabled
                   >
-                    Loan
+                    ණය
                   </Button>
                   <Divider
                     orientation="vertical"
