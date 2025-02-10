@@ -304,7 +304,7 @@ const Header = ({ siteTitle }) => {
                     {isViceSecretary && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
-                          Admin area
+                        උප ලේකම්
                         </Typography>
                         <Button
                           color="inherit"
@@ -319,7 +319,7 @@ const Header = ({ siteTitle }) => {
                     {isLoanTreasurer && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
-                          Admin area
+                        ණය භාණ්ඩාගාරික
                         </Typography>
                         <Button
                           color="inherit"
@@ -334,7 +334,7 @@ const Header = ({ siteTitle }) => {
                     {isTreasurer && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
-                          Admin area
+                        භාණ්ඩාගාරික
                         </Typography>
                         <Button
                           color="inherit"
@@ -374,7 +374,7 @@ const Header = ({ siteTitle }) => {
                     </Button>
                     <Button
                       color="inherit"
-                      onClick={() => navigate("/loan")}
+                      onClick={() => navigate("/member/loan")}
                       sx={{ textTransform: "none", width: "100%" }}
                       disabled={!hasLoan}
                     >

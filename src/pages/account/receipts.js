@@ -198,6 +198,18 @@ export default function Receipts() {
             onFocus={resetFields}
             sx={{ maxWidth: "120px" }}
           />
+          
+          <TextField
+            id="outlined-basic"
+            label="සාමාජික මුදල්"
+            placeholder={String(memberData?.membershipDue || "")}
+            variant="outlined"
+            type="number"
+            value={membershipPayment}
+            onChange={e => setMembershipPayment(e.target.value)}
+            sx={{ maxWidth: "120px" }}
+            // disabled={memPayDisabled}
+          />
           <TextField
             id="outlined-basic"
             label="හිග මුදල්"
@@ -207,21 +219,6 @@ export default function Receipts() {
             value={finePayment}
             onChange={e => setFinePayment(e.target.value)}
             sx={{ maxWidth: "120px" }}
-          />
-          <TextField
-            id="outlined-basic"
-            label={
-              memberData?.totalDue > 0
-                ? memberData?.membershipDue
-                : "සාමාජික මුදල්"
-            }
-            placeholder={String(memberData?.membershipDue || "")}
-            variant="outlined"
-            type="number"
-            value={membershipPayment}
-            onChange={e => setMembershipPayment(e.target.value)}
-            sx={{ maxWidth: "120px" }}
-            // disabled={memPayDisabled}
           />
           <Button
             variant="contained"
