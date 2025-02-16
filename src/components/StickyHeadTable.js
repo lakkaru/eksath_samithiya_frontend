@@ -69,11 +69,15 @@ export default function StickyHeadTable({
                     key={index}
                     sx={{
                       fontWeight: isLastRow ? "bold" : "normal",
-                      backgroundColor: isLastRow ? "#f0f0f0" : "inherit",
+                      backgroundColor: isLastRow ? "#009688" : "inherit",
+                      color: isLastRow ? "white" : "inherit",
+                      "& .MuiTableCell-root": {
+                        color: isLastRow ? "white" : "inherit"
+                      }
                     }}
                   >
                     <TableCell align="center" sx={{ padding: "8px" }}>
-                      {page * rowsPerPage + index + 1}
+                      {isLastRow ? "" : page * rowsPerPage + index + 1}
                     </TableCell>
                     {columnsArray.map((column) => {
                       const value = row[column.id];

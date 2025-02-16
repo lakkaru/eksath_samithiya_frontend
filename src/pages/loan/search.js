@@ -91,14 +91,14 @@ export default function Search() {
     }
     //getting installment
     let loanInstallment=0
-    // console.log('totalMonths:', totalMonths)
-    // console.log('remainingAmount:', remainingAmount)
+    console.log('totalMonths:', totalMonths)
+    console.log('remainingAmount:', remainingAmount)
     if (totalMonths<=10) {
       loanInstallment=(totalMonths*1000)-(10000-remainingAmount)
-      // console.log(loanInstallment)
+      console.log(loanInstallment)
     } else {
-      loanInstallment=(10000-remainingAmount)
-      // console.log(loanInstallment)
+      loanInstallment=(remainingAmount)
+      console.log(loanInstallment)
     }
 
     

@@ -58,7 +58,9 @@ export default function MemberLoan() {
         setCalculatedInterest(res.data.calculatedInterest)
         setEarlyPayments(res.data.groupedPayments)
       })
-      .catch(error => {})
+      .catch(error => {
+        console.error("Error getting member loan:", error)
+      })
   }, [])
 
   return (
@@ -126,7 +128,7 @@ export default function MemberLoan() {
                   interest: calculatedInterest.int || "-",
                   penaltyInterest: calculatedInterest.penInt || "-",
                   installment: calculatedInterest.installment || "",
-                  due: loan.dueAmount || "-",
+                  due: loan.loanRemainingAmount+calculatedInterest.int+calculatedInterest.penInt || "-",
                 },
               ]}
             />

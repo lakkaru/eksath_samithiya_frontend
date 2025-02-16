@@ -20,12 +20,12 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
 
 export default function Receipts() {
   const columnsArray = [
-    { id: "memberId", label: "Member Id" },
-    { id: "name", label: "Name", minWidth: 250 },
-    { id: "finePayment", label: "හිග මුදල්" },
+    { id: "memberId", label: "සාමාජික අංකය" },
+    { id: "name", label: "නම", minWidth: 250 },
     { id: "memPayment", label: "සාමාජික මුදල්" },
+    { id: "finePayment", label: "හිග මුදල්" },
     { id: "totPayment", label: "එකතුව" },
-    { id: "delete", label: "Delete" }, // Add delete column
+    { id: "delete", label: "" },
   ]
   //un authorized access preventing
   const [roles, setRoles] = useState([])
@@ -35,9 +35,9 @@ export default function Receipts() {
   const [memberData, setMemberData] = useState()
   const [membershipPayment, setMembershipPayment] = useState("")
   const [finePayment, setFinePayment] = useState("")
-  const [paymentsArray, setPaymentsArray] = useState([])
   const [paymentDate, setPaymentDate] = useState(dayjs())
   const [savingData, setSavingData] = useState(false)
+  const [payments, setPayments] = useState([])
 
   const inputRef = useRef(null)
 
@@ -53,16 +53,20 @@ export default function Receipts() {
   // console.log("isAuthenticated:", isAuthenticated)
   // console.log("roles:", roles)
   useEffect(() => {
-    // if (memberData?.member?._id) {
-    //   Axios.get(`${baseUrl}/member/due?member_id=${memberData._id}`)
-    //     .then(response => {
-    //       console.log(response.data)
-    //     })
-    //     .catch(error => {
-    //       console.error("Axios error: ", error)
-    //     })
-    // }
-  }, [])
+    // Fetch today's payments when component mounts or date changes
+    const fetchPayments = async () => {
+      try {
+        const response = await api.get(
+          `${baseUrl}/account/receipts?date=${paymentDate.format('YYYY-MM-DD')}`
+        )
+        setPayments(response.data)
+      } catch (error) {
+        console.error("Error fetching payments:", error)
+      }
+    }
+
+    fetchPayments()
+  }, [paymentDate])
 
   const getMemberDueId = e => {
     if (e.target.value) {
@@ -82,79 +86,92 @@ export default function Receipts() {
     setMemberId("")
   }
 
-  const handleNext = () => {
-    const newEntry = {
-      memberId: memberId,
-      member_Id: memberData.member._id,
-      name: memberData.member.name || "N/A",
-      memPayment: membershipPayment,
-      finePayment: finePayment,
-      id: Date.now(),
-    }
-    // console.log("newEntry:", newEntry)
-    setPaymentsArray(prevArray => [...prevArray, newEntry])
-
-    if (inputRef.current) {
-      inputRef.current.focus()
-    }
-
-    setMemberId("")
-    setMemberData()
-    setMembershipPayment("")
-    setFinePayment("")
-  }
-
-  const handleDelete = id => {
-    setPaymentsArray(prevArray =>
-      prevArray.filter(payment => payment.id !== id)
-    )
-  }
-
-  const handleAddRecords = async () => {
+  const handleNext = async () => {
     setSavingData(true)
     try {
-      await api
-        .post(`${baseUrl}/account/receipts`, {
-          date: paymentDate,
-          paymentsArray: paymentsArray,
-        })
-        .then(response => {
-          // console.log("response:", response, paymentsArray)
-          setPaymentsArray([])
-        })
+      const paymentData = {
+        date: paymentDate,
+        memberId: memberId,
+        member_Id: memberData.member._id,
+        name: memberData.member.name || "N/A",
+        memPayment: membershipPayment,
+        finePayment: finePayment,
+      }
+
+      const response = await api.post(`${baseUrl}/account/receipts`, paymentData)
+      
+      // Refresh payments list
+      const updatedPayments = await api.get(
+        `${baseUrl}/account/receipts?date=${paymentDate.format('YYYY-MM-DD')}`
+      )
+      setPayments(updatedPayments.data)
+
+      // Reset form
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+
+      setMemberId("")
+      setMemberData()
+      setMembershipPayment("")
+      setFinePayment("")
     } catch (error) {
-      console.error("Error recording payment:", error)
+      console.error("Error saving payment:", error)
     }
     setSavingData(false)
   }
 
+  const handleDelete = async (date, memberId, finePayment, memPayment) => {
+    try {
+      await api.delete(`${baseUrl}/account/receipts/${date}/${memberId}/${finePayment}/${memPayment}`)
+      
+      // Refresh payments list
+      const updatedPayments = await api.get(
+        `${baseUrl}/account/receipts?date=${paymentDate.format('YYYY-MM-DD')}`
+      )
+      setPayments(updatedPayments.data)
+    } catch (error) {
+      console.error("Error deleting payment:", error)
+    }
+  }
+
+  // Calculate totals from fetched payments
   let totalMemPayment = 0
   let totalFinePayment = 0
 
-  paymentsArray.forEach(payment => {
+  payments.forEach(payment => {
     totalMemPayment += parseFloat(payment.memPayment || 0)
     totalFinePayment += parseFloat(payment.finePayment || 0)
   })
 
   const totalsRow = {
-    memberId: "Total",
-    name: "Total",
+    memberId: "",
+    name: "එකතුව",
     memPayment: totalMemPayment.toFixed(2),
     finePayment: totalFinePayment.toFixed(2),
-    delete: (totalMemPayment + totalFinePayment).toFixed(2),
+    totPayment: (totalMemPayment + totalFinePayment).toFixed(2),
+    delete: "",
   }
 
   let dataArray = [
-    ...[...paymentsArray].reverse().map(payment => ({
+    ...payments.map(payment => ({
       ...payment,
-      totPayment:
+      memPayment: parseFloat(payment.memPayment || 0).toFixed(2),
+      finePayment: parseFloat(payment.finePayment || 0).toFixed(2),
+      totPayment: (
         parseFloat(payment.finePayment || 0) +
-        parseFloat(payment.memPayment || 0),
+        parseFloat(payment.memPayment || 0)
+      ).toFixed(2),
       delete: (
         <Button
           variant="contained"
           color="error"
-          onClick={() => handleDelete(payment.id)}
+          onClick={() => handleDelete(
+            payment.date,
+            payment.member_Id,
+            payment.finePayment,
+            payment.memPayment
+          )}
         >
           Delete
         </Button>
@@ -172,7 +189,8 @@ export default function Receipts() {
     !memberData ||
     (!finePayment && !membershipPayment) ||
     parseFloat(finePayment || 0) < 0 ||
-    parseFloat(membershipPayment || 0) < 0
+    parseFloat(membershipPayment || 0) < 0 ||
+    savingData
 
   return (
     <Layout>
@@ -248,13 +266,6 @@ export default function Receipts() {
               />
             </DemoContainer>
           </LocalizationProvider>
-          <Button
-            variant="contained"
-            disabled={!paymentsArray.length > 0}
-            onClick={handleAddRecords}
-          >
-            Add all Records
-          </Button>
         </Box>
         <hr />
         <StickyHeadTable
