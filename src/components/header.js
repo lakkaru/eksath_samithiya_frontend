@@ -27,6 +27,7 @@ const Header = ({ siteTitle }) => {
   const [memberId, setMemberId] = useState()
   const [hasLoan, setHasLoan] = useState(false)
   const [memberAnchorEl, setMemberAnchorEl] = useState(null)
+  const [membershipAnchorEl, setMemberShipAnchorEl] = useState(null)
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -37,6 +38,8 @@ const Header = ({ siteTitle }) => {
 
   const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
   const handleMemberMenuClose = () => setMemberAnchorEl(null)
+  const handleMembershipMenuOpen = event => setMemberShipAnchorEl(event.currentTarget)
+  const handleMembershipMenuClose = () => setMemberShipAnchorEl(null)
   const handleLoanSchemeMenuOpen = event =>
     setLoanSchemeAnchorEl(event.currentTarget)
   const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
@@ -120,11 +123,41 @@ const Header = ({ siteTitle }) => {
                     <>
                       <Button
                         color="inherit"
-                        onClick={() => navigate("/attendance")}
+                        onClick={handleMembershipMenuOpen}
                         sx={{ textTransform: "none" }}
                       >
-                        Attendance
+                        සාමාජිකත්වය
                       </Button>
+                      <Menu
+                        anchorEl={membershipAnchorEl}
+                        open={Boolean(membershipAnchorEl)}
+                        onClose={handleMembershipMenuClose}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/member/deathById")
+                            handleMembershipMenuClose()
+                          }}
+                        >
+                          අවමංගල්‍ය
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/")
+                            handleMembershipMenuClose()
+                          }}
+                        >
+                          Loan Search
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/")
+                            handleMembershipMenuClose()
+                          }}
+                        >
+                          Active Loans
+                        </MenuItem>
+                      </Menu>
                       <Divider
                         orientation="vertical"
                         flexItem
@@ -311,7 +344,7 @@ const Header = ({ siteTitle }) => {
                           onClick={() => navigate("/attendance")}
                           sx={{ textTransform: "none", width: "100%" }}
                         >
-                          Attendance
+                          සාමාජිකත්වය
                         </Button>
                         <hr />
                       </>

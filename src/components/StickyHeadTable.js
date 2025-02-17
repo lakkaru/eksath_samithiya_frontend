@@ -14,6 +14,7 @@ export default function StickyHeadTable({
   headingAlignment,
   dataAlignment,
   firstPage,
+  totalRow=true,
 }) {
   const [data, setData] = React.useState([]);
 
@@ -69,15 +70,15 @@ export default function StickyHeadTable({
                     key={index}
                     sx={{
                       fontWeight: isLastRow ? "bold" : "normal",
-                      backgroundColor: isLastRow ? "#009688" : "inherit",
-                      color: isLastRow ? "white" : "inherit",
+                      backgroundColor: isLastRow ? (totalRow?'teal':"inherit") : "inherit",
+                      color: isLastRow ? (totalRow?'white':"inherit") : "inherit",
                       "& .MuiTableCell-root": {
-                        color: isLastRow ? "white" : "inherit"
+                        color: isLastRow ? (totalRow?'white':"inherit") : "inherit"
                       }
                     }}
                   >
                     <TableCell align="center" sx={{ padding: "8px" }}>
-                      {isLastRow ? "" : page * rowsPerPage + index + 1}
+                      {isLastRow ?(totalRow? "" : page * rowsPerPage + index + 1):page * rowsPerPage + index + 1}
                     </TableCell>
                     {columnsArray.map((column) => {
                       const value = row[column.id];
