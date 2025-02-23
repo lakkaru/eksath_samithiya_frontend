@@ -28,6 +28,7 @@ const Header = ({ siteTitle }) => {
   const [hasLoan, setHasLoan] = useState(false)
   const [memberAnchorEl, setMemberAnchorEl] = useState(null)
   const [membershipAnchorEl, setMemberShipAnchorEl] = useState(null)
+  const [attendanceAnchorEl, setAttendanceAnchorEl] = useState(null)
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -38,8 +39,12 @@ const Header = ({ siteTitle }) => {
 
   const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
   const handleMemberMenuClose = () => setMemberAnchorEl(null)
-  const handleMembershipMenuOpen = event => setMemberShipAnchorEl(event.currentTarget)
+  const handleMembershipMenuOpen = event =>
+    setMemberShipAnchorEl(event.currentTarget)
   const handleMembershipMenuClose = () => setMemberShipAnchorEl(null)
+  const handleAttendanceMenuOpen = event =>
+    setAttendanceAnchorEl(event.currentTarget)
+  const handleAttendanceMenuClose = () => setAttendanceAnchorEl(null)
   const handleLoanSchemeMenuOpen = event =>
     setLoanSchemeAnchorEl(event.currentTarget)
   const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
@@ -122,7 +127,54 @@ const Header = ({ siteTitle }) => {
                   {isViceSecretary && (
                     <>
                       <Button
+                        variant="outlined"
                         color="inherit"
+                        onClick={handleAttendanceMenuOpen}
+                        sx={{ textTransform: "none" }}
+                      >
+                        පැමිණීම
+                      </Button>
+                      <Menu
+                        anchorEl={attendanceAnchorEl}
+                        open={Boolean(attendanceAnchorEl)}
+                        onClose={handleAttendanceMenuClose}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/funeral/funeralAttendance")
+                            handleAttendanceMenuClose()
+                          }}
+                        >
+                          අවමංගල්‍ය උත්සවය
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/")
+                            handleAttendanceMenuClose()
+                          }}
+                        >
+                          සුසන භුමි කටයුතු
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/")
+                            handleAttendanceMenuClose()
+                          }}
+                        >
+                          මහා සභාව
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/forms/MeetingSheet")
+                            handleAttendanceMenuClose()
+                          }}
+                        >
+                          මහා සභාව ලේඛණය
+                        </MenuItem>
+                      </Menu>
+                      <Button
+                        color="inherit"
+                        variant="outlined"
                         onClick={handleMembershipMenuOpen}
                         sx={{ textTransform: "none" }}
                       >
@@ -143,11 +195,11 @@ const Header = ({ siteTitle }) => {
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
-                            navigate("/")
+                            navigate("/funeral/assignment")
                             handleMembershipMenuClose()
                           }}
                         >
-                          Loan Search
+                          අවමංගල්‍ය පැවරීම
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
@@ -155,9 +207,10 @@ const Header = ({ siteTitle }) => {
                             handleMembershipMenuClose()
                           }}
                         >
-                          Active Loans
+                          aaaaa
                         </MenuItem>
                       </Menu>
+
                       <Divider
                         orientation="vertical"
                         flexItem
@@ -337,7 +390,7 @@ const Header = ({ siteTitle }) => {
                     {isViceSecretary && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
-                        උප ලේකම්
+                          උප ලේකම්
                         </Typography>
                         <Button
                           color="inherit"
@@ -352,7 +405,7 @@ const Header = ({ siteTitle }) => {
                     {isLoanTreasurer && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
-                        ණය භාණ්ඩාගාරික
+                          ණය භාණ්ඩාගාරික
                         </Typography>
                         <Button
                           color="inherit"
@@ -367,7 +420,7 @@ const Header = ({ siteTitle }) => {
                     {isTreasurer && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
-                        භාණ්ඩාගාරික
+                          භාණ්ඩාගාරික
                         </Typography>
                         <Button
                           color="inherit"

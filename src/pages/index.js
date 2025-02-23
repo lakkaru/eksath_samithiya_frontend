@@ -36,6 +36,9 @@ export default function Index() {
           </Link>{" "}
           දැනුවත් කරන්න.{" "}
         </Typography>
+        <a href="https://docs.google.com/document/d/1W7AZcMk_7kmMhI2NpcIBDO3Dy-2W65rIqXK2i2y-4vk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" sx={{ fontSize: { xs: ".8rem", sm: "1rem" } }}>
+        සමිති ව්‍යවස්ථාව
+        </a>
       </Grid2>{" "}
     </Layout>
   )

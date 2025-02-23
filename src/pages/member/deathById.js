@@ -13,7 +13,6 @@ const AuthComponent = loadable(() =>
 )
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
-const Axios = require("axios")
 
 export default function DeathById() {
   //un authorized access preventing
@@ -23,8 +22,9 @@ export default function DeathById() {
   const [memberId, setMemberId] = useState("")
   //   const [member, setMember] = useState({})
   const [familyRegister, setFamilyRegister] = useState([])
-  const [selectedDeath, setSelectedDeath] = useState(null) // State for selected death
-  const [selectedDate, setSelectedDate] = useState(dayjs()) // State for selected date
+  const [selectedDeath, setSelectedDeath] = useState(null) 
+  const [selectedDate, setSelectedDate] = useState(dayjs()) 
+  const [funeral, setFuneral] = useState(false) 
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
@@ -84,6 +84,7 @@ export default function DeathById() {
       })
         .then(response => {
           console.log("Death updated.")
+          setFuneral(true)
         })
         .catch(error => {
           console.error("Death update error:", error)
@@ -96,12 +97,18 @@ export default function DeathById() {
       })
         .then(response => {
           console.log("Dependent death updated.")
+          setFuneral(true)
         })
         .catch(error => {
           console.error("Dependent death update error:", error)
         })
     }
     getMemberById()
+  }
+
+  const handleFuneral = () => {
+    console.log("Funeral")
+    navigate("/funeral/assignment")
   }
 
   return (
@@ -176,6 +183,11 @@ export default function DeathById() {
           dataAlignment={"left"}
           totalRow={false}
         />
+        {funeral && (
+          <Button variant="contained" onClick={handleFuneral}>
+            අවමංගල්‍ය පැවරුම්
+          </Button>
+        )}
       </section>
     </Layout>
   )

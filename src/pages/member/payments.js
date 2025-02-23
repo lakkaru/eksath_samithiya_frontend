@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import Layout from "../../components/layout"
+import Layout from "../../components/Layout"
 import StickyHeadTable from "../../components/StickyHeadTable"
 import { Box, Typography, Paper } from "@mui/material"
 

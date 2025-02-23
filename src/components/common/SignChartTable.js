@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead"
 import TablePagination from "@mui/material/TablePagination"
 import TableRow from "@mui/material/TableRow"
 
-export default function StickyHeadTable({
+export default function SignChartTable({
   columnsArray,
   dataArray,
   headingAlignment,
@@ -44,12 +44,12 @@ export default function StickyHeadTable({
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell
+              {/* <TableCell
                 align="center"
                 sx={{ padding: "4px", border: borders ? "1px solid black" : "none" }}
               >
                 #
-              </TableCell>
+              </TableCell> */}
               {columnsArray.map(column => (
                 <TableCell
                   key={column.id}
@@ -58,6 +58,7 @@ export default function StickyHeadTable({
                     padding: "4px",
                     border: borders ? "1px solid black" : "none",
                     minWidth: column.minWidth,
+                    textAlign: "center",
                   }}
                 >
                   {column.label}
@@ -98,7 +99,7 @@ export default function StickyHeadTable({
                       },
                     }}
                   >
-                    <TableCell
+                    {/* <TableCell
                       align="center"
                       sx={{ padding: "4px", border: borders ? "1px solid black" : "none" }}
                     >
@@ -107,14 +108,36 @@ export default function StickyHeadTable({
                           ? ""
                           : page * rowsPerPage + index + 1
                         : page * rowsPerPage + index + 1}
-                    </TableCell>
+                    </TableCell> */}
                     {columnsArray.map(column => {
                       const value = row[column.id]
+                      // Determine color based on value
+                      let textColor = "black" // Default color
+                      if (typeof value === "number") {
+                        textColor =
+                          value > 3000
+                            ? "black"
+                            : value > 0
+                            ? "#888888"
+                            : "#c0c0c0"
+                      } else if (
+                        typeof value === "string" &&
+                        value.includes("Warning")
+                      ) {
+                        textColor = "blue"
+                      }
+
                       return (
                         <TableCell
                           key={column.id}
-                          align={dataAlignment || "right"}
-                          sx={{ padding: "4px", border: borders ? ".5px solid black" : "none" }}
+                          align={column.align || dataAlignment || "right"} // Use column-specific alignment
+                          sx={{
+                            padding: "4px",
+                            border: borders ? ".5px solid black" : "none",
+                            color: column.color
+                              ? `${textColor} !important`
+                              : "inherit", // Use column-specific color
+                          }}
                         >
                           {column.format && typeof value === "string"
                             ? column.format(value)
