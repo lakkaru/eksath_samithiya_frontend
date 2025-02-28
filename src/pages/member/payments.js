@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import Layout from "../../components/Layout"
+import Layout from "../../components/layout"
 import StickyHeadTable from "../../components/StickyHeadTable"
 import { Box, Typography, Paper } from "@mui/material"
 
@@ -103,7 +103,7 @@ export default function Payments() {
   //   let totalFines = 0
   //   let totalDue = 0
 
-  console.log("groupedPayments :", groupedPayments)
+  // console.log("groupedPayments :", groupedPayments)
   useEffect(() => {
     if (!memberData) {
       //get memberData if page reload and context is empty
@@ -160,8 +160,7 @@ export default function Payments() {
             sx={{
               fontWeight: "800",
               fontSize: { xs: ".6rem", sm: "1rem" },
-              color: memberInfo?.previousDue < 0 ? "green" : "orange"
-
+              color: memberInfo?.previousDue < 0 ? "green" : "orange",
             }}
           >
             {memberInfo?.previousDue < 0 && (
@@ -175,7 +174,7 @@ export default function Payments() {
             sx={{
               fontWeight: "800",
               fontSize: { xs: ".6rem", sm: "1rem" },
-              color: membershipDue < 0 ? "green" : "orange"
+              color: membershipDue < 0 ? "green" : "orange",
             }}
           >
             {membershipDue < 0 && (
@@ -184,11 +183,14 @@ export default function Payments() {
             {membershipDue >= 0 && (
               <>සාමාජික මුදල් හිඟ රු. {Math.abs(membershipDue)}</>
             )}
-            
           </Typography>
 
           <Typography
-            sx={{ fontWeight: "800", fontSize: { xs: ".6rem", sm: "1rem" } , color:  "orange"}}
+            sx={{
+              fontWeight: "800",
+              fontSize: { xs: ".6rem", sm: "1rem" },
+              color: "orange",
+            }}
           >
             දඩ මුදල් රු.
             {memberInfo?.fineTotal || "0"}
@@ -200,38 +202,34 @@ export default function Payments() {
               color: totalDue < 0 ? "green" : "orange",
             }}
           >
-            {totalDue < 0 && (
-              <>ඉතිරි මුදල රු. {Math.abs(totalDue)}</>
-            )}
-            {totalDue >= 0 && (
-              <>හිඟ එකතුව රු. {Math.abs(totalDue)}</>
-            )}
-           
+            {totalDue < 0 && <>ඉතිරි මුදල රු. {Math.abs(totalDue)}</>}
+            {totalDue >= 0 && <>හිඟ එකතුව රු. {Math.abs(totalDue)}</>}
           </Typography>
         </Box>
+
+        {groupedPayments &&
+          Object.keys(groupedPayments)
+            .sort((a, b) => b - a) // Sort years in descending order
+            .map(year => (
+              <Box key={year} sx={{ marginBottom: "20px" }}>
+                <Typography
+                  variant="h6"
+                  align="center"
+                  sx={{ marginBottom: "10px" }}
+                >
+                  {year} - වසරේ ගෙවීම්
+                </Typography>
+                <Paper elevation={3} sx={{ padding: "20px" }}>
+                  <StickyHeadTable
+                    columnsArray={columnsArray}
+                    dataArray={groupedPayments[year]?.payments || []} // Ensure `payments` is defined
+                    headingAlignment={"left"}
+                    dataAlignment={"left"}
+                  />
+                </Paper>
+              </Box>
+            ))}
       </section>
-      {groupedPayments &&
-        Object.keys(groupedPayments)
-          .sort((a, b) => b - a) // Sort years in descending order
-          .map(year => (
-            <Box key={year} sx={{ marginBottom: "20px" }}>
-              <Typography
-                variant="h6"
-                align="center"
-                sx={{ marginBottom: "10px" }}
-              >
-                {year} - වසරේ ගෙවීම්
-              </Typography>
-              <Paper elevation={3} sx={{ padding: "20px" }}>
-                <StickyHeadTable
-                  columnsArray={columnsArray}
-                  dataArray={groupedPayments[year]?.payments || []} // Ensure `payments` is defined
-                  headingAlignment={"left"}
-                  dataAlignment={"left"}
-                />
-              </Paper>
-            </Box>
-          ))}
     </Layout>
   )
 }

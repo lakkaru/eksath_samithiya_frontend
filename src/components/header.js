@@ -304,6 +304,13 @@ const Header = ({ siteTitle }) => {
                   >
                     මුදල් ගෙවීම්
                   </Button>
+                  <Button
+                    color="inherit"
+                    onClick={() => navigate("/member/fines")}
+                    sx={{ textTransform: "none" }}
+                  >
+                    දඩ මුදල්
+                  </Button>
 
                   <Button
                     color="inherit"
