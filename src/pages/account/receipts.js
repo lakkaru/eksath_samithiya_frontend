@@ -207,7 +207,7 @@ export default function Receipts() {
           <TextField
             id="outlined-basic"
             inputRef={inputRef}
-            label="සාමාජික අංකය"
+            label="සා. අංකය"
             variant="outlined"
             type="number"
             value={memberId}
@@ -219,7 +219,7 @@ export default function Receipts() {
           
           <TextField
             id="outlined-basic"
-            label="සාමාජික මුදල්"
+            label="සා. මුදල්"
             placeholder={String(memberData?.membershipDue || "")}
             variant="outlined"
             type="number"

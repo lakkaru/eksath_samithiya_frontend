@@ -178,7 +178,7 @@ const Header = ({ siteTitle }) => {
                         onClick={handleMembershipMenuOpen}
                         sx={{ textTransform: "none" }}
                       >
-                        සාමාජිකත්වය
+                        අවමංගල්‍ය
                       </Button>
                       <Menu
                         anchorEl={membershipAnchorEl}
@@ -191,7 +191,7 @@ const Header = ({ siteTitle }) => {
                             handleMembershipMenuClose()
                           }}
                         >
-                          අවමංගල්‍ය
+                          ඇතුලත් කිරීම
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
@@ -203,11 +203,11 @@ const Header = ({ siteTitle }) => {
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
-                            navigate("/")
+                            navigate("/funeral/extraDue")
                             handleMembershipMenuClose()
                           }}
                         >
-                          aaaaa
+                          ද්‍රව්‍ය ආධාර හිඟ
                         </MenuItem>
                       </Menu>
 
