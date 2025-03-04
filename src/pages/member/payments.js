@@ -142,7 +142,7 @@ export default function Payments() {
   const totalDue =
     memberInfo?.previousDue +
       memberInfo?.membershipDue +
-      memberInfo?.fineTotal || "0"
+      memberInfo?.fineDue || "0"
 
   return (
     <Layout>

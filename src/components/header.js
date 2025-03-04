@@ -401,10 +401,18 @@ const Header = ({ siteTitle }) => {
                         </Typography>
                         <Button
                           color="inherit"
-                          onClick={() => navigate("/attendance")}
+                          onClick={handleAttendanceMenuOpen}
                           sx={{ textTransform: "none", width: "100%" }}
                         >
-                          සාමාජිකත්වය
+                          පැමිණීම
+                        </Button>
+                        <Button
+                          color="inherit"
+                          // variant="outlined"
+                          onClick={handleMembershipMenuOpen}
+                          sx={{ textTransform: "none", width: "100%" }}
+                        >
+                          අවමංගල්‍ය
                         </Button>
                         <hr />
                       </>
@@ -437,6 +445,7 @@ const Header = ({ siteTitle }) => {
                         >
                           මුදල් ලැබීම්
                         </Button>
+
                         <hr />
                         {/* <Menu
                           anchorEl={receiptAnchorEl}
@@ -464,6 +473,13 @@ const Header = ({ siteTitle }) => {
                       sx={{ textTransform: "none", width: "100%" }}
                     >
                       මුදල් ගෙවීම්
+                    </Button>
+                    <Button
+                      color="inherit"
+                      onClick={() => navigate("/member/fines")}
+                      sx={{ textTransform: "none", width: "100%" }}
+                    >
+                      දඩ මුදල්
                     </Button>
                     <Button
                       color="inherit"
