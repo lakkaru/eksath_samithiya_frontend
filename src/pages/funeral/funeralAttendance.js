@@ -8,7 +8,7 @@ import {
   MenuItem,
 } from "@mui/material"
 import Layout from "../../components/layout"
-// import AttendanceChart from "../../components/common/attendanceChart"
+
 import FuneralAttChart from "../../components/common/FuneralAttChart"
 
 import { navigate } from "gatsby"
@@ -21,7 +21,7 @@ const AuthComponent = loadable(() =>
 // const Axios = require("axios")
 const baseUrl = process.env.GATSBY_API_BASE_URL
 
-  export default function FuneralAttendance() {
+export default function FuneralAttendance() {
   //un authorized access preventing
   const [roles, setRoles] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -31,7 +31,7 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
   const [memberIds, setMemberIds] = useState([])
   const [memberIdMap, setMemberIdMap] = useState({})
   const [attendance, setAttendance] = useState([])
-//   const [attendance, setAttendance] = useState([])
+  //   const [attendance, setAttendance] = useState([])
   // const [dependents, setDependents] = useState([])
   const [member, setMember] = useState({})
   const [deceasedOptions, setDeceasedOptions] = useState([])
@@ -59,23 +59,23 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
         console.log("Error: ", error)
       })
 
-      api.get(`${baseUrl}/member/getMemberIdsForFuneralAttendance`).then(
-        response => {
-          const ids = response.data.memberIds || []
+    api
+      .get(`${baseUrl}/member/getMemberIdsForFuneralAttendance`)
+      .then(response => {
+        const ids = response.data.memberIds || []
         //   console.log(ids)
-          setMemberIds(ids)
-          const idMap = {}
-          ids.forEach(id => {
-            idMap[id] = true // Mark valid member IDs
-          })
-          setMemberIdMap(idMap)
+        setMemberIds(ids)
+        const idMap = {}
+        ids.forEach(id => {
+          idMap[id] = true // Mark valid member IDs
+        })
+        setMemberIdMap(idMap)
         //   setAttendance(ids.map(() => false)) // Initialize attendance only for valid IDs
-        }
-      )
+      })
   }, [member])
 
   const getMemberById = e => {
-    console.log('search:', memberId)
+    console.log("search:", memberId)
     api
       .get(`${baseUrl}/member/getMembershipDeathById?member_id=${memberId}`)
       .then(response => {
@@ -128,7 +128,7 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
     api
       .get(`${baseUrl}/funeral/getFuneralId?deceased_id=${deceased_id}`)
       .then(response => {
-        console.log('funeral Id : ',response.data)
+        console.log("funeral Id : ", response.data)
         setFuneralId(response.data)
       })
       .catch(error => {
@@ -223,20 +223,7 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
           <Typography>{member.mob_tel}</Typography>
           <Typography>{member.res_tel}</Typography>
         </Box> */}
-{/* 
-        <AttendanceChart
-          chartName={"Funeral Attendance"}
-          totalCells={totalMembers}
-          memberIds={memberIds}
-          memberIdMap={memberIdMap}
-          setAttendance={setAttendance}
-          attendance={attendance}
-          // getAttendance={(attendance, selectedDate) => {
-          saveAttendance={saveEventAbsents}
-          // console.log("Attendance received:", attendance)
-          // console.log("Attendance date:", new Date(selectedDate))
-          // }}
-        ></AttendanceChart> */}
+
         <FuneralAttChart
           chartName={"Funeral Attendance"}
           saveAttendance={saveAttendance}

@@ -35,7 +35,7 @@ const MemberHomePage = () => {
     const fetchMemberData = async () => {
       try {
         const response = await api.get(`${baseUrl}/member/info`)
-        // console.log("response: ", response.data)
+        console.log("response: ", response.data)
         setMemberData(response.data)
       } catch (err) {
         console.error("Error fetching member data:", err)

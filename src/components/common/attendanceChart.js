@@ -1,22 +1,47 @@
 import React, { useState, useEffect } from "react"
 import { Box, Typography, Button, Checkbox, Paper, Grid2 } from "@mui/material"
 // import Grid2 from "@mui/material/Unstable_Grid2";
-import BasicDatePicker from "./basicDatePicker"
+// import BasicDatePicker from "./basicDatePicker"
 
 import dayjs from "dayjs"
-// import Axios from "axios"
+import Axios from "axios"
 
-export default function AttendanceChart({ chartName, saveAttendance, memberIds, memberIdMap, setAttendance, attendance}) {
-  const chunkSize = 100 // Define 100 cells per group
-//   const [memberIds, setMemberIds] = useState(memberIds)
-  
+import { navigate } from "gatsby"
+import api from "../../utils/api"
+import loadable from "@loadable/component"
+import BasicDatePicker from "./basicDatePicker"
+
+const AuthComponent = loadable(() =>
+  import("../../components/common/AuthComponent")
+)
+
+// const Axios = require("axios")
+const baseUrl = process.env.GATSBY_API_BASE_URL
+
+export default function AttendanceChart({ chartName, saveAttendance }) {
+  const chunkSize = 300 // Define 100 cells per group
+  const [memberIds, setMemberIds] = useState([])
+  const [attendance, setAttendance] = useState([])
   const [selectedDate, setSelectedDate] = useState(dayjs()) // Initialize with today's date
-//   const [memberIdMap, setMemberIdMap] = useState(memberIdMap) // Map for quick lookup
+  const [memberIdMap, setMemberIdMap] = useState({}) // Map for quick lookup
 
   useEffect(() => {
-    setAttendance(memberIds.map(() => false))
+    api
+      .get(`${baseUrl}/member/getMembersForMeetingAttendance`)
+      .then(response => {
+        const ids = response.data.memberIds || []
+        // console.log(ids)
+        setMemberIds(ids)
+        const idMap = {}
+        ids.forEach(id => {
+          idMap[id] = true // Mark valid member IDs
+        })
+        // console.log("idMap: ", idMap)
+        setMemberIdMap(idMap)
+        setAttendance(ids.map(() => false)) // Initialize attendance only for valid IDs
+      })
   }, [])
-
+  // console.log(memberIdMap)
   // Calculate total attendance (checked cells)
   const totalAttendance = attendance.filter(value => value).length
 
@@ -25,7 +50,6 @@ export default function AttendanceChart({ chartName, saveAttendance, memberIds, 
     const updatedAttendance = [...attendance]
     updatedAttendance[index] = !updatedAttendance[index]
     setAttendance(updatedAttendance)
-    console.log(updatedAttendance)
   }
 
   // Check all checkboxes (only for enabled cells)
@@ -39,20 +63,21 @@ export default function AttendanceChart({ chartName, saveAttendance, memberIds, 
   }
 
   const handleSubmit = () => {
-    const date = selectedDate.format("YYYY-MM-DD")
+    // const date = selectedDate.format("YYYY-MM-DD")
 
     // Filter and map attendance to get only absent member IDs
     const absentMemberIds = attendance
       .map((checked, index) => (!checked ? memberIds[index] : null))
       .filter(id => id !== null)
-
+    // console.log("absentMemberIds: ", absentMemberIds)
     // Pass only the absent member IDs and date to saveAttendance
-    saveAttendance({ absentMemberIds, date })
+    saveAttendance({ absentMemberIds, selectedDate })
     handleUncheckAll()
   }
 
   // Generate 100 cells per group, disabling invalid memberIds
-  const totalCells = Math.ceil(memberIds.length / chunkSize) * chunkSize
+  const totalCells = Math.ceil(Math.max(...memberIds) / chunkSize) * chunkSize
+  // console.log('totalCells :', totalCells)
   const cells = Array.from({ length: totalCells }, (_, i) => ({
     id: i + 1,
     isEnabled: memberIdMap[i + 1] || false,
@@ -65,7 +90,7 @@ export default function AttendanceChart({ chartName, saveAttendance, memberIds, 
     { length: Math.ceil(cells.length / chunkSize) },
     (_, i) => cells.slice(i * chunkSize, (i + 1) * chunkSize)
   )
-
+  // console.log('chunk: ', chunks)
   return (
     <Box sx={{ padding: 2 }}>
       <Box
@@ -108,10 +133,10 @@ export default function AttendanceChart({ chartName, saveAttendance, memberIds, 
       {/* Render groups */}
       {chunks.map((chunk, chunkIndex) => (
         <Paper key={chunkIndex} sx={{ padding: 2, marginBottom: 2 }}>
-          <Typography variant="h6" align="center" gutterBottom>
+          {/* <Typography variant="h6" align="center" gutterBottom>
             Group {chunkIndex + 1} (Cells {chunkIndex * chunkSize + 1} to{" "}
             {(chunkIndex + 1) * chunkSize})
-          </Typography>
+          </Typography> */}
           <Grid2 container spacing={1} justifyContent="center">
             {chunk.map(cell => (
               <Grid2 key={cell.id}>

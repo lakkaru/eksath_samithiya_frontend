@@ -157,7 +157,7 @@ const Header = ({ siteTitle }) => {
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
-                            navigate("/")
+                            navigate("/meeting/Attendance")
                             handleAttendanceMenuClose()
                           }}
                         >
