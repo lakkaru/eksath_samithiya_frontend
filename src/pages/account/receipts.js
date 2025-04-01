@@ -180,6 +180,11 @@ export default function Receipts() {
     totalsRow,
   ]
 
+  //calculate membership due if previous due is negative
+  const membershipDue=memberData?.totalDue<=0?memberData?.membershipDue+memberData?.totalDue:memberData?.membershipDue;
+
+  //calculate due if total due is negative
+  const totalDue=memberData?.totalDue<=0?memberData?.membershipDue+memberData?.totalDue:memberData?.totalDue
   // Calculate dynamic states directly in the render logic
   // const memPayDisabled = !(
   //   memberData?.totalDue === 0 ||
@@ -191,6 +196,7 @@ export default function Receipts() {
     parseFloat(finePayment || 0) < 0 ||
     parseFloat(membershipPayment || 0) < 0 ||
     savingData
+    
 
   return (
     <Layout>
@@ -220,7 +226,7 @@ export default function Receipts() {
           <TextField
             id="outlined-basic"
             label="සා. මුදල්"
-            placeholder={String(memberData?.membershipDue || "")}
+            placeholder={String(membershipDue || "")}
             variant="outlined"
             type="number"
             value={membershipPayment}
@@ -231,7 +237,7 @@ export default function Receipts() {
           <TextField
             id="outlined-basic"
             label="හිග මුදල්"
-            placeholder={String(memberData?.totalDue || "")}
+            placeholder={String(totalDue || "")}
             variant="outlined"
             type="number"
             value={finePayment}

@@ -95,21 +95,24 @@ export default function Search() {
     console.log('remainingAmount:', remainingAmount)
     if (totalMonths<=10) {
       loanInstallment=(totalMonths*1000)-(10000-remainingAmount)
-      console.log(loanInstallment)
+      // console.log(loanInstallment)
     } else {
       loanInstallment=(remainingAmount)
-      console.log(loanInstallment)
+      // console.log(loanInstallment)
     }
 
     
     // console.log("totalMonths :", totalMonths)
+    // console.log('lastIntPayDateObj.getFullYear():',lastIntPayDateObj.getFullYear())
+    // console.log('lastIntPayDateObj.getMonth():',lastIntPayDateObj.getMonth())
+    // console.log('loanDateObj.getMonth():',loanDateObj.getMonth())
     let lastPaymentMonths =
       (lastIntPayDateObj.getFullYear() - loanDateObj.getFullYear()) * 12 +
       (lastIntPayDateObj.getMonth() - loanDateObj.getMonth())
     // //adding one month if loan date is exceed
-    // if ((lastIntPayDateObj.getDate() - loanDateObj.getDate())>0) {
-    //   lastPaymentMonths=lastPaymentMonths+1
-    // }
+    if ((lastIntPayDateObj.getDate() - loanDateObj.getDate())>0) {
+      lastPaymentMonths=lastPaymentMonths+1
+    }
     // console.log("lastPaymentMonths :", lastPaymentMonths)
 
     const interestUnpaidMonths = Math.max(totalMonths - lastPaymentMonths, 0)
@@ -359,6 +362,7 @@ export default function Search() {
             <Typography>ණය ආපසු ගෙවීම් </Typography>
             <StickyHeadTable 
               columnsArray={paymentColumns}
+              totalRow={false}
               dataArray={earlyPayments.map(val => ({
                 date: new Date(val.date).toLocaleDateString("en-CA"),
                 payedTotal:
