@@ -172,7 +172,7 @@ const MemberHomePage = () => {
                     sx={{ py: "3px", my: "3px" }}
                   >
                     <ListItemText
-                      primary={`${index + 1}. ${dependent}${
+                      primary={`${index + 1}. ${dependent.name} - ${dependent.relationship}${
                         index !== memberData.dependents.length - 1 ? ", " : ""
                       }`}
                     />
