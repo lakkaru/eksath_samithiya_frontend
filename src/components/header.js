@@ -210,7 +210,14 @@ const Header = ({ siteTitle }) => {
                           ද්‍රව්‍ය ආධාර හිඟ
                         </MenuItem>
                       </Menu>
-
+                      <Button
+                        color="inherit"
+                        variant="outlined"
+                        onClick={() => navigate("/member/fullDetails")}
+                        sx={{ textTransform: "none" }}
+                      >
+                        සාමාජිකත්වය
+                      </Button>
                       <Divider
                         orientation="vertical"
                         flexItem
@@ -413,6 +420,14 @@ const Header = ({ siteTitle }) => {
                           sx={{ textTransform: "none", width: "100%" }}
                         >
                           අවමංගල්‍ය
+                        </Button>
+                        <Button
+                          color="inherit"
+                          // variant="outlined"
+                          onClick={() => navigate("/member/fullDetails")}
+                          sx={{ textTransform: "none", width: "100%"  }}
+                        >
+                          සාමාජිකත්වය
                         </Button>
                         <hr />
                       </>

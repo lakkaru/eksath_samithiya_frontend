@@ -114,7 +114,7 @@ export default function Fines() {
             {totalDue >= 0 && <>හිඟ එකතුව රු. {Math.abs(totalDue)}</>}
           </Typography> */}
         </Box>
-        {console.log("data array", fines)}
+        {/* {console.log("data array", fines)} */}
         {fines.length>0 && (
           <StickyHeadTable
             columnsArray={columnsArray}

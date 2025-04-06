@@ -7,15 +7,17 @@ import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
 import TablePagination from "@mui/material/TablePagination"
 import TableRow from "@mui/material/TableRow"
+import { Typography } from "@mui/material"
 
 export default function StickyHeadTable({
-  columnsArray,
+ columnsArray,
   dataArray,
   headingAlignment,
   dataAlignment,
   firstPage,
   totalRow = true,
   hidePagination = false,
+  headBorder = false,
   borders = false,
 }) {
   const [data, setData] = React.useState([])
@@ -42,11 +44,15 @@ export default function StickyHeadTable({
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
+          <TableHead >
+            <TableRow >
               <TableCell
                 align="center"
-                sx={{ padding: "4px", border: borders ? "1px solid black" : "none" }}
+                sx={{
+                  padding: "4px",
+                  border: headBorder ? "1px solid black" : "none",
+                  fontWeight: "bold",
+                }}
               >
                 #
               </TableCell>
@@ -56,7 +62,8 @@ export default function StickyHeadTable({
                   align={headingAlignment || "right"}
                   sx={{
                     padding: "4px",
-                    border: borders ? "1px solid black" : "none",
+                    border: headBorder ? "1px solid black" : "none",
+                    fontWeight: "bold",
                     minWidth: column.minWidth,
                   }}
                 >
@@ -100,7 +107,10 @@ export default function StickyHeadTable({
                   >
                     <TableCell
                       align="center"
-                      sx={{ padding: "4px", border: borders ? "1px solid black" : "none" }}
+                      sx={{
+                        padding: "4px",
+                        border: borders ? "1px solid black" : "none",
+                      }}
                     >
                       {isLastRow
                         ? totalRow
@@ -114,7 +124,10 @@ export default function StickyHeadTable({
                         <TableCell
                           key={column.id}
                           align={dataAlignment || "right"}
-                          sx={{ padding: "4px", border: borders ? ".5px solid black" : "none" }}
+                          sx={{
+                            padding: "4px",
+                            border: borders ? ".5px solid black" : "none",
+                          }}
                         >
                           {column.format && typeof value === "string"
                             ? column.format(value)
