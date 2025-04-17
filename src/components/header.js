@@ -210,6 +210,7 @@ const Header = ({ siteTitle }) => {
                           ද්‍රව්‍ය ආධාර හිඟ
                         </MenuItem>
                       </Menu>
+
                       <Button
                         color="inherit"
                         variant="outlined"
@@ -228,6 +229,14 @@ const Header = ({ siteTitle }) => {
 
                   {isLoanTreasurer && (
                     <>
+                      <Button
+                        color="inherit"
+                        // variant="outlined"
+                        onClick={() => navigate("/member/fullDetails")}
+                        sx={{ textTransform: "none" }}
+                      >
+                        සාමාජිකත්වය
+                      </Button>
                       <Button
                         color="inherit"
                         onClick={handleLoanSchemeMenuOpen}
@@ -275,6 +284,14 @@ const Header = ({ siteTitle }) => {
 
                   {isTreasurer && (
                     <>
+                      <Button
+                        color="inherit"
+                        // variant="outlined"
+                        onClick={() => navigate("/member/fullDetails")}
+                        sx={{ textTransform: "none" }}
+                      >
+                        සාමාජිකත්වය
+                      </Button>
                       <Button
                         color="inherit"
                         // onClick={() => navigate("/member/payments")}
@@ -425,7 +442,7 @@ const Header = ({ siteTitle }) => {
                           color="inherit"
                           // variant="outlined"
                           onClick={() => navigate("/member/fullDetails")}
-                          sx={{ textTransform: "none", width: "100%"  }}
+                          sx={{ textTransform: "none", width: "100%" }}
                         >
                           සාමාජිකත්වය
                         </Button>
@@ -437,6 +454,14 @@ const Header = ({ siteTitle }) => {
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
                           ණය භාණ්ඩාගාරික
                         </Typography>
+                        <Button
+                          color="inherit"
+                          // variant="outlined"
+                          onClick={() => navigate("/member/fullDetails")}
+                          sx={{ textTransform: "none" }}
+                        >
+                          සාමාජිකත්වය
+                        </Button>
                         <Button
                           color="inherit"
                           onClick={handleLoanSchemeMenuOpen}
@@ -452,6 +477,14 @@ const Header = ({ siteTitle }) => {
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
                           භාණ්ඩාගාරික
                         </Typography>
+                        <Button
+                          color="inherit"
+                          // variant="outlined"
+                          onClick={() => navigate("/member/fullDetails")}
+                          sx={{ textTransform: "none" }}
+                        >
+                          සාමාජිකත්වය
+                        </Button>
                         <Button
                           color="inherit"
                           // onClick={() => navigate("/member/payments")}
