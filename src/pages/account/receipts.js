@@ -184,12 +184,13 @@ export default function Receipts() {
   const membershipDue=memberData?.totalDue<=0?memberData?.membershipDue+memberData?.totalDue:memberData?.membershipDue;
 
   //calculate due if total due is negative
-  const totalDue=memberData?.totalDue<=0?memberData?.membershipDue+memberData?.totalDue:memberData?.totalDue
+  const totalDue=memberData?.totalDue>0?memberData?.totalDue:'0'
   // Calculate dynamic states directly in the render logic
   // const memPayDisabled = !(
   //   memberData?.totalDue === 0 ||
   //   (finePayment && parseFloat(finePayment) >= memberData?.totalDue)
   // )
+  console.log('totalDue: ', memberData?.totalDue)
   const nextDisabled =
     !memberData ||
     (!finePayment && !membershipPayment) ||
