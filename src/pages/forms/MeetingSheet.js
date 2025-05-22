@@ -90,7 +90,7 @@ const saveAsPDF = () => {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       // Define custom margins (in mm)
-      const marginTop = 15; // Top margin
+      const marginTop = 5; // Top margin
       const marginLeft = 45; // Left margin
       const marginRight = 10; // Right margin (can be used for adjustment)
 
@@ -132,6 +132,8 @@ const saveAsPDF = () => {
           >
             විල්බාගෙදර එක්සත් අවමංගල්‍යාධාර සමිතිය
           </Typography>
+          
+          <Box sx={{ display: "flex", gap: 5, mb: "4px" }}>
           <Typography
             // variant="p"
             sx={{
@@ -140,7 +142,6 @@ const saveAsPDF = () => {
           >
             මහා සභාවට සහභාගිත්වය
           </Typography>
-          <Box sx={{ display: "flex", gap: 17, mb: "30px" }}>
             <Typography variant="p">
               දිනය:- {new Date().getFullYear()}/
               {(new Date().getMonth() + 1).toString().padStart(2, "0")}
@@ -181,6 +182,8 @@ const saveAsPDF = () => {
           >
             විල්බාගෙදර එක්සත් අවමංගල්‍යාධාර සමිතිය
           </Typography>
+          
+          <Box sx={{ display: "flex", gap: 5, mb: "4px" }}>
           <Typography
             // variant="p"
             sx={{
@@ -189,7 +192,6 @@ const saveAsPDF = () => {
           >
             මහා සභාවට සහභාගිත්වය
           </Typography>
-          <Box sx={{ display: "flex", gap: 17, mb: "30px" }}>
             <Typography variant="p">
               දිනය:- {new Date().getFullYear()}/
               {(new Date().getMonth() + 1).toString().padStart(2, "0")}
@@ -230,6 +232,8 @@ const saveAsPDF = () => {
           >
             විල්බාගෙදර එක්සත් අවමංගල්‍යාධාර සමිතිය
           </Typography>
+          
+          <Box sx={{ display: "flex", gap: 5, mb: "4px" }}>
           <Typography
             // variant="p"
             sx={{
@@ -238,7 +242,6 @@ const saveAsPDF = () => {
           >
             මහා සභාවට සහභාගිත්වය
           </Typography>
-          <Box sx={{ display: "flex", gap: 17, mb: "30px" }}>
             <Typography variant="p">
               දිනය:- {new Date().getFullYear()}/
               {(new Date().getMonth() + 1).toString().padStart(2, "0")}

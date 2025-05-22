@@ -117,7 +117,7 @@ export default function SignChartTable({
                       let textColor = "black"
                       if (typeof value === "number") {
                         textColor =
-                          value > 3000
+                          value > 6000
                             ? "black"
                             : value > 0
                             ? "#888888"
@@ -134,13 +134,13 @@ export default function SignChartTable({
                           key={column.id}
                           align={column.align || dataAlignment || "right"}
                           sx={{
-                            padding: "4px",
+                            padding: "0px",
                             border: borders ? ".5px solid black" : "none",
 
                             color: column.color ? `${textColor}` : "inherit",
                           }}
                         >
-                          {colIndex === 0 ? (
+                          {[0, 2, 4].includes(colIndex) ? (
                             <Box
                               sx={{
                                 width: 40,
