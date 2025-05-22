@@ -7,6 +7,7 @@ import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
 import TablePagination from "@mui/material/TablePagination"
 import TableRow from "@mui/material/TableRow"
+import { Box } from "@mui/material"
 
 export default function SignChartTable({
   columnsArray,
@@ -109,10 +110,11 @@ export default function SignChartTable({
                           : page * rowsPerPage + index + 1
                         : page * rowsPerPage + index + 1}
                     </TableCell> */}
-                    {columnsArray.map(column => {
+                    {columnsArray.map((column, colIndex) => {
                       const value = row[column.id]
-                      // Determine color based on value
-                      let textColor = "black" // Default color
+
+                      // Determine text color
+                      let textColor = "black"
                       if (typeof value === "number") {
                         textColor =
                           value > 3000
@@ -130,18 +132,38 @@ export default function SignChartTable({
                       return (
                         <TableCell
                           key={column.id}
-                          align={column.align || dataAlignment || "right"} // Use column-specific alignment
+                          align={column.align || dataAlignment || "right"}
                           sx={{
                             padding: "4px",
                             border: borders ? ".5px solid black" : "none",
-                            color: column.color
-                              ? `${textColor} !important`
-                              : "inherit", // Use column-specific color
+
+                            color: column.color ? `${textColor}` : "inherit",
                           }}
                         >
-                          {column.format && typeof value === "string"
-                            ? column.format(value)
-                            : value}
+                          {colIndex === 0 ? (
+                            <Box
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: "50%",
+                                // border: "2px solid black",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                margin: "0 auto", // center the circle in the cell
+                                fontSize: "1.2em",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {column.format && typeof value === "string"
+                                ? column.format(value)
+                                : value}
+                            </Box>
+                          ) : column.format && typeof value === "string" ? (
+                            column.format(value)
+                          ) : (
+                            value
+                          )}
                         </TableCell>
                       )
                     })}

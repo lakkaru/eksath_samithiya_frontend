@@ -163,13 +163,24 @@ const Header = ({ siteTitle }) => {
                         >
                           මහා සභාව
                         </MenuItem>
+                        <hr/>
                         <MenuItem
                           onClick={() => {
                             navigate("/forms/MeetingSheet")
                             handleAttendanceMenuClose()
                           }}
                         >
+                          
                           මහා සභාව ලේඛණය
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/reports/meetingAttendance")
+                            handleAttendanceMenuClose()
+                          }}
+                        >
+                          
+                          මහා සභාව පැමිණීම
                         </MenuItem>
                       </Menu>
                       <Button

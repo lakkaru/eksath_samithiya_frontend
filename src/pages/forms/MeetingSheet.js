@@ -12,6 +12,7 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
 
 export default function MeetingSheet() {
   const [members, setMembers] = useState([])
+  
   useEffect(() => {
     api.get(`${baseUrl}/forms/meeting-sign-due`).then(res => {
       setMembers(res.data)
@@ -42,7 +43,7 @@ export default function MeetingSheet() {
     }))
   }
 
-  // Example Usage:
+  
   const dataArray100 = generateDataArray(members, 1, 100)
   const dataArray200 = generateDataArray(members, 101, 200)
   const dataArray300 = generateDataArray(members, 201, 300)
@@ -57,6 +58,7 @@ export default function MeetingSheet() {
       minWidth: 150,
       align: "left",
       color: "#999999",
+      fontWeight: "bold",
     },
     { id: "id2", label: "සා. අංකය", minWidth: 50, align: "center" },
     {
