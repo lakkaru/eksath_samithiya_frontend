@@ -9,10 +9,10 @@ import {
   Divider,
 } from "@mui/material"
 // import Axios from "axios"
-import api from '../../utils/api'
+import api from "../../utils/api"
 import { navigate } from "gatsby"
 
-import { useMember } from "../../context/MemberContext";
+import { useMember } from "../../context/MemberContext"
 import Layout from "../../components/layout"
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
@@ -23,15 +23,13 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
 //   token = localStorage.getItem("authToken");
 // }
 
-
 const MemberHomePage = () => {
-  const { memberData, setMemberData } = useMember();
+  const { memberData, setMemberData } = useMember()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   // console.log('memberData: ', memberData)
 
   useEffect(() => {
-    
     const fetchMemberData = async () => {
       try {
         const response = await api.get(`${baseUrl}/member/info`)
@@ -48,7 +46,7 @@ const MemberHomePage = () => {
 
     fetchMemberData()
   }, [])
-// console.log('memberData: ', memberData)
+  // console.log('memberData: ', memberData)
   if (loading) {
     return (
       <Layout>
@@ -72,7 +70,7 @@ const MemberHomePage = () => {
         }}
       >
         <Typography variant="h5" gutterBottom>
-        සාමාජික තොරතුරු
+          සාමාජික තොරතුරු
         </Typography>
         <Paper
           elevation={3}
@@ -118,39 +116,54 @@ const MemberHomePage = () => {
             </ListItem>
             <Divider />
             <ListItem>
-              <ListItemText
-                primary="පසුගිය වසර හිඟ"
-                secondary={`${
-                  memberData?.previousDue
-                    ? `LKR ${memberData?.previousDue}`
-                    : "නැත"
-                }`}
-              />
+              {memberData?.previousDue > 0 ? (
+                <ListItemText
+                  primary="පසුගිය වසර හිඟ"
+                  secondary={`${`LKR ${memberData?.previousDue}`}`}
+                />
+              ) : (
+                <ListItemText
+                  primary="පසුගිය වසර ඉතිරිය"
+                  secondary={`${`LKR ${memberData?.previousDue * -1}`}`}
+                />
+              )}
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
                 primary="දඩ මුදල් එකතුව"
                 secondary={`${
-                  memberData?.fineTotal ? `LKR ${memberData?.fineTotal}` : 'නැත'
+                  memberData?.fineTotal ? `LKR ${memberData?.fineTotal}` : "නැත"
                 }`}
               />
             </ListItem>
             <Divider />
             <ListItem>
-              <ListItemText
-                primary="සාමාජික මුදල් හිඟ"
-                secondary={`${
-                  memberData?.membershipDue
-                    ? `LKR ${memberData?.membershipDue}`
-                    : 'නැත'
-                }`}
-              />
+              {/* getting total due */}
+              {memberData?.membershipDue +
+                memberData?.fineTotal +
+                memberData?.previousDue >
+              0 ? (
+                <ListItemText
+                  primary="සම්පුර්ණ හිඟ මුදල "
+                  secondary={`${`LKR ${memberData?.membershipDue}`}`}
+                />
+              ) : (
+                <ListItemText
+                  primary="ගෙවීම් ඉතිරිය"
+                  secondary={`${`LKR ${
+                    (memberData?.membershipDue +
+                      memberData?.fineTotal +
+                      memberData?.previousDue) *
+                    -1
+                  }`}`}
+                />
+              )}
             </ListItem>
             <Divider />
             <ListItem>
               <ListItemText
-                primary="මහාසභාවට නොපැමිණිම්"
+                primary="මහා සභාවට නොපැමිණිම්"
                 secondary={
                   memberData?.meetingAbsents
                     ? `${memberData?.meetingAbsents} times`
@@ -161,7 +174,10 @@ const MemberHomePage = () => {
             <Divider />
             {/* Dependents */}
             <ListItem>
-              <ListItemText primary="යැපෙන්නන් ලේඛනය" sx={{textDecoration:'underline', textAlign: 'left'}}/>
+              <ListItemText
+                primary="යැපෙන්නන් ලේඛනය"
+                sx={{ textDecoration: "underline", textAlign: "left" }}
+              />
             </ListItem>
             {memberData?.dependents && memberData.dependents.length > 0 ? (
               <List sx={{ pl: 2 }}>
@@ -172,7 +188,9 @@ const MemberHomePage = () => {
                     sx={{ py: "3px", my: "3px" }}
                   >
                     <ListItemText
-                      primary={`${index + 1}. ${dependent.name} - ${dependent.relationship}${
+                      primary={`${index + 1}. ${dependent.name} - ${
+                        dependent.relationship
+                      }${
                         index !== memberData.dependents.length - 1 ? ", " : ""
                       }`}
                     />
