@@ -172,6 +172,52 @@ const MemberHomePage = () => {
               />
             </ListItem>
             <Divider />
+            {/* as a guarantor */}
+            {memberData.loanDetailsAsGuarantor.map((loan, key) => {
+              const currentDate = new Date()
+              const lastIntPaymentDate = loan.lastIntPaymentDate
+                ? new Date(loan.lastIntPaymentDate)
+                : null
+
+              let unpaidMonths = "නොමැත"
+              let unpaidMonthsValue = 0
+
+              if (lastIntPaymentDate) {
+                const yearDiff =
+                  currentDate.getFullYear() - lastIntPaymentDate.getFullYear()
+                const monthDiff =
+                  currentDate.getMonth() - lastIntPaymentDate.getMonth()
+                unpaidMonthsValue = yearDiff * 12 + monthDiff
+                unpaidMonths = unpaidMonthsValue
+              }
+
+              return (
+                <ListItem key={key}>
+                  <ListItemText
+                    primary={`ණය සඳහා ඇප වීම් - ${key + 1}`}
+                    secondary={
+                      <>
+                        {loan.loanMember.member_id} - {loan.loanMember.name}{" "}
+                        <br />
+                        ඉතිරි මුදල රු.:- {loan.loanRemainingAmount} <br />
+                        ණය වු දිනය:-{" "}
+                        {new Date(loan.loanDate).toLocaleDateString()} <br />
+                        <span
+                          style={{
+                            color: unpaidMonthsValue >= 3 ? "red" : "inherit",
+                          }}
+                        >
+                          නොගෙවු මාස ගනන:- {unpaidMonths}
+                        </span>
+                      </>
+                    }
+                  />
+                </ListItem>
+              )
+            })}
+
+            <Divider />
+
             {/* Dependents */}
             <ListItem>
               <ListItemText
