@@ -28,6 +28,7 @@ const Header = ({ siteTitle }) => {
   const [hasLoan, setHasLoan] = useState(false)
   const [memberAnchorEl, setMemberAnchorEl] = useState(null)
   const [membershipAnchorEl, setMemberShipAnchorEl] = useState(null)
+  const [membershipViceSecAnchorEl, setMembershipViceSecAnchorEl] = useState(null)
   const [attendanceAnchorEl, setAttendanceAnchorEl] = useState(null)
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
@@ -42,6 +43,9 @@ const Header = ({ siteTitle }) => {
   const handleMembershipMenuOpen = event =>
     setMemberShipAnchorEl(event.currentTarget)
   const handleMembershipMenuClose = () => setMemberShipAnchorEl(null)
+  const handleMembershipViceSecMenuOpen = event =>
+    setMembershipViceSecAnchorEl(event.currentTarget)
+  const handleMembershipViceSecMenuClose = () => setMembershipViceSecAnchorEl(null)
   const handleAttendanceMenuOpen = event =>
     setAttendanceAnchorEl(event.currentTarget)
   const handleAttendanceMenuClose = () => setAttendanceAnchorEl(null)
@@ -228,8 +232,30 @@ const Header = ({ siteTitle }) => {
                         onClick={() => navigate("/member/fullDetails")}
                         sx={{ textTransform: "none" }}
                       >
+                        සාමාජික තොරතුරු
+                      </Button>
+                      <Button
+                        color="inherit"
+                        variant="outlined"
+                        onClick={handleMembershipViceSecMenuOpen}
+                        sx={{ textTransform: "none" }}
+                      >
                         සාමාජිකත්වය
                       </Button>
+                      <Menu
+                        anchorEl={membershipViceSecAnchorEl}
+                        open={Boolean(membershipViceSecAnchorEl)}
+                        onClose={handleMembershipViceSecMenuClose}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/member/add-member")
+                            handleMembershipViceSecMenuClose()
+                          }}
+                        >
+                          සාමාජිකයෙකු ඇතුලත් කරන්න
+                        </MenuItem>
+                      </Menu>
                       <Divider
                         orientation="vertical"
                         flexItem
@@ -246,7 +272,7 @@ const Header = ({ siteTitle }) => {
                         onClick={() => navigate("/member/fullDetails")}
                         sx={{ textTransform: "none" }}
                       >
-                        සාමාජිකත්වය
+                        සාමාජික තොරතුරු
                       </Button>
                       <Button
                         color="inherit"
@@ -301,7 +327,7 @@ const Header = ({ siteTitle }) => {
                         onClick={() => navigate("/member/fullDetails")}
                         sx={{ textTransform: "none" }}
                       >
-                        සාමාජිකත්වය
+                        සාමාජික තොරතුරු
                       </Button>
                       <Button
                         color="inherit"
@@ -455,7 +481,18 @@ const Header = ({ siteTitle }) => {
                           onClick={() => navigate("/member/fullDetails")}
                           sx={{ textTransform: "none", width: "100%" }}
                         >
+                          සාමාජික තොරතුරු
+                        </Button>
+                        <Typography sx={{ textAlign: "center", color: "gray", fontSize: "0.9rem", padding: "5px" }}>
                           සාමාජිකත්වය
+                        </Typography>
+                        <Button
+                          color="inherit"
+                          // variant="outlined"
+                          onClick={() => navigate("/member/add-member")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                        >
+                          • සාමාජිකයෙකු ඇතුලත් කරන්න
                         </Button>
                         <hr />
                       </>
@@ -471,7 +508,7 @@ const Header = ({ siteTitle }) => {
                           onClick={() => navigate("/member/fullDetails")}
                           sx={{ textTransform: "none" }}
                         >
-                          සාමාජිකත්වය
+                          සාමාජික තොරතුරු
                         </Button>
                         <Button
                           color="inherit"
@@ -494,7 +531,7 @@ const Header = ({ siteTitle }) => {
                           onClick={() => navigate("/member/fullDetails")}
                           sx={{ textTransform: "none" }}
                         >
-                          සාමාජිකත්වය
+                          සාමාජික තොරතුරු
                         </Button>
                         <Button
                           color="inherit"
