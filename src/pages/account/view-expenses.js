@@ -249,8 +249,8 @@ export default function ViewExpenses() {
                     <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                       <TableCell sx={{ fontWeight: "bold" }}>දිනය</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>වර්ගය</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>මුදල</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>සාමාජික අංකය</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>විස්තර</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }} align="right">මුදල</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>ක්‍රියා</TableCell>
                     </TableRow>
                   </TableHead>
@@ -265,11 +265,26 @@ export default function ViewExpenses() {
                             size="small"
                           />
                         </TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>
-                          {formatCurrency(expense.amount)}
-                        </TableCell>
                         <TableCell>
-                          {expense.beneficiaryMemberId || "-"}
+                          {expense.beneficiaryMemberId && (
+                            <Typography variant="body2" sx={{ marginBottom: "2px" }}>
+                              <strong>සාමාජික ID:</strong> {expense.beneficiaryMemberId}
+                            </Typography>
+                          )}
+                          {expense.description && (
+                            <Typography variant="body2" sx={{ marginBottom: "2px" }}>
+                              <strong>විස්තරය:</strong> {expense.description}
+                            </Typography>
+                          )}
+                          {expense.paidTo && (
+                            <Typography variant="body2">
+                              <strong>ගෙවන ලද තැන:</strong> {expense.paidTo}
+                            </Typography>
+                          )}
+                          {!expense.beneficiaryMemberId && !expense.description && !expense.paidTo && "-"}
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                          {formatCurrency(expense.amount)}
                         </TableCell>
                         <TableCell>
                           <IconButton
@@ -280,7 +295,7 @@ export default function ViewExpenses() {
                             <ViewIcon />
                           </IconButton>
                           <IconButton
-                            onClick={() => navigate(`/account/edit-expense/${expense._id}`)}
+                            onClick={() => navigate(`/account/edit-expense?id=${expense._id}`)}
                             color="warning"
                             size="small"
                           >
