@@ -390,6 +390,14 @@ const Header = ({ siteTitle }) => {
                         >
                           වියදම් ඇතුලත් කරන්න
                         </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/account/view-expenses")
+                            handleExpenseMenuClose()
+                          }}
+                        >
+                          වියදම් බලන්න
+                        </MenuItem>
                       </Menu>
                       <Divider
                         orientation="vertical"
