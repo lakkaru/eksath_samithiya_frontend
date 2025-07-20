@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Box,
   Button,
@@ -33,6 +33,9 @@ export default function NewLoan() {
   //un authorized access preventing
   const [roles, setRoles] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  const [loading, setLoading] = useState(true) // Handle loading state
+  const [error, setError] = useState(null)
 
   const [member_id, setMember_id] = useState("")
   const [member, setMember] = useState("")
@@ -172,14 +175,29 @@ export default function NewLoan() {
     setGuarantor2("")
   }
 
-   //un authorized access preventing
-    const handleAuthStateChange = ({ isAuthenticated, roles }) => {
-      setIsAuthenticated(isAuthenticated)
-      setRoles(roles)
-      if (!isAuthenticated || !roles.includes("loan-treasurer")) {
-        navigate("/login/user-login")
-      }
+  //un authorized access preventing
+  const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+    setIsAuthenticated(isAuthenticated)
+    setRoles(roles)
+    if (!isAuthenticated || !roles.includes("loan-treasurer")) {
+      navigate("/login/user-login")
     }
+  }
+
+useEffect(()=>{
+  const blacklistMembers = async () => {
+    // console.log('first')
+    try {
+      const blacklisted = await api.get(`${baseUrl}/member/blacklist`)
+      console.log("blacklisted: ", blacklisted.data)
+    } catch (err) {
+      console.error("Error fetching attendance data:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+  blacklistMembers()
+},[])
 
   // console.log('existingLoan: ', existingLoan)
   return (
