@@ -18,7 +18,9 @@ import {
   Snackbar,
   Alert,
   Chip,
-  Grid2
+  Grid2,
+  TextField,
+  MenuItem
 } from "@mui/material"
 import {
   Edit as EditIcon,
@@ -43,6 +45,7 @@ export default function ViewIncome() {
   const [loading, setLoading] = useState(false)
   const [alert, setAlert] = useState({ open: false, message: "", severity: "success" })
   const [totalAmount, setTotalAmount] = useState(0)
+  const [categoryFilter, setCategoryFilter] = useState("all")
   
   // Date range filters
   const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
@@ -81,7 +84,8 @@ export default function ViewIncome() {
       const response = await api.get(`${baseUrl}/account/incomes`, {
         params: {
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
+          endDate: endDate.toISOString(),
+          category: categoryFilter
         }
       })
 
@@ -146,10 +150,16 @@ export default function ViewIncome() {
       "පුද්ගලික පරිත්‍යාග",
       "රජයේ ආධාර"
     ]
+
+    const memberIncomeCategories = [
+      "සාමාජික ගාස්තු",
+      "දඩ මුදල්"
+    ]
     
     if (serviceIncomeCategories.includes(category)) return "primary"
     if (financialIncomeCategories.includes(category)) return "success"
     if (donationCategories.includes(category)) return "secondary"
+    if (memberIncomeCategories.includes(category)) return "info"
     return "default"
   }
 
@@ -186,9 +196,9 @@ export default function ViewIncome() {
             </Typography>
 
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              {/* Date Range Filter */}
+              {/* Date Range Filter and Category Filter */}
               <Grid2 container spacing={3} sx={{ marginBottom: "30px" }}>
-                <Grid2 size={{ xs: 12, sm: 4 }}>
+                <Grid2 size={{ xs: 12, sm: 3 }}>
                   <DatePicker
                     label="ආරම්භක දිනය"
                     value={startDate}
@@ -200,7 +210,7 @@ export default function ViewIncome() {
                     }}
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 4 }}>
+                <Grid2 size={{ xs: 12, sm: 3 }}>
                   <DatePicker
                     label="අවසාන දිනය"
                     value={endDate}
@@ -212,7 +222,32 @@ export default function ViewIncome() {
                     }}
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 4 }}>
+                <Grid2 size={{ xs: 12, sm: 3 }}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="ප්‍රවර්ගය"
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    sx={{ height: "56px" }}
+                  >
+                    <MenuItem value="all">සියලුම ආදායම්</MenuItem>
+                    <MenuItem value="සාමාජික ගාස්තු">සාමාජික ගාස්තු</MenuItem>
+                    <MenuItem value="දඩ මුදල්">දඩ මුදල්</MenuItem>
+                    <MenuItem value="කූඩාරම් කුලිය">කූඩාරම් කුලිය</MenuItem>
+                    <MenuItem value="පිඟන් කුලිය">පිඟන් කුලිය</MenuItem>
+                    <MenuItem value="පුටු කුලිය">පුටු කුලිය</MenuItem>
+                    <MenuItem value="බුෆේ සෙට් කුලිය">බුෆේ සෙට් කුලිය</MenuItem>
+                    <MenuItem value="ශබ්ද විකාශන කුලිය">ශබ්ද විකාශන කුලිය</MenuItem>
+                    <MenuItem value="බැංකු පොලී ආදායම">බැංකු පොලී ආදායම</MenuItem>
+                    <MenuItem value="වෙනත් සංවිධානවලින් පරිත්‍යාග">වෙනත් සංවිධානවලින් පරිත්‍යාග</MenuItem>
+                    <MenuItem value="පුද්ගලික පරිත්‍යාග">පුද්ගලික පරිත්‍යාග</MenuItem>
+                    <MenuItem value="රජයේ ආධාර">රජයේ ආධාර</MenuItem>
+                    <MenuItem value="වෙනත් ආදායම්">වෙනත් ආදායම්</MenuItem>
+                    <MenuItem value="විශේෂ ඉසව්">විශේෂ ඉසව්</MenuItem>
+                  </TextField>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 3 }}>
                   <Button
                     variant="contained"
                     onClick={fetchIncomes}
@@ -291,20 +326,25 @@ export default function ViewIncome() {
                           >
                             <ViewIcon />
                           </IconButton>
-                          <IconButton
-                            onClick={() => navigate(`/account/edit-income?id=${income._id}`)}
-                            color="warning"
-                            size="small"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => setDeleteDialog({ open: true, incomeId: income._id })}
-                            color="error"
-                            size="small"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          {/* Only show edit and delete buttons for regular income entries, not membership/fine payments or summaries */}
+                          {income.category !== 'සාමාජික ගාස්තු' && income.category !== 'දඩ මුදල්' && income.type !== 'membership-summary' && income.type !== 'fine-summary' && (
+                            <>
+                              <IconButton
+                                onClick={() => navigate(`/account/edit-income?id=${income._id}`)}
+                                color="warning"
+                                size="small"
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                onClick={() => setDeleteDialog({ open: true, incomeId: income._id })}
+                                color="error"
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
