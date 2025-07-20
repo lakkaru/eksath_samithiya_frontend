@@ -253,7 +253,7 @@ const Header = ({ siteTitle }) => {
                             handleMembershipViceSecMenuClose()
                           }}
                         >
-                          සාමාජිකයෙකු ඇතුලත් කරන්න
+                          සාමාජිකයෙකු ඇතුලත් කිරීම
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
@@ -508,7 +508,7 @@ const Header = ({ siteTitle }) => {
                           onClick={() => navigate("/member/add-member")}
                           sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
                         >
-                          • සාමාජිකයෙකු ඇතුලත් කරන්න
+                          • සාමාජිකයෙකු ඇතුලත් කිරීම
                         </Button>
                         <Button
                           color="inherit"
