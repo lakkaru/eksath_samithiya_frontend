@@ -367,7 +367,23 @@ const Header = ({ siteTitle }) => {
                             handleReceiptMenuClose()
                           }}
                         >
-                          Add Receipts
+                          සාමාජික මුදල්/හිඟ ලැබීම්
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/account/add-income")
+                            handleReceiptMenuClose()
+                          }}
+                        >
+                          වෙනත් ආදායම් ඇතුලත් කරන්න
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/account/view-income")
+                            handleReceiptMenuClose()
+                          }}
+                        >
+                          වෙනත් ආදායම් බලන්න
                         </MenuItem>
                       </Menu>
                       <Button
@@ -629,7 +645,7 @@ const Header = ({ siteTitle }) => {
                               handleReceiptMenuClose()
                             }}
                           >
-                            Add Receipts
+                            සාමාජික මුදල්/හිඟ ලැබීම්
                           </MenuItem>
                         </Menu> */}
                       </>
