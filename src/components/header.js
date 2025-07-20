@@ -32,6 +32,7 @@ const Header = ({ siteTitle }) => {
   const [attendanceAnchorEl, setAttendanceAnchorEl] = useState(null)
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
+  const [expenseAnchorEl, setExpenseAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isViceSecretary = roles.includes("vice-secretary")
@@ -54,6 +55,8 @@ const Header = ({ siteTitle }) => {
   const handleLoanSchemeMenuClose = () => setLoanSchemeAnchorEl(null)
   const handleReceiptMenuOpen = event => setReceiptAnchorEl(event.currentTarget)
   const handleReceiptMenuClose = () => setReceiptAnchorEl(null)
+  const handleExpenseMenuOpen = event => setExpenseAnchorEl(event.currentTarget)
+  const handleExpenseMenuClose = () => setExpenseAnchorEl(null)
 
   const handleAuthStateChange = ({
     isAuthenticated,
@@ -295,7 +298,7 @@ const Header = ({ siteTitle }) => {
                         onClick={handleLoanSchemeMenuOpen}
                         sx={{ textTransform: "none" }}
                       >
-                        Loan Schemes
+                        ණය තොරතුරු
                       </Button>
                       <Menu
                         anchorEl={loanSchemeAnchorEl}
@@ -365,6 +368,27 @@ const Header = ({ siteTitle }) => {
                           }}
                         >
                           Add Receipts
+                        </MenuItem>
+                      </Menu>
+                      <Button
+                        color="inherit"
+                        onClick={handleExpenseMenuOpen}
+                        sx={{ textTransform: "none" }}
+                      >
+                        මුදල් ගෙවීම්
+                      </Button>
+                      <Menu
+                        anchorEl={expenseAnchorEl}
+                        open={Boolean(expenseAnchorEl)}
+                        onClose={handleExpenseMenuClose}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/account/add-expense")
+                            handleExpenseMenuClose()
+                          }}
+                        >
+                          වියදම් ඇතුලත් කරන්න
                         </MenuItem>
                       </Menu>
                       <Divider
@@ -547,7 +571,7 @@ const Header = ({ siteTitle }) => {
                           onClick={handleLoanSchemeMenuOpen}
                           sx={{ textTransform: "none", width: "100%" }}
                         >
-                          Loan Schemes
+                          ණය තොරතුරු
                         </Button>
                         <hr />
                       </>
@@ -572,6 +596,13 @@ const Header = ({ siteTitle }) => {
                           sx={{ textTransform: "none", width: "100%" }}
                         >
                           මුදල් ලැබීම්
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={handleExpenseMenuOpen}
+                          sx={{ textTransform: "none", width: "100%" }}
+                        >
+                          මුදල් ගෙවීම්
                         </Button>
 
                         <hr />
