@@ -263,6 +263,14 @@ const Header = ({ siteTitle }) => {
                         >
                           ප්‍රදේශය අනුව සෙවීම
                         </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/member/search-by-name")
+                            handleMembershipViceSecMenuClose()
+                          }}
+                        >
+                          නම අනුව සෙවීම
+                        </MenuItem>
                       </Menu>
                       <Divider
                         orientation="vertical"
@@ -509,6 +517,14 @@ const Header = ({ siteTitle }) => {
                           sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
                         >
                           • ප්‍රදේශය අනුව සෙවීම
+                        </Button>
+                        <Button
+                          color="inherit"
+                          // variant="outlined"
+                          onClick={() => navigate("/member/search-by-name")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                        >
+                          • නම අනුව සෙවීම
                         </Button>
                         <hr />
                       </>
