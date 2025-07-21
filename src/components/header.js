@@ -315,7 +315,7 @@ const Header = ({ siteTitle }) => {
                             handleLoanSchemeMenuClose()
                           }}
                         >
-                          New Loan
+                          නව ණයක්
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
@@ -323,7 +323,7 @@ const Header = ({ siteTitle }) => {
                             handleLoanSchemeMenuClose()
                           }}
                         >
-                          Loan Search
+                          ණය සෙවීම
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
@@ -331,7 +331,7 @@ const Header = ({ siteTitle }) => {
                             handleLoanSchemeMenuClose()
                           }}
                         >
-                          Active Loans
+                          ක්‍රියාකාරී ණය
                         </MenuItem>
                       </Menu>
                       <Divider

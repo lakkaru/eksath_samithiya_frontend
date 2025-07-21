@@ -29,12 +29,12 @@ export default function ActiveLoans() {
   const [activeLoans, setActiveLoans] = useState([])
 
   const loanColumnsArray = [
-    { id: "date", label: "Loan Date", minWidth: 50 },
-    { id: "loanNumber", label: "Loan Number", minWidth: 50 },
-    { id: "memberId", label: "ID", minWidth: 50 },
-    { id: "member", label: "Member", minWidth: 50 },
-    { id: "remaining", label: "Remaining Amount", minWidth: 50 },
-    { id: "unpaidMonths", label: "Unpaid Months", minWidth: 50 },
+    { id: "date", label: "ණය දිනය", minWidth: 50 },
+    { id: "loanNumber", label: "ණය අංකය", minWidth: 50 },
+    { id: "memberId", label: "සාමාජික අංකය", minWidth: 50 },
+    { id: "member", label: "සාමාජිකයා", minWidth: 50 },
+    { id: "remaining", label: "ඉතිරි මුදල", minWidth: 50 },
+    { id: "unpaidMonths", label: "නොගෙවු මාස", minWidth: 50 },
     { id: "view", label: "", minWidth: 50, align: "right" },
     // { id: "interest", label: "Interest", minWidth: 50 },
     // { id: "penaltyInterest", label: "Penalty Int.", minWidth: 50 },

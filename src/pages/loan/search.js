@@ -304,7 +304,7 @@ export default function Search() {
         >
           <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
             <TextField
-              label="Member ID"
+              label="සාමාජික අංකය"
               value={memberInputId}
               onChange={handleIdChange}
               sx={{ maxWidth: "100px" }}
@@ -313,7 +313,7 @@ export default function Search() {
               variant="contained"
               onClick={() => handleSearch(paymentDate)}
             >
-              Loan Search
+              ණය සෙවීම
             </Button>
           </Box>
           {loan && (
@@ -330,9 +330,9 @@ export default function Search() {
           )}
         </Box>
 
-        {loading && <Typography>Loading...</Typography>}
+        {loading && <Typography>පූරණය වෙමින්...</Typography>}
         {!loading && member && !loan && (
-          <Typography>No loan found for {member.name}.</Typography>
+          <Typography>{member.name} සඳහා ණයක් සොයාගත නොහැකි විය.</Typography>
         )}
         {!loading && loan && (
           <Typography sx={{ fontSize: ".8rem" }}>
@@ -386,14 +386,14 @@ export default function Search() {
             <Box sx={{ marginTop: 2, padding: 2, border: "1px solid #ccc" }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  label="Payment Date"
+                  label="ගෙවීමේ දිනය"
                   value={paymentDate}
                   onChange={handleDateChange}
                   format="YYYY/MM/DD"
                 />
               </LocalizationProvider>
               <TextField
-                label="Payment Amount"
+                label="ගෙවන මුදල"
                 type="number"
                 value={paymentAmount}
                 onChange={e => {
@@ -403,10 +403,10 @@ export default function Search() {
                 sx={{ mx: "20px" }}
               />
               <Typography>
-                Paying Penalty Interest: Rs. {payingPenaltyInterest}
+                ගෙවන දඩ පොලිය: රු. {payingPenaltyInterest}
               </Typography>
-              <Typography>Paying Interest: Rs. {payingInterest}</Typography>
-              <Typography>Paying Principal: Rs. {payingPrincipal}</Typography>
+              <Typography>ගෙවන පොලිය: රු. {payingInterest}</Typography>
+              <Typography>ගෙවන ණය මුදල: රු. {payingPrincipal}</Typography>
               <Button
                 variant="contained"
                 onClick={handleLoanPayment}
@@ -415,7 +415,7 @@ export default function Search() {
                   loan.interest + loan.penaltyInterest
                 }
               >
-                Pay
+                ගෙවන්න
               </Button>
             </Box>
           </>
@@ -424,7 +424,7 @@ export default function Search() {
           open={snackbarOpen}
           autoHideDuration={3000}
           onClose={() => setSnackbarOpen(false)}
-          message="Payment recorded successfully"
+          message="ගෙවීම සාර්ථකව සටහන් කරන ලදී"
         />
       </section>
     </Layout>

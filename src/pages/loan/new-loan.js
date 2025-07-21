@@ -92,7 +92,7 @@ export default function NewLoan() {
         setAlert({
           open: true,
           severity: "error",
-          message: "Error on member searching. Please try again",
+          message: "සාමාජික සෙවීමේදී දෝෂයක් සිදුවිය. කරුණාකර නැවත උත්සාහ කරන්න",
         })
       })
   }
@@ -140,7 +140,7 @@ export default function NewLoan() {
         setAlert({
           open: true,
           severity: "success",
-          message: "New Loan has recorded successfully.",
+          message: "නව ණයක් සාර්ථකව සටහන් කර ඇත.",
         })
         // Reset form fields
         setLoanNumber("")
@@ -154,7 +154,7 @@ export default function NewLoan() {
         setAlert({
           open: true,
           severity: "error",
-          message: "New Loan has did not recorded",
+          message: "නව ණයක් සටහන් කිරීමට නොහැකි විය",
         })
       })
 
@@ -227,7 +227,7 @@ useEffect(()=>{
           <Typography>අයදුම්කරු </Typography>
           <TextField
             id="outlined-basic"
-            label="Member ID"
+            label="සාමාජික අංකය"
             variant="outlined"
             type="number"
             value={member_id}
@@ -239,7 +239,7 @@ useEffect(()=>{
             onFocus={resetFields}
           />
           <Button variant="contained" onClick={getMemberInfoById}>
-            Search
+            සොයන්න
           </Button>
         </Box>
         <Box
@@ -257,7 +257,7 @@ useEffect(()=>{
         <hr style={{ padding: "2px", marginTop: "10px" }}></hr>
         {existingLoan && (
           <Box>
-            <Typography> {member.name} is having an ongoing loan.</Typography>
+            <Typography> {member.name} සතුව දැනට ණයක් ඇත.</Typography>
           </Box>
         )}
         {Object.keys(member).length > 0 && !existingLoan && (
@@ -274,7 +274,7 @@ useEffect(()=>{
               {/* <Typography>Member ID</Typography> */}
               <TextField
                 id="guarantor1_id"
-                label="Guarantor_1 ID"
+                label="ඇපකරු 1 අංකය"
                 variant="outlined"
                 type="number"
                 value={guarantor1_id}
@@ -282,7 +282,7 @@ useEffect(()=>{
                 onBlur={getGuarantor1ById}
               />
               <Button variant="contained" onClick={getGuarantor1ById}>
-                Search
+                සොයන්න
               </Button>
             </Box>
             <Box
@@ -311,7 +311,7 @@ useEffect(()=>{
               {/* <Typography>Member ID</Typography> */}
               <TextField
                 id="guarantor2_id"
-                label="Guarantor_2 ID"
+                label="ඇපකරු 2 අංකය"
                 variant="outlined"
                 type="number"
                 value={guarantor2_id}
@@ -319,7 +319,7 @@ useEffect(()=>{
                 onBlur={getGuarantor2ById}
               />
               <Button variant="contained" onClick={getGuarantor2ById}>
-                Search
+                සොයන්න
               </Button>
             </Box>
             <Box
@@ -347,7 +347,7 @@ useEffect(()=>{
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DatePicker"]}>
                   <DatePicker
-                    label={"Loan Date"}
+                    label={"ණය දිනය"}
                     value={loanDate}
                     onChange={newValue => setLoanDate(newValue)} // Update state with dayjs object
                     format="YYYY/MM/DD" // Use the desired display format
@@ -358,7 +358,7 @@ useEffect(()=>{
               </LocalizationProvider>
               <TextField
                 id="loan_number"
-                label="Loan Number"
+                label="ණය අංකය"
                 variant="outlined"
                 type="number"
                 value={loanNumber}
@@ -366,7 +366,7 @@ useEffect(()=>{
               />
               <TextField
                 id="loan_amount"
-                label="Loan Amount"
+                label="ණය මුදල"
                 variant="outlined"
                 type="number"
                 value={loanAmount}
@@ -384,7 +384,7 @@ useEffect(()=>{
                 }
                 sx={{ float: "right" }}
               >
-                Apply
+                ආයදන්න
               </Button>
             </Box>
           </Box>
