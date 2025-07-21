@@ -13,11 +13,22 @@ import {
   Grid2,
   Card,
   CardContent,
-  Alert
+  Alert,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Snackbar
 } from "@mui/material"
 import {
   Print as PrintIcon,
-  Download as DownloadIcon
+  Download as DownloadIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Save as SaveIcon,
+  Cancel as CancelIcon
 } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
@@ -40,6 +51,22 @@ export default function LoanPaymentsReport() {
   // Date range filters
   const [startDate, setStartDate] = useState(dayjs().startOf('month'))
   const [endDate, setEndDate] = useState(dayjs())
+
+  // Edit/Delete functionality
+  const [editingPayment, setEditingPayment] = useState(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [paymentToDelete, setPaymentToDelete] = useState(null)
+  const [editFormData, setEditFormData] = useState({
+    principalAmount: '',
+    interestAmount: '',
+    penaltyInterestAmount: '',
+    paymentDate: dayjs()
+  })
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  })
 
   // Summary data
   const [summary, setSummary] = useState({
@@ -113,6 +140,102 @@ export default function LoanPaymentsReport() {
 
   const handlePrint = () => {
     window.print()
+  }
+
+  const handleEditPayment = (payment) => {
+    setEditingPayment(payment)
+    setEditFormData({
+      principalAmount: payment.principalAmount,
+      interestAmount: payment.interestAmount,
+      penaltyInterestAmount: payment.penaltyInterestAmount,
+      paymentDate: dayjs(payment.paymentDate)
+    })
+  }
+
+  const handleSaveEdit = async () => {
+    try {
+      const principalAmount = parseFloat(editFormData.principalAmount) || 0;
+      const interestAmount = parseFloat(editFormData.interestAmount) || 0;
+      const penaltyInterestAmount = parseFloat(editFormData.penaltyInterestAmount) || 0;
+      const updatedAmount = principalAmount + interestAmount + penaltyInterestAmount;
+      
+      const response = await api.put(`${baseUrl}/loan/payment/${editingPayment._id}`, {
+        principalAmount,
+        interestAmount,
+        penaltyInterestAmount,
+        paymentDate: editFormData.paymentDate.toISOString(),
+        amount: updatedAmount
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+      })
+
+      if (response.data.success) {
+        setSnackbar({
+          open: true,
+          message: 'ගෙවීම සාර්ථකව යාවත්කාලීන කරන ලදී',
+          severity: 'success'
+        })
+        setEditingPayment(null)
+        fetchPaymentsData() // Refresh the data
+      }
+    } catch (error) {
+      console.error("Error updating payment:", error)
+      setSnackbar({
+        open: true,
+        message: 'ගෙවීම යාවත්කාලීන කිරීමේදී දෝෂයක් සිදුවිය',
+        severity: 'error'
+      })
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingPayment(null)
+    setEditFormData({
+      principalAmount: '',
+      interestAmount: '',
+      penaltyInterestAmount: '',
+      paymentDate: dayjs()
+    })
+  }
+
+  const handleDeleteClick = (payment) => {
+    setPaymentToDelete(payment)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await api.delete(`${baseUrl}/loan/payment/${paymentToDelete._id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+      })
+
+      if (response.data.success) {
+        setSnackbar({
+          open: true,
+          message: 'ගෙවීම සාර්ථකව ඉවත් කරන ලදී',
+          severity: 'success'
+        })
+        setDeleteDialogOpen(false)
+        setPaymentToDelete(null)
+        fetchPaymentsData() // Refresh the data
+      }
+    } catch (error) {
+      console.error("Error deleting payment:", error)
+      setSnackbar({
+        open: true,
+        message: 'ගෙවීම ඉවත් කිරීමේදී දෝෂයක් සිදුවිය',
+        severity: 'error'
+      })
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false)
+    setPaymentToDelete(null)
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false })
   }
 
   if (!isAuthenticated) {
@@ -250,6 +373,7 @@ export default function LoanPaymentsReport() {
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>ණය මුදල</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>පොලිය</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>දඩ පොලිය</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: "bold" }} className="no-print">ක්‍රියා</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -271,6 +395,23 @@ export default function LoanPaymentsReport() {
                             <TableCell align="right">
                               {formatCurrency(payment.penaltyInterestAmount)}
                             </TableCell>
+                            <TableCell align="center" className="no-print">
+                              <IconButton
+                                size="small"
+                                color="primary"
+                                onClick={() => handleEditPayment(payment)}
+                                sx={{ marginRight: 1 }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => handleDeleteClick(payment)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </TableCell>
                           </TableRow>
                         ))}
                         <TableRow sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}>
@@ -289,6 +430,7 @@ export default function LoanPaymentsReport() {
                           <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
                             {formatCurrency(summary.totalPenaltyInterest)}
                           </TableCell>
+                          <TableCell className="no-print"></TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
@@ -317,6 +459,119 @@ export default function LoanPaymentsReport() {
           </Paper>
         </Box>
       </section>
+
+      {/* Edit Payment Dialog */}
+      <Dialog open={editingPayment !== null} onClose={handleCancelEdit} maxWidth="sm" fullWidth>
+        <DialogTitle>ගෙවීම සංස්කරණය කරන්න</DialogTitle>
+        <DialogContent>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, paddingTop: 2 }}>
+              <DatePicker
+                label="ගෙවීමේ දිනය"
+                value={editFormData.paymentDate}
+                onChange={(newValue) => setEditFormData({ ...editFormData, paymentDate: newValue })}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
+                label="ණය මුදල"
+                type="number"
+                value={editFormData.principalAmount}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setEditFormData({ 
+                    ...editFormData, 
+                    principalAmount: value === '' ? '' : parseFloat(value) || 0 
+                  });
+                }}
+              />
+              <TextField
+                fullWidth
+                label="පොලිය"
+                type="number"
+                value={editFormData.interestAmount}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setEditFormData({ 
+                    ...editFormData, 
+                    interestAmount: value === '' ? '' : parseFloat(value) || 0 
+                  });
+                }}
+              />
+              <TextField
+                fullWidth
+                label="දඩ පොලිය"
+                type="number"
+                value={editFormData.penaltyInterestAmount}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setEditFormData({ 
+                    ...editFormData, 
+                    penaltyInterestAmount: value === '' ? '' : parseFloat(value) || 0 
+                  });
+                }}
+              />
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                මුළු මුදල: {formatCurrency(
+                  (parseFloat(editFormData.principalAmount) || 0) + 
+                  (parseFloat(editFormData.interestAmount) || 0) + 
+                  (parseFloat(editFormData.penaltyInterestAmount) || 0)
+                )}
+              </Typography>
+            </Box>
+          </LocalizationProvider>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelEdit} startIcon={<CancelIcon />}>
+            අවලංගු කරන්න
+          </Button>
+          <Button onClick={handleSaveEdit} variant="contained" startIcon={<SaveIcon />}>
+            සුරකින්න
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
+        <DialogTitle>ගෙවීම ඉවත් කරන්න</DialogTitle>
+        <DialogContent>
+          <Typography>
+            ඔබට මෙම ගෙවීම ස්ථිරවම ඉවත් කිරීමට අවශ්‍යද?
+          </Typography>
+          {paymentToDelete && (
+            <Box sx={{ marginTop: 2, padding: 2, backgroundColor: "#f5f5f5", borderRadius: 1 }}>
+              <Typography><strong>සාමාජිකයා:</strong> {paymentToDelete.memberId?.name}</Typography>
+              <Typography><strong>ණය අංකය:</strong> {paymentToDelete.loanId?.loanNumber}</Typography>
+              <Typography><strong>මුදල:</strong> {formatCurrency(paymentToDelete.amount)}</Typography>
+              <Typography><strong>දිනය:</strong> {formatDate(paymentToDelete.paymentDate)}</Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>
+            අවලංගු කරන්න
+          </Button>
+          <Button onClick={handleDeleteConfirm} variant="contained" color="error" startIcon={<DeleteIcon />}>
+            ඉවත් කරන්න
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
       <style jsx global>{`
         @media print {
