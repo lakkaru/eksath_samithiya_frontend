@@ -489,7 +489,7 @@ const Header = ({ siteTitle }) => {
                     onClick={handleMemberMenuOpen}
                     sx={{ textTransform: "none" }}
                   >
-                    My Profile
+                    මගේ ගිණුම
                   </Button>
                   <Menu
                     anchorEl={memberAnchorEl}
@@ -503,7 +503,7 @@ const Header = ({ siteTitle }) => {
                         handleMemberMenuClose()
                       }}
                     >
-                      Home
+                      මුල් පිටුව
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -511,7 +511,7 @@ const Header = ({ siteTitle }) => {
                         handleMemberMenuClose()
                       }}
                     >
-                      Edit Profile
+                      ගිණුම සංස්කරණය
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
@@ -519,7 +519,7 @@ const Header = ({ siteTitle }) => {
                         handleMemberMenuClose()
                       }}
                     >
-                      Logout
+                      ඉවත් වන්න
                     </MenuItem>
                   </Menu>
                 </>
@@ -530,7 +530,7 @@ const Header = ({ siteTitle }) => {
                   onClick={() => navigate("/login/user-login")}
                   sx={{ textTransform: "none" }}
                 >
-                  Login
+                  ප්‍රවේශය
                 </Button>
               )}
             </Box>
@@ -711,7 +711,7 @@ const Header = ({ siteTitle }) => {
                       onClick={handleMemberMenuOpen}
                       sx={{ textTransform: "none", width: "100%" }}
                     >
-                      My Profile
+                      මගේ ගිණුම
                     </Button>
                   </>
                 )}
@@ -726,7 +726,7 @@ const Header = ({ siteTitle }) => {
                       width: "100%",
                     }}
                   >
-                    Login
+                    ප්‍රවේශය
                   </Button>
                 )}
               </Box>
