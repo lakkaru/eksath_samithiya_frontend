@@ -130,24 +130,49 @@ export default function ViewExpenses() {
   }
 
   const getCategoryChipColor = (category) => {
+    // === සාමාජික ප්‍රතිලාභ (Member Benefits) ===
     const memberBenefitCategories = [
       "මරණ ප්‍රතිලාභ ගෙවීම්",
       "ක්ෂණික ප්‍රතිලාභ ගෙවීම්", 
-      "ද්‍රව්‍ය ආධාර හිග",
-      "මළවුන් රැගෙන යාමේ ගාස්තු"
+      "මළවුන් රැගෙන යාමේ ගාස්තු",
+      "ද්‍රව්‍ය ආධාර හිග"
     ]
     
+    // === සේවා වියදම් (Service Expenses) ===
     const serviceCategories = [
       "කූඩාරම් හසුරුවීම - කම්කරු ගාස්තු",
       "පිඟන් නිකුත් කිරීම",
       "පුටු නිකුත් කිරීම",
       "බුෆේ සෙට් නිකුත් කිරීම",
-      "ශබ්ද විකාශන හසුරුවීම",
+      "ශබ්ද විකාශන හසුරුවීම"
+    ]
+
+    // === පරිපාලන වියදම් (Administrative Expenses) ===
+    const administrativeCategories = [
+      "කාර්යාල වියදම්",
+      "සභා වියදම්",
+      "සේවකයින්ගේ වැටුප්",
+      "ප්‍රවාහන වියදම්"
+    ]
+
+    // === මූල්‍ය වියදම් (Financial Expenses) ===
+    const financialCategories = [
+      "බැංකු තැන්පතු",
       "විදුලි බිල්පත්"
+    ]
+
+    // === මිලදී ගැනීම් සහ නඩත්තු (Purchases & Maintenance) ===
+    const purchaseMaintenanceCategories = [
+      "මිලදී ගැනීම්",
+      "කම්කරු ගාස්තු",
+      "නඩත්තු වියදම්"
     ]
     
     if (memberBenefitCategories.includes(category)) return "error"
     if (serviceCategories.includes(category)) return "warning"
+    if (administrativeCategories.includes(category)) return "info"
+    if (financialCategories.includes(category)) return "success"
+    if (purchaseMaintenanceCategories.includes(category)) return "secondary"
     return "primary"
   }
 

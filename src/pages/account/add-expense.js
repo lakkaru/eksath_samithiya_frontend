@@ -43,29 +43,7 @@ export default function AddExpense() {
     beneficiaryMemberId: "",
   })
 
-  const expenseCategories = [
-    "මරණ ප්‍රතිලාභ ගෙවීම්",
-    "ක්ෂණික ප්‍රතිලාභ ගෙවීම්",
-    "ද්‍රව්‍ය ආධාර හිග",
-    "මළවුන් රැගෙන යාමේ ගාස්තු",
-    "කූඩාරම් හසුරුවීම - කම්කරු ගාස්තු",
-    "පිඟන් නිකුත් කිරීම",
-    "පුටු නිකුත් කිරීම", 
-    "බුෆේ සෙට් නිකුත් කිරීම",
-    "ශබ්ද විකාශන හසුරුවීම",
-    "මිලදී ගැනීම්",
-    "කම්කරු ගාස්තු",
-    "ප්‍රවාහන වියදම්",
-    "කාර්යාල වියදම්",
-    "සභා වියදම්",
-    "නඩත්තු වියදම්",
-    "සේවකයින්ගේ වැටුප්",
-    "විදුලි බිල්පත්",
-    "බැංකු තැන්පතු",
-    "අනෙකුත්",
-  ]
-
-  // Categories that require beneficiaryMemberId but not description/paidTo
+  // === සාමාජික ප්‍රතිලාභ (Member Benefits) ===
   const memberBenefitCategories = [
     "මරණ ප්‍රතිලාභ ගෙවීම්",
     "ක්ෂණික ප්‍රතිලාභ ගෙවීම්", 
@@ -73,14 +51,49 @@ export default function AddExpense() {
     "ද්‍රව්‍ය ආධාර හිග"
   ]
 
-  // Categories that require description but not paidTo (internal services)
+  // === සේවා වියදම් (Service Expenses) ===
   const serviceCategories = [
     "කූඩාරම් හසුරුවීම - කම්කරු ගාස්තු",
     "පිඟන් නිකුත් කිරීම",
     "පුටු නිකුත් කිරීම",
     "බුෆේ සෙට් නිකුත් කිරීම",
-    "ශබ්ද විකාශන හසුරුවීම",
+    "ශබ්ද විකාශන හසුරුවීම"
+  ]
+
+  // === පරිපාලන වියදම් (Administrative Expenses) ===
+  const administrativeCategories = [
+    "කාර්යාල වියදම්",
+    "සභා වියදම්",
+    "සේවකයින්ගේ වැටුප්",
+    "ප්‍රවාහන වියදම්"
+  ]
+
+  // === මූල්‍ය වියදම් (Financial Expenses) ===
+  const financialCategories = [
+    "බැංකු තැන්පතු",
     "විදුලි බිල්පත්"
+  ]
+
+  // === මිලදී ගැනීම් සහ නඩත්තු (Purchases & Maintenance) ===
+  const purchaseMaintenanceCategories = [
+    "මිලදී ගැනීම්",
+    "කම්කරු ගාස්තු",
+    "නඩත්තු වියදම්"
+  ]
+
+  // === අනෙකුත් වියදම් (Other Expenses) ===
+  const otherCategories = [
+    "අනෙකුත්"
+  ]
+
+  // All categories combined
+  const expenseCategories = [
+    ...memberBenefitCategories,
+    ...serviceCategories, 
+    ...administrativeCategories,
+    ...financialCategories,
+    ...purchaseMaintenanceCategories,
+    ...otherCategories
   ]
 
   const isMemberBenefitCategory = (category) => {
@@ -278,7 +291,55 @@ export default function AddExpense() {
                       onChange={handleInputChange("category")}
                       required
                     >
-                      {expenseCategories.map((category) => (
+                      <MenuItem disabled>
+                        <em>සාමාජික ප්‍රතිලාභ</em>
+                      </MenuItem>
+                      {memberBenefitCategories.map((category) => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                      
+                      <MenuItem disabled>
+                        <em>සේවා වියදම්</em>
+                      </MenuItem>
+                      {serviceCategories.map((category) => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                      
+                      <MenuItem disabled>
+                        <em>පරිපාලන වියදම්</em>
+                      </MenuItem>
+                      {administrativeCategories.map((category) => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                      
+                      <MenuItem disabled>
+                        <em>මූල්‍ය වියදම්</em>
+                      </MenuItem>
+                      {financialCategories.map((category) => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                      
+                      <MenuItem disabled>
+                        <em>මිලදී ගැනීම් සහ නඩත්තු</em>
+                      </MenuItem>
+                      {purchaseMaintenanceCategories.map((category) => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                      
+                      <MenuItem disabled>
+                        <em>අනෙකුත් වියදම්</em>
+                      </MenuItem>
+                      {otherCategories.map((category) => (
                         <MenuItem key={category} value={category}>
                           {category}
                         </MenuItem>

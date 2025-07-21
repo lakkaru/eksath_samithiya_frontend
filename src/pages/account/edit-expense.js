@@ -46,31 +46,57 @@ export default function EditExpense({ location }) {
     beneficiaryMemberId: ""
   })
 
-  // Category definitions
+  // === සාමාජික ප්‍රතිලාභ (Member Benefits) ===
   const memberBenefitCategories = [
     "මරණ ප්‍රතිලාභ ගෙවීම්",
-    "ක්ෂණික ප්‍රතිලාභ ගෙවීම්",
+    "ක්ෂණික ප්‍රතිලාභ ගෙවීම්", 
     "මළවුන් රැගෙන යාමේ ගාස්තු",
     "ද්‍රව්‍ය ආධාර හිග"
   ]
 
+  // === සේවා වියදම් (Service Expenses) ===
   const serviceCategories = [
     "කූඩාරම් හසුරුවීම - කම්කරු ගාස්තු",
     "පිඟන් නිකුත් කිරීම",
     "පුටු නිකුත් කිරීම",
     "බුෆේ සෙට් නිකුත් කිරීම",
-    "ශබ්ද විකාශන හසුරුවීම",
+    "ශබ්ද විකාශන හසුරුවීම"
+  ]
+
+  // === පරිපාලන වියදම් (Administrative Expenses) ===
+  const administrativeCategories = [
+    "කාර්යාල වියදම්",
+    "සභා වියදම්",
+    "සේවකයින්ගේ වැටුප්",
+    "ප්‍රවාහන වියදම්"
+  ]
+
+  // === මූල්‍ය වියදම් (Financial Expenses) ===
+  const financialCategories = [
+    "බැංකු තැන්පතු",
     "විදුලි බිල්පත්"
   ]
 
-  const standardCategories = [
-    "බැංකු තැන්පතු",
-    "කාර්යාල වියදම්",
-    "සංස්ථාගත වියදම්",
-    "වෙනත්"
+  // === මිලදී ගැනීම් සහ නඩත්තු (Purchases & Maintenance) ===
+  const purchaseMaintenanceCategories = [
+    "මිලදී ගැනීම්",
+    "කම්කරු ගාස්තු",
+    "නඩත්තු වියදම්"
   ]
 
-  const allCategories = [...memberBenefitCategories, ...serviceCategories, ...standardCategories]
+  // === අනෙකුත් වියදම් (Other Expenses) ===
+  const otherCategories = [
+    "අනෙකුත්"
+  ]
+
+  const allCategories = [
+    ...memberBenefitCategories,
+    ...serviceCategories, 
+    ...administrativeCategories,
+    ...financialCategories,
+    ...purchaseMaintenanceCategories,
+    ...otherCategories
+  ]
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
@@ -275,18 +301,47 @@ export default function EditExpense({ location }) {
                             {category}
                           </MenuItem>
                         ))}
+                        
                         <MenuItem disabled>
-                          <em>සේවා</em>
+                          <em>සේවා වියදම්</em>
                         </MenuItem>
                         {serviceCategories.map((category) => (
                           <MenuItem key={category} value={category}>
                             {category}
                           </MenuItem>
                         ))}
+                        
                         <MenuItem disabled>
-                          <em>සාමාන්‍ය</em>
+                          <em>පරිපාලන වියදම්</em>
                         </MenuItem>
-                        {standardCategories.map((category) => (
+                        {administrativeCategories.map((category) => (
+                          <MenuItem key={category} value={category}>
+                            {category}
+                          </MenuItem>
+                        ))}
+                        
+                        <MenuItem disabled>
+                          <em>මූල්‍ය වියදම්</em>
+                        </MenuItem>
+                        {financialCategories.map((category) => (
+                          <MenuItem key={category} value={category}>
+                            {category}
+                          </MenuItem>
+                        ))}
+                        
+                        <MenuItem disabled>
+                          <em>මිලදී ගැනීම් සහ නඩත්තු</em>
+                        </MenuItem>
+                        {purchaseMaintenanceCategories.map((category) => (
+                          <MenuItem key={category} value={category}>
+                            {category}
+                          </MenuItem>
+                        ))}
+                        
+                        <MenuItem disabled>
+                          <em>අනෙකුත් වියදම්</em>
+                        </MenuItem>
+                        {otherCategories.map((category) => (
                           <MenuItem key={category} value={category}>
                             {category}
                           </MenuItem>
