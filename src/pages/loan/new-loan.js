@@ -85,7 +85,10 @@ export default function NewLoan() {
       })
       .then(response => {
         // console.log("gu1: ", response.data)
-        setGuarantor1(response?.data?.member)
+        const guarantorData = response?.data?.member
+        setGuarantor1(guarantorData)
+        // Check guarantor count after setting the guarantor - use the member's _id
+        checkGuarantorCount(guarantorData?._id, guarantorData)
       })
       .catch(error => {
         console.error("api error : ", error)
@@ -94,6 +97,7 @@ export default function NewLoan() {
           severity: "error",
           message: "සාමාජික සෙවීමේදී දෝෂයක් සිදුවිය. කරුණාකර නැවත උත්සාහ කරන්න",
         })
+        setGuarantor1({})
       })
   }
   const getGuarantor2ById = e => {
@@ -102,11 +106,43 @@ export default function NewLoan() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(response => {
-        setGuarantor2(response?.data?.member)
+        const guarantorData = response?.data?.member
+        setGuarantor2(guarantorData)
+        // Check guarantor count after setting the guarantor - use the member's _id
+        checkGuarantorCount(guarantorData?._id, guarantorData)
       })
       .catch(error => {
         console.error("Axios error : ", error)
+        setGuarantor2({})
       })
+  }
+
+  const checkGuarantorCount = async (memberId, guarantorData) => {
+    try {
+      const response = await api.get(`${baseUrl}/loan/active-loans`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      
+      const activeLoans = response.data.activeLoans || []
+      const guarantorCount = activeLoans.filter(loan => {
+        const guarantor1Id = loan.guarantor1Id?._id || loan.guarantor1Id?.member_id || loan.guarantor1Id
+        const guarantor2Id = loan.guarantor2Id?._id || loan.guarantor2Id?.member_id || loan.guarantor2Id
+        return guarantor1Id === memberId || guarantor2Id === memberId
+      }).length
+
+      // Update the guarantor object with count
+      guarantorData.guarantorCount = guarantorCount
+
+      if (guarantorCount >= 2) {
+        setAlert({
+          open: true,
+          severity: "warning",
+          message: `මෙම සාමාජිකයා දැනටමත් ${guarantorCount} ණය සඳහා ඇපකරුවෙකු වේ. තවත් ණයකට ඇපකරුවෙකු වීමට නොහැක.`,
+        })
+      }
+    } catch (error) {
+      console.error("Error checking guarantor count:", error)
+    }
   }
 
   const handleApply = () => {
@@ -147,14 +183,17 @@ export default function NewLoan() {
         setLoanAmount("")
         setLoanDate(dayjs())
         setGuarantor1_id("")
+        setGuarantor1("")
         setGuarantor2_id("")
+        setGuarantor2("")
       })
       .catch(error => {
         console.error("Error recording loan:", error)
+        const errorMessage = error.response?.data?.message || "නව ණයක් සටහන් කිරීමට නොහැකි විය"
         setAlert({
           open: true,
           severity: "error",
-          message: "නව ණයක් සටහන් කිරීමට නොහැකි විය",
+          message: errorMessage,
         })
       })
 
@@ -296,6 +335,16 @@ useEffect(()=>{
               <Typography>{guarantor1.name}</Typography>
               <Typography>{guarantor1.area}</Typography>
               <Typography>{guarantor1.mobile}</Typography>
+              {guarantor1.name && (
+                <Typography 
+                  sx={{ 
+                    color: (guarantor1.guarantorCount || 0) >= 2 ? "#d32f2f" : "#2e7d32",
+                    fontWeight: "bold"
+                  }}
+                >
+                  ඇප අත්සන් කර ඇති ණය: {guarantor1.guarantorCount || 0}
+                </Typography>
+              )}
               {/* <Typography>{guarantor1.res_tel}</Typography> */}
             </Box>
             <hr></hr>
@@ -333,6 +382,16 @@ useEffect(()=>{
               <Typography>{guarantor2.name}</Typography>
               <Typography>{guarantor2.area}</Typography>
               <Typography>{guarantor2.mobile}</Typography>
+              {guarantor2.name && (
+                <Typography 
+                  sx={{ 
+                    color: (guarantor2.guarantorCount || 0) >= 2 ? "#d32f2f" : "#2e7d32",
+                    fontWeight: "bold"
+                  }}
+                >
+                  ඇප අත්සන් කර ඇති ණය: {guarantor2.guarantorCount || 0}
+                </Typography>
+              )}
               {/* <Typography>{guarantor2.res_tel}</Typography> */}
             </Box>
 
@@ -380,7 +439,8 @@ useEffect(()=>{
                 variant="contained"
                 onClick={handleApply}
                 disabled={
-                  !loanAmount || !loanNumber || !guarantor1 || !guarantor2
+                  !loanAmount || !loanNumber || !guarantor1 || !guarantor2 ||
+                  (guarantor1.guarantorCount || 0) >= 2 || (guarantor2.guarantorCount || 0) >= 2
                 }
                 sx={{ float: "right" }}
               >
