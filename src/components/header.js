@@ -33,6 +33,7 @@ const Header = ({ siteTitle }) => {
   const [loanSchemeAnchorEl, setLoanSchemeAnchorEl] = useState(null)
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
   const [expenseAnchorEl, setExpenseAnchorEl] = useState(null)
+  const [reportAnchorEl, setReportAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isViceSecretary = roles.includes("vice-secretary")
@@ -57,6 +58,9 @@ const Header = ({ siteTitle }) => {
   const handleReceiptMenuClose = () => setReceiptAnchorEl(null)
   const handleExpenseMenuOpen = event => setExpenseAnchorEl(event.currentTarget)
   const handleExpenseMenuClose = () => setExpenseAnchorEl(null)
+
+  const handleReportMenuOpen = event => setReportAnchorEl(event.currentTarget)
+  const handleReportMenuClose = () => setReportAnchorEl(null)
 
   const handleAuthStateChange = ({
     isAuthenticated,
@@ -413,6 +417,27 @@ const Header = ({ siteTitle }) => {
                           }}
                         >
                           වියදම් බලන්න
+                        </MenuItem>
+                      </Menu>
+                      <Button
+                        color="inherit"
+                        onClick={handleReportMenuOpen}
+                        sx={{ textTransform: "none" }}
+                      >
+                        වාර්තා
+                      </Button>
+                      <Menu
+                        anchorEl={reportAnchorEl}
+                        open={Boolean(reportAnchorEl)}
+                        onClose={handleReportMenuClose}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/account/monthly-report")
+                            handleReportMenuClose()
+                          }}
+                        >
+                          මාසික ආදායම්/වියදම් වාර්තාව
                         </MenuItem>
                       </Menu>
                       <Divider
