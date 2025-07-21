@@ -19,7 +19,8 @@ import {
 } from "@mui/material"
 import {
   Print as PrintIcon,
-  Download as DownloadIcon
+  Download as DownloadIcon,
+  Save as SaveIcon
 } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
@@ -58,7 +59,7 @@ export default function MonthlyReport() {
 
     setLoading(true)
     try {
-      const [incomesResponse, expensesResponse, prePeriodIncomesResponse, prePeriodExpensesResponse] = await Promise.all([
+      const [incomesResponse, expensesResponse, lastBalanceResponse] = await Promise.all([
         api.get(`${baseUrl}/account/incomes`, {
           params: {
             startDate: startDate.toISOString(),
@@ -71,48 +72,22 @@ export default function MonthlyReport() {
             endDate: endDate.toISOString()
           }
         }),
-        // Get all transactions before the selected period to calculate starting balance
-        api.get(`${baseUrl}/account/incomes`, {
+        // Get the last stored balance before this period
+        api.get(`${baseUrl}/period-balance/last-balance`, {
           params: {
-            startDate: new Date('2025-01-01').toISOString(),
-            endDate: new Date(startDate.getTime() - 1).toISOString() // Day before start date
-          }
-        }),
-        api.get(`${baseUrl}/account/expenses`, {
-          params: {
-            startDate: new Date('2025-01-01').toISOString(),
-            endDate: new Date(startDate.getTime() - 1).toISOString() // Day before start date
+            beforeDate: startDate.toISOString()
           }
         })
       ])
 
-      if (incomesResponse.data.success && expensesResponse.data.success && 
-          prePeriodIncomesResponse.data.success && prePeriodExpensesResponse.data.success) {
+      if (incomesResponse.data.success && expensesResponse.data.success && lastBalanceResponse.data.success) {
         const incomes = incomesResponse.data.incomes || []
         const expenses = expensesResponse.data.expenses || []
-        const prePeriodIncomes = prePeriodIncomesResponse.data.incomes || []
-        const prePeriodExpenses = prePeriodExpensesResponse.data.expenses || []
+        const lastBalance = lastBalanceResponse.data.balance
         
-        // Get initial amounts from environment (year start)
-        const yearStartCashOnHand = parseFloat(process.env.GATSBY_INITIAL_CASH_ON_HAND || 0)
-        const yearStartBankDeposit = parseFloat(process.env.GATSBY_INITIAL_BANK_DEPOSIT || 0)
-        
-        // Calculate pre-period totals to get starting balance for selected period
-        const prePeriodTotalIncome = prePeriodIncomesResponse.data.totalAmount || 0
-        const prePeriodTotalExpense = prePeriodExpensesResponse.data.totalAmount || 0
-        const prePeriodNetCashFlow = prePeriodTotalIncome - prePeriodTotalExpense
-        
-        // Calculate pre-period bank transactions
-        const prePeriodBankDeposits = prePeriodExpenses
-          .filter(expense => expense.category === 'බැංකු තැන්පතු')
-          .reduce((sum, expense) => sum + expense.amount, 0)
-        const prePeriodBankWithdrawals = prePeriodIncomes
-          .filter(income => income.category === 'බැංකු මුදල් ආපසු ගැනීම')
-          .reduce((sum, income) => sum + income.amount, 0)
-        
-        // Calculate starting balances for the selected period
-        const periodStartCashOnHand = yearStartCashOnHand + prePeriodNetCashFlow
-        const periodStartBankDeposit = yearStartBankDeposit + prePeriodBankDeposits - prePeriodBankWithdrawals
+        // Starting balances for this period (from last stored balance or initial amounts)
+        const periodStartCashOnHand = lastBalance.endingCashOnHand
+        const periodStartBankDeposit = lastBalance.endingBankDeposit
 
         // Calculate totals by category
         const incomeByCategory = calculateIncomeByCategory(incomes)
@@ -196,6 +171,30 @@ export default function MonthlyReport() {
     window.print()
   }
 
+  const handleSaveBalance = async () => {
+    if (!reportData) return
+
+    try {
+      const response = await api.post(`${baseUrl}/period-balance/save-balance`, {
+        periodEndDate: endDate.toISOString(),
+        endingCashOnHand: reportData.totals.currentCashOnHand,
+        endingBankDeposit: reportData.totals.currentBankDeposit,
+        totalIncome: reportData.totals.totalIncome,
+        totalExpense: reportData.totals.totalExpense,
+        netCashFlow: reportData.totals.netCashFlow
+      })
+
+      if (response.data.success) {
+        alert("කාල සීමාවේ ශේෂය සාර්ථකව සුරකින ලදී!")
+      } else {
+        alert("ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය")
+      }
+    } catch (error) {
+      console.error("Error saving balance:", error)
+      alert("ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය")
+    }
+  }
+
   const getIncomeColor = (category) => {
     if (category === 'සාමාජික ගාස්තු' || category === 'දඩ මුදල්') return "info"
     if (category.includes('කුලිය')) return "primary"
@@ -239,8 +238,8 @@ export default function MonthlyReport() {
 
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               {/* Date Range Filter */}
-              <Grid2 container spacing={3} sx={{ marginBottom: "30px" }}>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+              <Grid2 container spacing={2} sx={{ marginBottom: "30px" }}>
+                <Grid2 size={{ xs: 12, sm: 6, md: 2.4 }}>
                   <DatePicker
                     label="ආරම්භක දිනය"
                     value={startDate}
@@ -252,7 +251,7 @@ export default function MonthlyReport() {
                     }}
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+                <Grid2 size={{ xs: 12, sm: 6, md: 2.4 }}>
                   <DatePicker
                     label="අවසාන දිනය"
                     value={endDate}
@@ -264,7 +263,7 @@ export default function MonthlyReport() {
                     }}
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+                <Grid2 size={{ xs: 12, sm: 4, md: 2.4 }}>
                   <Button
                     variant="contained"
                     onClick={fetchReportData}
@@ -278,7 +277,7 @@ export default function MonthlyReport() {
                     {loading ? "සකසමින්..." : "වාර්තාව සකසන්න"}
                   </Button>
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+                <Grid2 size={{ xs: 12, sm: 4, md: 2.4 }}>
                   <Button
                     variant="outlined"
                     startIcon={<PrintIcon />}
@@ -291,6 +290,22 @@ export default function MonthlyReport() {
                     }}
                   >
                     මුද්‍රණය කරන්න
+                  </Button>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 4, md: 2.4 }}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<SaveIcon />}
+                    onClick={handleSaveBalance}
+                    disabled={!reportData}
+                    sx={{ 
+                      height: "56px", 
+                      width: "100%",
+                      textTransform: "none" 
+                    }}
+                  >
+                    ශේෂය සුරකින්න
                   </Button>
                 </Grid2>
               </Grid2>
