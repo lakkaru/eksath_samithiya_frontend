@@ -58,32 +58,75 @@ export default function MonthlyReport() {
     }
 
     setLoading(true)
+    console.log("Starting report generation...")
+    console.log("Date range:", startDate.toISOString(), "to", endDate.toISOString())
+    
     try {
-      const [incomesResponse, expensesResponse, lastBalanceResponse] = await Promise.all([
-        api.get(`${baseUrl}/account/incomes`, {
-          params: {
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString()
-          }
-        }),
-        api.get(`${baseUrl}/account/expenses`, {
-          params: {
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString()
-          }
-        }),
-        // Get the last stored balance before this period
-        api.get(`${baseUrl}/period-balance/last-balance`, {
+      console.log("Making API calls...")
+      console.log("Base URL:", baseUrl)
+      
+      // Make API calls individually to isolate which one is hanging
+      console.log("1. Fetching incomes...")
+      const incomesResponse = await api.get(`${baseUrl}/account/incomes`, {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        }
+      })
+      console.log("✓ Incomes response received:", incomesResponse.data)
+
+      console.log("2. Fetching expenses...")
+      const expensesResponse = await api.get(`${baseUrl}/account/expenses`, {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        }
+      })
+      console.log("✓ Expenses response received:", expensesResponse.data)
+
+      console.log("3. Fetching last balance...")
+      let lastBalanceResponse
+      try {
+        lastBalanceResponse = await api.get(`${baseUrl}/period-balance/last-balance`, {
           params: {
             beforeDate: startDate.toISOString()
-          }
+          },
+          timeout: 10000 // 10 second timeout
         })
-      ])
+        console.log("✓ Last balance response received:", lastBalanceResponse.data)
+      } catch (balanceError) {
+        console.warn("Failed to fetch last balance, using initial values from environment:", balanceError.message)
+        // Use initial values from environment variables if the API call fails or no records found
+        const initialCashOnHand = parseFloat(process.env.GATSBY_INITIAL_CASH_ON_HAND || 0)
+        const initialBankDeposit = parseFloat(process.env.GATSBY_INITIAL_BANK_DEPOSIT || 0)
+        
+        console.log("Using initial values from .env:", {
+          initialCashOnHand,
+          initialBankDeposit
+        })
+        
+        lastBalanceResponse = {
+          data: {
+            success: true,
+            balance: {
+              endingCashOnHand: initialCashOnHand,
+              endingBankDeposit: initialBankDeposit,
+              periodEndDate: new Date('2024-12-31'),
+              isInitial: true
+            }
+          }
+        }
+      }
 
       if (incomesResponse.data.success && expensesResponse.data.success && lastBalanceResponse.data.success) {
+        console.log("All API calls successful, processing data...")
         const incomes = incomesResponse.data.incomes || []
         const expenses = expensesResponse.data.expenses || []
         const lastBalance = lastBalanceResponse.data.balance
+        
+        console.log("Processing incomes:", incomes.length, "items")
+        console.log("Processing expenses:", expenses.length, "items")
+        console.log("Last balance:", lastBalance)
         
         // Starting balances for this period (from last stored balance or initial amounts)
         const periodStartCashOnHand = lastBalance.endingCashOnHand
@@ -111,6 +154,7 @@ export default function MonthlyReport() {
         const currentBankDeposit = periodStartBankDeposit + periodBankDeposits - periodBankWithdrawals
         const currentCashOnHand = periodStartCashOnHand + netCashFlow
 
+        console.log("Report data calculated successfully")
         setReportData({
           period: { startDate, endDate },
           incomes,
@@ -129,11 +173,19 @@ export default function MonthlyReport() {
             periodStartBankDeposit // Starting balance for this period
           }
         })
+      } else {
+        console.error("One or more API calls failed:")
+        console.error("Incomes success:", incomesResponse.data.success)
+        console.error("Expenses success:", expensesResponse.data.success)
+        console.error("Balance success:", lastBalanceResponse.data.success)
+        alert("API ප්‍රතිචාරවල දෝෂයක් සිදුවිය")
       }
     } catch (error) {
       console.error("Error fetching report data:", error)
-      alert("වාර්තා දත්ත ලබා ගැනීමේදී දෝෂයක් සිදුවිය")
+      console.error("Error details:", error.response?.data || error.message)
+      alert(`වාර්තා දත්ත ලබා ගැනීමේදී දෝෂයක් සිදුවිය: ${error.response?.data?.message || error.message}`)
     } finally {
+      console.log("Report generation completed, setting loading to false")
       setLoading(false)
     }
   }
@@ -555,7 +607,7 @@ export default function MonthlyReport() {
         </Box>
       </section>
 
-      <style jsx global>{`
+      <style>{`
         @media print {
           .no-print {
             display: none !important;

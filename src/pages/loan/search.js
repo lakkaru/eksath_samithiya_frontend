@@ -275,7 +275,7 @@ export default function Search() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("loan-treasurer")) {
+    if (!isAuthenticated || (!roles.includes("loan-treasurer") && !roles.includes("treasurer"))) {
       navigate("/login/user-login")
     }
   }
@@ -384,39 +384,47 @@ export default function Search() {
               }))}
             />
             <Box sx={{ marginTop: 2, padding: 2, border: "1px solid #ccc" }}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="ගෙවීමේ දිනය"
-                  value={paymentDate}
-                  onChange={handleDateChange}
-                  format="YYYY/MM/DD"
-                />
-              </LocalizationProvider>
-              <TextField
-                label="ගෙවන මුදල"
-                type="number"
-                value={paymentAmount}
-                onChange={e => {
-                  setPaymentAmount(e.target.value)
-                  calculatePaymentSplit(e.target.value)
-                }}
-                sx={{ mx: "20px" }}
-              />
-              <Typography>
-                ගෙවන දඩ පොලිය: රු. {payingPenaltyInterest}
-              </Typography>
-              <Typography>ගෙවන පොලිය: රු. {payingInterest}</Typography>
-              <Typography>ගෙවන ණය මුදල: රු. {payingPrincipal}</Typography>
-              <Button
-                variant="contained"
-                onClick={handleLoanPayment}
-                disabled={
-                  parseFloat(paymentAmount) <
-                  loan.interest + loan.penaltyInterest
-                }
-              >
-                ගෙවන්න
-              </Button>
+              {roles.includes("loan-treasurer") ? (
+                <>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="ගෙවීමේ දිනය"
+                      value={paymentDate}
+                      onChange={handleDateChange}
+                      format="YYYY/MM/DD"
+                    />
+                  </LocalizationProvider>
+                  <TextField
+                    label="ගෙවන මුදල"
+                    type="number"
+                    value={paymentAmount}
+                    onChange={e => {
+                      setPaymentAmount(e.target.value)
+                      calculatePaymentSplit(e.target.value)
+                    }}
+                    sx={{ mx: "20px" }}
+                  />
+                  <Typography>
+                    ගෙවන දඩ පොලිය: රු. {payingPenaltyInterest}
+                  </Typography>
+                  <Typography>ගෙවන පොලිය: රු. {payingInterest}</Typography>
+                  <Typography>ගෙවන ණය මුදල: රු. {payingPrincipal}</Typography>
+                  <Button
+                    variant="contained"
+                    onClick={handleLoanPayment}
+                    disabled={
+                      parseFloat(paymentAmount) <
+                      loan.interest + loan.penaltyInterest
+                    }
+                  >
+                    ගෙවන්න
+                  </Button>
+                </>
+              ) : (
+                <Typography sx={{ textAlign: "center", color: "#666", padding: "20px" }}>
+                  ණය ගෙවීම් කළමනාකරණය කිරීමට ණය භාණ්ඩාගාරික අවසර අවශ්‍ය වේ.
+                </Typography>
+              )}
             </Box>
           </>
         )}

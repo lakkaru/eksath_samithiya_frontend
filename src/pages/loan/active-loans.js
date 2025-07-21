@@ -109,7 +109,7 @@ export default function ActiveLoans() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("loan-treasurer")) {
+    if (!isAuthenticated || (!roles.includes("loan-treasurer") && !roles.includes("treasurer"))) {
       navigate("/login/user-login")
     }
   }
@@ -207,15 +207,17 @@ export default function ActiveLoans() {
                             >
                               <ViewIcon />
                             </IconButton>
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => handleDeleteClick(loan)}
-                              title="ඉවත් කරන්න"
-                              disabled={!isLoanCreatedToday(loan.loanDate)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
+                            {roles.includes("loan-treasurer") && (
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => handleDeleteClick(loan)}
+                                title="ඉවත් කරන්න"
+                                disabled={!isLoanCreatedToday(loan.loanDate)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))

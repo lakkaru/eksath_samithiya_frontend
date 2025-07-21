@@ -39,6 +39,7 @@ const Header = ({ siteTitle }) => {
   const isViceSecretary = roles.includes("vice-secretary")
   const isLoanTreasurer = roles.includes("loan-treasurer")
   const isTreasurer = roles.includes("treasurer")
+  const hasLoanAccess = isLoanTreasurer || isTreasurer
 
   const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
   const handleMemberMenuClose = () => setMemberAnchorEl(null)
@@ -84,6 +85,11 @@ const Header = ({ siteTitle }) => {
 
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const handleMobileNavigate = (path) => {
+    setMobileMenuOpen(false)
+    navigate(path)
   }
   useEffect(() => {
     api
@@ -287,16 +293,8 @@ const Header = ({ siteTitle }) => {
                     </>
                   )}
 
-                  {isLoanTreasurer && (
+                  {hasLoanAccess && (
                     <>
-                      <Button
-                        color="inherit"
-                        // variant="outlined"
-                        onClick={() => navigate("/member/fullDetails")}
-                        sx={{ textTransform: "none" }}
-                      >
-                        සාමාජික තොරතුරු
-                      </Button>
                       <Button
                         color="inherit"
                         onClick={handleLoanSchemeMenuOpen}
@@ -309,14 +307,17 @@ const Header = ({ siteTitle }) => {
                         open={Boolean(loanSchemeAnchorEl)}
                         onClose={handleLoanSchemeMenuClose}
                       >
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/loan/new-loan")
-                            handleLoanSchemeMenuClose()
-                          }}
-                        >
-                          නව ණයක්
-                        </MenuItem>
+                        {/* Show New Loan only for loan-treasurer, not for treasurer */}
+                        {isLoanTreasurer && !isTreasurer && (
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/loan/new-loan")
+                              handleLoanSchemeMenuClose()
+                            }}
+                          >
+                            නව ණයක්
+                          </MenuItem>
+                        )}
                         <MenuItem
                           onClick={() => {
                             navigate("/loan/search")
@@ -333,14 +334,17 @@ const Header = ({ siteTitle }) => {
                         >
                           ක්‍රියාකාරී ණය
                         </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/loan/payments-report")
-                            handleLoanSchemeMenuClose()
-                          }}
-                        >
-                          ගෙවීම් වාර්තාව
-                        </MenuItem>
+                        {/* Show Payments Report only for loan-treasurer, not for treasurer */}
+                        {isLoanTreasurer && !isTreasurer && (
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/loan/payments-report")
+                              handleLoanSchemeMenuClose()
+                            }}
+                          >
+                            ගෙවීම් වාර්තාව
+                          </MenuItem>
+                        )}
                       </Menu>
                       <Divider
                         orientation="vertical"
@@ -575,7 +579,7 @@ const Header = ({ siteTitle }) => {
                         <Button
                           color="inherit"
                           // variant="outlined"
-                          onClick={() => navigate("/member/fullDetails")}
+                          onClick={() => handleMobileNavigate("/member/fullDetails")}
                           sx={{ textTransform: "none", width: "100%" }}
                         >
                           සාමාජික තොරතුරු
@@ -610,25 +614,41 @@ const Header = ({ siteTitle }) => {
                         <hr />
                       </>
                     )}
-                    {isLoanTreasurer && (
+                    {hasLoanAccess && !isTreasurer && (
                       <>
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
                           ණය භාණ්ඩාගාරික
                         </Typography>
+                        <Typography sx={{ textAlign: "center", color: "teal", marginTop: "10px" }}>
+                          ණය තොරතුරු
+                        </Typography>
                         <Button
                           color="inherit"
-                          // variant="outlined"
-                          onClick={() => navigate("/member/fullDetails")}
-                          sx={{ textTransform: "none" }}
+                          onClick={() => handleMobileNavigate("/loan/new-loan")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
                         >
-                          සාමාජික තොරතුරු
+                          • නව ණයක්
                         </Button>
                         <Button
                           color="inherit"
-                          onClick={handleLoanSchemeMenuOpen}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          onClick={() => handleMobileNavigate("/loan/search")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
                         >
-                          ණය තොරතුරු
+                          • ණය සෙවීම
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/loan/active-loans")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                        >
+                          • ක්‍රියාකාරී ණය
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/loan/payments-report")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                        >
+                          • ගෙවීම් වාර්තාව
                         </Button>
                         <hr />
                       </>
@@ -660,6 +680,25 @@ const Header = ({ siteTitle }) => {
                           sx={{ textTransform: "none", width: "100%" }}
                         >
                           මුදල් ගෙවීම්
+                        </Button>
+
+                        {/* Loan menu items for treasurers */}
+                        <Typography sx={{ textAlign: "center", color: "teal", marginTop: "10px" }}>
+                          ණය තොරතුරු
+                        </Typography>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/loan/search")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                        >
+                          • ණය සෙවීම
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/loan/active-loans")}
+                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                        >
+                          • ක්‍රියාකාරී ණය
                         </Button>
 
                         <hr />
