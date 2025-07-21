@@ -333,6 +333,14 @@ const Header = ({ siteTitle }) => {
                         >
                           ක්‍රියාකාරී ණය
                         </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/loan/payments-report")
+                            handleLoanSchemeMenuClose()
+                          }}
+                        >
+                          ගෙවීම් වාර්තාව
+                        </MenuItem>
                       </Menu>
                       <Divider
                         orientation="vertical"
