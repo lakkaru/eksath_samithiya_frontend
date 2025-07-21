@@ -295,6 +295,16 @@ const Header = ({ siteTitle }) => {
 
                   {hasLoanAccess && (
                     <>
+                      {/* Show Member Details only for loan-treasurer, not for treasurer (treasurer has it in their own section) */}
+                      {isLoanTreasurer && !isTreasurer && (
+                        <Button
+                          color="inherit"
+                          onClick={() => navigate("/member/fullDetails")}
+                          sx={{ textTransform: "none" }}
+                        >
+                          සාමාජික තොරතුරු
+                        </Button>
+                      )}
                       <Button
                         color="inherit"
                         onClick={handleLoanSchemeMenuOpen}
@@ -619,6 +629,13 @@ const Header = ({ siteTitle }) => {
                         <Typography sx={{ textAlign: "center", color: "teal" }}>
                           ණය භාණ්ඩාගාරික
                         </Typography>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/member/fullDetails")}
+                          sx={{ textTransform: "none", width: "100%" }}
+                        >
+                          සාමාජික තොරතුරු
+                        </Button>
                         <Typography sx={{ textAlign: "center", color: "teal", marginTop: "10px" }}>
                           ණය තොරතුරු
                         </Typography>
