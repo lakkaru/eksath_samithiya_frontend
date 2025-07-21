@@ -142,7 +142,8 @@ export default function ViewIncome() {
     ]
     
     const financialIncomeCategories = [
-      "බැංකු පොලී ආදායම"
+      "බැංකු පොලී ආදායම",
+      "බැංකු මුදල් ආපසු ගැනීම"
     ]
 
     const donationCategories = [
@@ -232,17 +233,38 @@ export default function ViewIncome() {
                     sx={{ height: "56px" }}
                   >
                     <MenuItem value="all">සියලුම ආදායම්</MenuItem>
+                    
+                    <MenuItem disabled>
+                      <em>සාමාජික ආදායම්</em>
+                    </MenuItem>
                     <MenuItem value="සාමාජික ගාස්තු">සාමාජික ගාස්තු</MenuItem>
                     <MenuItem value="දඩ මුදල්">දඩ මුදල්</MenuItem>
+                    
+                    <MenuItem disabled>
+                      <em>සේවා ආදායම්</em>
+                    </MenuItem>
                     <MenuItem value="කූඩාරම් කුලිය">කූඩාරම් කුලිය</MenuItem>
                     <MenuItem value="පිඟන් කුලිය">පිඟන් කුලිය</MenuItem>
                     <MenuItem value="පුටු කුලිය">පුටු කුලිය</MenuItem>
                     <MenuItem value="බුෆේ සෙට් කුලිය">බුෆේ සෙට් කුලිය</MenuItem>
                     <MenuItem value="ශබ්ද විකාශන කුලිය">ශබ්ද විකාශන කුලිය</MenuItem>
+                    
+                    <MenuItem disabled>
+                      <em>මූල්‍ය ආදායම්</em>
+                    </MenuItem>
                     <MenuItem value="බැංකු පොලී ආදායම">බැංකු පොලී ආදායම</MenuItem>
+                    <MenuItem value="බැංකු මුදල් ආපසු ගැනීම">බැංකු මුදල් ආපසු ගැනීම</MenuItem>
+                    
+                    <MenuItem disabled>
+                      <em>පරිත්‍යාග</em>
+                    </MenuItem>
                     <MenuItem value="වෙනත් සංවිධානවලින් පරිත්‍යාග">වෙනත් සංවිධානවලින් පරිත්‍යාග</MenuItem>
                     <MenuItem value="පුද්ගලික පරිත්‍යාග">පුද්ගලික පරිත්‍යාග</MenuItem>
                     <MenuItem value="රජයේ ආධාර">රජයේ ආධාර</MenuItem>
+                    
+                    <MenuItem disabled>
+                      <em>අනෙකුත් ආදායම්</em>
+                    </MenuItem>
                     <MenuItem value="වෙනත් ආදායම්">වෙනත් ආදායම්</MenuItem>
                     <MenuItem value="විශේෂ ඉසව්">විශේෂ ඉසව්</MenuItem>
                   </TextField>

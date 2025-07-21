@@ -55,7 +55,8 @@ export default function EditIncome({ location }) {
   ]
 
   const financialIncomeCategories = [
-    "බැංකු පොලී ආදායම"
+    "බැංකු පොලී ආදායම",
+    "බැංකු මුදල් ආපසු ගැනීම"
   ]
 
   const donationCategories = [
