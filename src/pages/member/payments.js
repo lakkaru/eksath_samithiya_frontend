@@ -20,7 +20,7 @@ export default function Payments() {
   const columnsArray = [
     { id: "date", label: "දිනය", minWidth: 50 },
     { id: "memAmount", label: "සාමාජික මුදල්", minWidth: 50 },
-    { id: "fineAmount", label: "දඩ මුදල් ", minWidth: 50 },
+    { id: "fineAmount", label: "දඩ/හිඟ මුදල් ", minWidth: 50 },
   ]
   // console.log('groupedPayments:', groupedPayments["2024"]?.totals.memAmount);
   //   let fines = []
@@ -192,7 +192,7 @@ export default function Payments() {
               color: "orange",
             }}
           >
-            දඩ මුදල් රු.
+            දඩ/හිඟ මුදල් රු.
             {memberInfo?.fineTotal || "0"}
           </Typography>
           <Typography

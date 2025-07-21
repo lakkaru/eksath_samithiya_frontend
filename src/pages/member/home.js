@@ -166,7 +166,7 @@ const MemberHomePage = () => {
                 primary="මහා සභාවට නොපැමිණිම්"
                 secondary={
                   memberData?.meetingAbsents
-                    ? `${memberData?.meetingAbsents} times`
+                    ? `${memberData?.meetingAbsents} `
                     : "නැත"
                 }
               />
