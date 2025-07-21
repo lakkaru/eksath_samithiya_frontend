@@ -252,9 +252,13 @@ export default function LoanPaymentsReport() {
   return (
     <Layout>
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
-      <section style={{ padding: "20px" }} className="no-print">
-        <Box sx={{ maxWidth: "1400px", margin: "0 auto" }}>
-          <Paper sx={{ padding: "30px", borderRadius: "10px" }}>
+      <section style={{ 
+        padding: "10px",
+        margin: "0 auto",
+        width: "100%" 
+      }} className="no-print">
+        <Box sx={{ width: "100%", margin: "0 auto" }}>
+          <Paper sx={{ padding: "20px", borderRadius: "10px" }}>
             <Typography
               variant="h4"
               gutterBottom
@@ -361,8 +365,8 @@ export default function LoanPaymentsReport() {
                   <Typography variant="h5" sx={{ marginBottom: "15px", color: "#2e7d32" }}>
                     ගෙවීම් විස්තර
                   </Typography>
-                  <TableContainer component={Paper}>
-                    <Table size="small">
+                  <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                    <Table size="small" sx={{ minWidth: '100%' }}>
                       <TableHead>
                         <TableRow sx={{ backgroundColor: "#e8f5e8" }}>
                           <TableCell sx={{ fontWeight: "bold" }}>දිනය</TableCell>
