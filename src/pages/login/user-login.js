@@ -58,8 +58,8 @@ export default function UserLogin() {
 
   return (
     <Layout>
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)' }}>
-        <Box sx={{ width: { xs: '95%', sm: 400 }, mx: 'auto' }}>
+      <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', background: 'linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)' }}>
+        <Box sx={{ width: { xs: '95%', sm: 400 }, mx: 'auto', mt: { xs: 6, sm: 12 } }}>
           <Box sx={{ boxShadow: 6, borderRadius: 4, bgcolor: 'white', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Box sx={{ bgcolor: '#1976d2', borderRadius: '50%', width: 64, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
