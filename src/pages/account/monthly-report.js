@@ -227,13 +227,17 @@ export default function MonthlyReport() {
     if (!reportData) return
 
     try {
-      const response = await api.post(`${baseUrl}/period-balance/save-balance`, {
+      const dataToSave = {
         periodEndDate: endDate.toISOString(),
         endingCashOnHand: reportData.totals.currentCashOnHand,
         endingBankDeposit: reportData.totals.currentBankDeposit,
         totalIncome: reportData.totals.totalIncome,
         totalExpense: reportData.totals.totalExpense,
         netCashFlow: reportData.totals.netCashFlow
+      }
+
+      const response = await api.post(`${baseUrl}/period-balance/save-balance`, dataToSave, {
+        timeout: 15000 // 15 second timeout
       })
 
       if (response.data.success) {
@@ -243,7 +247,8 @@ export default function MonthlyReport() {
       }
     } catch (error) {
       console.error("Error saving balance:", error)
-      alert("ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය")
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message
+      alert(`ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය: ${errorMessage}`)
     }
   }
 
