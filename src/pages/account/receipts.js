@@ -121,9 +121,9 @@ export default function Receipts() {
     setSavingData(false)
   }
 
-  const handleDelete = async (date, memberId, finePayment, memPayment) => {
+  const handleDelete = async (date, memberId) => {
     try {
-      await api.delete(`${baseUrl}/account/receipts/${date}/${memberId}/${finePayment}/${memPayment}`)
+      await api.delete(`${baseUrl}/account/receipts/${date}/${memberId}`)
       
       // Refresh payments list
       const updatedPayments = await api.get(
@@ -168,9 +168,7 @@ export default function Receipts() {
           color="error"
           onClick={() => handleDelete(
             payment.date,
-            payment.member_Id,
-            payment.finePayment,
-            payment.memPayment
+            payment.member_Id
           )}
         >
           Delete

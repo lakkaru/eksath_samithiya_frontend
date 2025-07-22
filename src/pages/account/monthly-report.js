@@ -15,7 +15,8 @@ import {
   Divider,
   Card,
   CardContent,
-  Alert
+  Alert,
+  Snackbar
 } from "@mui/material"
 import {
   Print as PrintIcon,
@@ -39,6 +40,13 @@ export default function MonthlyReport() {
   const [loading, setLoading] = useState(false)
   const [reportData, setReportData] = useState(null)
   
+  // Notification state
+  const [notification, setNotification] = useState({
+    open: false,
+    message: '',
+    severity: 'info' // 'success', 'error', 'warning', 'info'
+  })
+  
   // Date range filters
   const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
   const [endDate, setEndDate] = useState(new Date())
@@ -51,9 +59,24 @@ export default function MonthlyReport() {
     }
   }
 
+  const showNotification = (message, severity = 'info') => {
+    setNotification({
+      open: true,
+      message,
+      severity
+    })
+  }
+
+  const handleCloseNotification = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setNotification({ ...notification, open: false })
+  }
+
   const fetchReportData = async () => {
     if (!startDate || !endDate) {
-      alert("කරුණාකර දින පරාසය තෝරන්න")
+      showNotification("කරුණාකර දින පරාසය තෝරන්න", "warning")
       return
     }
 
@@ -178,12 +201,12 @@ export default function MonthlyReport() {
         console.error("Incomes success:", incomesResponse.data.success)
         console.error("Expenses success:", expensesResponse.data.success)
         console.error("Balance success:", lastBalanceResponse.data.success)
-        alert("API ප්‍රතිචාරවල දෝෂයක් සිදුවිය")
+        showNotification("API ප්‍රතිචාරවල දෝෂයක් සිදුවිය", "error")
       }
     } catch (error) {
       console.error("Error fetching report data:", error)
       console.error("Error details:", error.response?.data || error.message)
-      alert(`වාර්තා දත්ත ලබා ගැනීමේදී දෝෂයක් සිදුවිය: ${error.response?.data?.message || error.message}`)
+      showNotification(`වාර්තා දත්ත ලබා ගැනීමේදී දෝෂයක් සිදුවිය: ${error.response?.data?.message || error.message}`, "error")
     } finally {
       console.log("Report generation completed, setting loading to false")
       setLoading(false)
@@ -241,14 +264,14 @@ export default function MonthlyReport() {
       })
 
       if (response.data.success) {
-        alert("කාල සීමාවේ ශේෂය සාර්ථකව සුරකින ලදී!")
+        showNotification("කාල සීමාවේ ශේෂය සාර්ථකව සුරකින ලදී!", "success")
       } else {
-        alert("ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය")
+        showNotification("ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය", "error")
       }
     } catch (error) {
       console.error("Error saving balance:", error)
       const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message
-      alert(`ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය: ${errorMessage}`)
+      showNotification(`ශේෂය සුරැකීමේදී දෝෂයක් සිදුවිය: ${errorMessage}`, "error")
     }
   }
 
@@ -632,6 +655,23 @@ export default function MonthlyReport() {
           }
         }
       `}</style>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={handleCloseNotification} 
+          severity={notification.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Layout>
   )
 }
