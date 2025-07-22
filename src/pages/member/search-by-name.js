@@ -37,7 +37,7 @@ export default function SearchByName() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!roles.includes("vice-secretary")) {
+    if (!isAuthenticated || !roles.includes("vice-secretary")) {
       navigate("/login/user-login")
     }
   }

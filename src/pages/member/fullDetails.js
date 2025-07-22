@@ -28,7 +28,7 @@ export default function FullDetails() {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
     const allowedRoles = ["vice-secretary", "treasurer", "loan-treasurer"]
-    if (!roles.some(role => allowedRoles.includes(role))) {
+    if (!isAuthenticated || !roles.some(role => allowedRoles.includes(role))) {
       navigate("/login/user-login")
     }
   }

@@ -92,16 +92,22 @@ const Header = ({ siteTitle }) => {
     navigate(path)
   }
   useEffect(() => {
-    api
-      .get(`${baseUrl}/member/hasLoan`)
-      .then(response => {
-        console.log(response?.data.loan)
-        setHasLoan(response?.data.loan)
-      })
-      .catch(error => {
-        console.error("Axios error: ", error)
-      })
-  }, [])
+    // Only check for loan if user is authenticated
+    if (isAuthenticated) {
+      api
+        .get(`${baseUrl}/member/hasLoan`)
+        .then(response => {
+          console.log(response?.data.loan)
+          setHasLoan(response?.data.loan)
+        })
+        .catch(error => {
+          console.error("Axios error: ", error)
+        })
+    } else {
+      // Reset loan status when not authenticated
+      setHasLoan(false)
+    }
+  }, [isAuthenticated])
 
   return (
     <header>

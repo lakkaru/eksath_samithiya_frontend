@@ -80,7 +80,7 @@ export default function LoanPaymentsReport() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!roles.includes("loan-treasurer")) {
+    if (!isAuthenticated || !roles.includes("loan-treasurer")) {
       navigate("/login/user-login")
     }
   }

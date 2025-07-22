@@ -48,7 +48,8 @@ export default function AddExpense() {
     "මරණ ප්‍රතිලාභ ගෙවීම්",
     "ක්ෂණික ප්‍රතිලාභ ගෙවීම්", 
     "මළවුන් රැගෙන යාමේ ගාස්තු",
-    "ද්‍රව්‍ය ආධාර හිග"
+    "ද්‍රව්‍ය ආධාර හිග",
+    "කලත්‍රයාගේ දෙමව්පිය මරණ ප්‍රතිලාභ ගෙවීම්"
   ]
 
   // === සේවා වියදම් (Service Expenses) ===
@@ -107,7 +108,7 @@ export default function AddExpense() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!roles.includes("treasurer")) {
+    if (!isAuthenticated || !roles.includes("treasurer")) {
       navigate("/login/user-login")
     }
   }
@@ -214,7 +215,7 @@ export default function AddExpense() {
       }
     } catch (error) {
       console.error("Error adding expense:", error)
-      const errorMessage = error.response?.data?.error || "වියදම ඇතුලත් කිරීමේදී දෝෂයක් සිදුවිය"
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || "වියදම ඇතුලත් කිරීමේදී දෝෂයක් සිදුවිය"
       showAlert(errorMessage, "error")
     } finally {
       setLoading(false)

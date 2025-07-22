@@ -73,7 +73,7 @@ export default function EditExpense({ params }) {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!roles.includes("treasurer")) {
+    if (!isAuthenticated || !roles.includes("treasurer")) {
       navigate("/login/user-login")
     }
   }

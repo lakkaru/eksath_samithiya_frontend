@@ -40,6 +40,15 @@ const AuthComponent = ({ onAuthStateChange }) => {
       } catch (error) {
         console.error("Error decoding token:", error)
         setIsAuthenticated(false)
+        if (onAuthStateChange) {
+          onAuthStateChange({ isAuthenticated: false, roles: [], memberName: "" })
+        }
+      }
+    } else {
+      // No token found - user is not authenticated
+      setIsAuthenticated(false)
+      if (onAuthStateChange) {
+        onAuthStateChange({ isAuthenticated: false, roles: [], memberName: "" })
       }
     }
   }, [])
