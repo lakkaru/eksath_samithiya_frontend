@@ -154,7 +154,11 @@ const Header = ({ siteTitle }) => {
                   height: { xs: 32, sm: 40 }
                 }}
               >
-                <AccountBalanceIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
+                <AccountBalanceIcon 
+                  sx={{ 
+                    fontSize: { xs: '1.25rem', sm: '1.5rem' }
+                  }} 
+                />
               </Avatar>
               <Typography
                 variant="h6"
@@ -906,12 +910,13 @@ const Header = ({ siteTitle }) => {
                   top: "100%",
                   left: "0",
                   right: "0",
-                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                  background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                  boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
                   zIndex: 1000,
                   display: { xs: "block", sm: "none" },
                   borderRadius: 0,
-                  borderTop: '2px solid rgba(102, 126, 234, 0.3)',
+                  borderTop: '3px solid #667eea',
+                  borderBottom: '1px solid rgba(0,0,0,0.1)',
                   maxHeight: 'calc(100vh - 64px)',
                   overflowY: 'auto'
                 }}
@@ -957,36 +962,46 @@ const Header = ({ siteTitle }) => {
                         </Typography>
                         <Button
                           color="inherit"
-                          onClick={handleAttendanceMenuOpen}
+                          onClick={() => handleMobileNavigate("/forms/MeetingSheet")}
                           startIcon={<GroupsIcon />}
                           sx={{ 
                             textTransform: "none", 
                             width: "100%",
                             mb: 1,
                             justifyContent: 'flex-start',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                            border: '1px solid rgba(102, 126, 234, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(102, 126, 234, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
                             borderRadius: 2,
                             py: 1.5,
-                            color: '#333'
+                            color: '#333',
+                            transition: 'all 0.2s ease'
                           }}
                         >
                           පැමිණීම
                         </Button>
                         <Button
                           color="inherit"
-                          onClick={handleMembershipMenuOpen}
+                          onClick={() => handleMobileNavigate("/member/deathById")}
                           startIcon={<MonetizationOnIcon />}
                           sx={{ 
                             textTransform: "none", 
                             width: "100%",
                             mb: 1,
                             justifyContent: 'flex-start',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                            border: '1px solid rgba(102, 126, 234, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(102, 126, 234, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
                             borderRadius: 2,
                             py: 1.5,
-                            color: '#333'
+                            color: '#333',
+                            transition: 'all 0.2s ease'
                           }}
                         >
                           අවමංගල්‍ය
@@ -1000,11 +1015,16 @@ const Header = ({ siteTitle }) => {
                             width: "100%",
                             mb: 2,
                             justifyContent: 'flex-start',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                            border: '1px solid rgba(102, 126, 234, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(102, 126, 234, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
                             borderRadius: 2,
                             py: 1.5,
-                            color: '#333'
+                            color: '#333',
+                            transition: 'all 0.2s ease'
                           }}
                         >
                           සාමාජික තොරතුරු
@@ -1020,7 +1040,7 @@ const Header = ({ siteTitle }) => {
                         </Typography>
                         <Button
                           color="inherit"
-                          onClick={() => navigate("/member/add-member")}
+                          onClick={() => handleMobileNavigate("/member/add-member")}
                           sx={{ 
                             textTransform: "none", 
                             width: "100%", 
@@ -1038,7 +1058,7 @@ const Header = ({ siteTitle }) => {
                         </Button>
                         <Button
                           color="inherit"
-                          onClick={() => navigate("/member/search-by-area")}
+                          onClick={() => handleMobileNavigate("/member/search-by-area")}
                           sx={{ 
                             textTransform: "none", 
                             width: "100%", 
@@ -1056,7 +1076,7 @@ const Header = ({ siteTitle }) => {
                         </Button>
                         <Button
                           color="inherit"
-                          onClick={() => navigate("/member/search-by-name")}
+                          onClick={() => handleMobileNavigate("/member/search-by-name")}
                           sx={{ 
                             textTransform: "none", 
                             width: "100%", 
@@ -1097,11 +1117,16 @@ const Header = ({ siteTitle }) => {
                             width: "100%",
                             mb: 2,
                             justifyContent: 'flex-start',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                            border: '1px solid rgba(102, 126, 234, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(102, 126, 234, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
                             borderRadius: 2,
                             py: 1.5,
-                            color: '#333'
+                            color: '#333',
+                            transition: 'all 0.2s ease'
                           }}
                         >
                           සාමාජික තොරතුරු
@@ -1191,73 +1216,136 @@ const Header = ({ siteTitle }) => {
                       </Box>
                     )}
                     {isTreasurer && (
-                      <>
-                        <Typography sx={{ textAlign: "center", color: "teal" }}>
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ 
+                          textAlign: "center", 
+                          color: "#00897b", 
+                          fontWeight: 'bold',
+                          mb: 2,
+                          py: 1,
+                          backgroundColor: 'rgba(0, 150, 136, 0.1)',
+                          borderRadius: 1
+                        }}>
                           භාණ්ඩාගාරික
                         </Typography>
                         <Button
                           color="inherit"
-                          // variant="outlined"
-                          onClick={() => navigate("/member/fullDetails")}
-                          sx={{ textTransform: "none" }}
+                          onClick={() => handleMobileNavigate("/member/fullDetails")}
+                          startIcon={<PersonIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(0, 150, 136, 0.15)',
+                            border: '1px solid rgba(0, 150, 136, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(0, 150, 136, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
                         >
                           සාමාජික තොරතුරු
                         </Button>
                         <Button
                           color="inherit"
-                          // onClick={() => navigate("/member/payments")}
-                          onClick={handleReceiptMenuOpen}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          onClick={() => handleMobileNavigate("/account/receipts")}
+                          startIcon={<PaymentIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(0, 150, 136, 0.15)',
+                            border: '1px solid rgba(0, 150, 136, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(0, 150, 136, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
                         >
                           මුදල් ලැබීම්
                         </Button>
                         <Button
                           color="inherit"
-                          onClick={handleExpenseMenuOpen}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          onClick={() => handleMobileNavigate("/account/add-expense")}
+                          startIcon={<MonetizationOnIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(0, 150, 136, 0.15)',
+                            border: '1px solid rgba(0, 150, 136, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(0, 150, 136, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
                         >
                           මුදල් ගෙවීම්
                         </Button>
 
                         {/* Loan menu items for treasurers */}
-                        <Typography sx={{ textAlign: "center", color: "teal", marginTop: "10px" }}>
+                        <Typography variant="body2" sx={{ 
+                          color: "#666", 
+                          fontSize: "0.875rem", 
+                          fontWeight: 'bold',
+                          mb: 1,
+                          ml: 2
+                        }}>
                           ණය තොරතුරු
                         </Typography>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/loan/search")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 0.5,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(0, 150, 136, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • ණය සෙවීම
                         </Button>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/loan/active-loans")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(0, 150, 136, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • ක්‍රියාකාරී ණය
                         </Button>
-
-                        <hr />
-                        {/* <Menu
-                          anchorEl={receiptAnchorEl}
-                          open={Boolean(receiptAnchorEl)}
-                          onClose={handleReceiptMenuClose}
-                          anchorOrigin={{
-                            horizontal: "right",
-                            vertical: "bottom",
-                          }}
-                        >
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/account/receipts")
-                              handleReceiptMenuClose()
-                            }}
-                          >
-                            සාමාජික මුදල්/හිඟ ලැබීම්
-                          </MenuItem>
-                        </Menu> */}
-                      </>
+                        <Divider sx={{ my: 2, backgroundColor: 'rgba(0, 150, 136, 0.2)' }} />
+                      </Box>
                     )}
                     {/* Common Member Buttons */}
                     <Box sx={{ mb: 3 }}>
@@ -1272,36 +1360,46 @@ const Header = ({ siteTitle }) => {
                       </Typography>
                       <Button
                         color="inherit"
-                        onClick={() => navigate("/member/payments")}
+                        onClick={() => handleMobileNavigate("/member/payments")}
                         startIcon={<PaymentIcon />}
                         sx={{ 
                           textTransform: "none", 
                           width: "100%",
                           mb: 1,
                           justifyContent: 'flex-start',
-                          backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                          '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.2)' },
+                          backgroundColor: 'rgba(76, 175, 80, 0.15)',
+                          border: '1px solid rgba(76, 175, 80, 0.2)',
+                          '&:hover': { 
+                            backgroundColor: 'rgba(76, 175, 80, 0.25)',
+                            transform: 'translateX(2px)'
+                          },
                           borderRadius: 2,
                           py: 1.5,
-                          color: '#333'
+                          color: '#333',
+                          transition: 'all 0.2s ease'
                         }}
                       >
                         මුදල් ගෙවීම්
                       </Button>
                       <Button
                         color="inherit"
-                        onClick={() => navigate("/member/fines")}
+                        onClick={() => handleMobileNavigate("/member/fines")}
                         startIcon={<MonetizationOnIcon />}
                         sx={{ 
                           textTransform: "none", 
                           width: "100%",
                           mb: 1,
                           justifyContent: 'flex-start',
-                          backgroundColor: 'rgba(255, 152, 0, 0.1)',
-                          '&:hover': { backgroundColor: 'rgba(255, 152, 0, 0.2)' },
+                          backgroundColor: 'rgba(255, 152, 0, 0.15)',
+                          border: '1px solid rgba(255, 152, 0, 0.2)',
+                          '&:hover': { 
+                            backgroundColor: 'rgba(255, 152, 0, 0.25)',
+                            transform: 'translateX(2px)'
+                          },
                           borderRadius: 2,
                           py: 1.5,
-                          color: '#333'
+                          color: '#333',
+                          transition: 'all 0.2s ease'
                         }}
                       >
                         දඩ මුදල්
@@ -1319,7 +1417,7 @@ const Header = ({ siteTitle }) => {
                       >
                         <Button
                           color="inherit"
-                          onClick={() => navigate("/member/loan")}
+                          onClick={() => handleMobileNavigate("/member/loan")}
                           startIcon={<AccountBalanceIcon />}
                           sx={{ 
                             textTransform: "none",
@@ -1349,36 +1447,46 @@ const Header = ({ siteTitle }) => {
                     <Box sx={{ mb: 2 }}>
                       <Button
                         color="inherit"
-                        onClick={() => navigate("/member/home")}
+                        onClick={() => handleMobileNavigate("/member/home")}
                         startIcon={<HomeIcon />}
                         sx={{ 
                           textTransform: "none",
                           width: "100%",
                           mb: 1,
                           justifyContent: 'flex-start',
-                          backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                          '&:hover': { backgroundColor: 'rgba(33, 150, 243, 0.2)' },
+                          backgroundColor: 'rgba(33, 150, 243, 0.15)',
+                          border: '1px solid rgba(33, 150, 243, 0.2)',
+                          '&:hover': { 
+                            backgroundColor: 'rgba(33, 150, 243, 0.25)',
+                            transform: 'translateX(2px)'
+                          },
                           borderRadius: 2,
                           py: 1.5,
-                          color: '#333'
+                          color: '#333',
+                          transition: 'all 0.2s ease'
                         }}
                       >
                         මුල් පිටුව
                       </Button>
                       <Button
                         color="inherit"
-                        onClick={() => navigate("/member/profile-edit")}
+                        onClick={() => handleMobileNavigate("/member/profile-edit")}
                         startIcon={<EditIcon />}
                         sx={{ 
                           textTransform: "none",
                           width: "100%",
                           mb: 2,
                           justifyContent: 'flex-start',
-                          backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                          '&:hover': { backgroundColor: 'rgba(33, 150, 243, 0.2)' },
+                          backgroundColor: 'rgba(33, 150, 243, 0.15)',
+                          border: '1px solid rgba(33, 150, 243, 0.2)',
+                          '&:hover': { 
+                            backgroundColor: 'rgba(33, 150, 243, 0.25)',
+                            transform: 'translateX(2px)'
+                          },
                           borderRadius: 2,
                           py: 1.5,
-                          color: '#333'
+                          color: '#333',
+                          transition: 'all 0.2s ease'
                         }}
                       >
                         ගිණුම සංස්කරණය
@@ -1407,7 +1515,7 @@ const Header = ({ siteTitle }) => {
                   <Box sx={{ p: 2, textAlign: 'center' }}>
                     <Button
                       color="inherit"
-                      onClick={() => navigate("/login/user-login")}
+                      onClick={() => handleMobileNavigate("/login/user-login")}
                       startIcon={<PersonIcon />}
                       sx={{
                         textTransform: "none",
