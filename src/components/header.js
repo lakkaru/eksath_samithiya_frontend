@@ -9,10 +9,26 @@ import {
   MenuItem,
   IconButton,
   Divider,
+  Chip,
+  Avatar,
+  Badge,
+  Paper,
 } from "@mui/material"
+import {
+  Menu as MenuIcon,
+  Person as PersonIcon,
+  AccountBalance as AccountBalanceIcon,
+  Groups as GroupsIcon,
+  Payment as PaymentIcon,
+  MonetizationOn as MonetizationOnIcon,
+  Assessment as AssessmentIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  Home as HomeIcon,
+  Edit as EditIcon,
+} from "@mui/icons-material"
 import { navigate } from "gatsby"
 import loadable from "@loadable/component"
-import MenuIcon from "@mui/icons-material/Menu" // For mobile menu icon
 
 import api from "../../src/utils/api"
 
@@ -120,31 +136,57 @@ const Header = ({ siteTitle }) => {
           width: "100%",
         }}
       >
-        <AppBar position="static" color="primary">
-          <Toolbar>
-            <Typography
-              variant="h6"
-              sx={{
-                flexGrow: 1,
-                cursor: "pointer",
-                display: { xs: "block", sm: "block" }, // Display on all screens
-              }}
-              onClick={() => navigate("/")}
-            >
-              {siteTitle}
-            </Typography>
+        <AppBar 
+          position="static" 
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
+          }}
+        >
+          <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+              <Avatar 
+                sx={{ 
+                  bgcolor: 'white', 
+                  color: '#667eea', 
+                  mr: 2,
+                  width: { xs: 32, sm: 40 },
+                  height: { xs: 32, sm: 40 }
+                }}
+              >
+                <AccountBalanceIcon fontSize={window.innerWidth < 600 ? "small" : "medium"} />
+              </Avatar>
+              <Typography
+                variant="h6"
+                sx={{
+                  flexGrow: 1,
+                  cursor: "pointer",
+                  fontWeight: 'bold',
+                  fontSize: { xs: '1rem', sm: '1.25rem' },
+                  color: 'white',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                }}
+                onClick={() => navigate("/")}
+              >
+                {siteTitle}
+              </Typography>
+            </Box>
 
             {/* Mobile Menu Button */}
             <IconButton
               color="inherit"
-              sx={{ display: { xs: "block", sm: "none" } }} // Only show on mobile (xs)
+              sx={{ 
+                display: { xs: "block", sm: "none" },
+                bgcolor: 'rgba(255,255,255,0.1)',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' }
+              }}
               onClick={handleMobileMenuToggle}
             >
               <MenuIcon />
             </IconButton>
 
             {/* Desktop Buttons */}
-            <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+            <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 1 }}>
               {isAuthenticated && (
                 <>
                   {isViceSecretary && (
@@ -153,7 +195,16 @@ const Header = ({ siteTitle }) => {
                         variant="outlined"
                         color="inherit"
                         onClick={handleAttendanceMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<GroupsIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          borderColor: 'rgba(255,255,255,0.3)',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            borderColor: 'rgba(255,255,255,0.5)',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         පැමිණීම
                       </Button>
@@ -161,6 +212,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={attendanceAnchorEl}
                         open={Boolean(attendanceAnchorEl)}
                         onClose={handleAttendanceMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         <MenuItem
                           onClick={() => {
@@ -193,8 +261,7 @@ const Header = ({ siteTitle }) => {
                             handleAttendanceMenuClose()
                           }}
                         >
-                          
-                          මහා සභාව ලේඛණය
+                          📋 මහා සභාව ලේඛණය
                         </MenuItem>
                         <MenuItem
                           onClick={() => {
@@ -202,15 +269,23 @@ const Header = ({ siteTitle }) => {
                             handleAttendanceMenuClose()
                           }}
                         >
-                          
-                          මහා සභාව පැමිණීම
+                          📊 මහා සභාව පැමිණීම
                         </MenuItem>
                       </Menu>
                       <Button
                         color="inherit"
                         variant="outlined"
                         onClick={handleMembershipMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<MonetizationOnIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          borderColor: 'rgba(255,255,255,0.3)',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            borderColor: 'rgba(255,255,255,0.5)',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         අවමංගල්‍ය
                       </Button>
@@ -218,6 +293,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={membershipAnchorEl}
                         open={Boolean(membershipAnchorEl)}
                         onClose={handleMembershipMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         <MenuItem
                           onClick={() => {
@@ -249,7 +341,16 @@ const Header = ({ siteTitle }) => {
                         color="inherit"
                         variant="outlined"
                         onClick={() => navigate("/member/fullDetails")}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<PersonIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          borderColor: 'rgba(255,255,255,0.3)',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            borderColor: 'rgba(255,255,255,0.5)',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         සාමාජික තොරතුරු
                       </Button>
@@ -257,7 +358,16 @@ const Header = ({ siteTitle }) => {
                         color="inherit"
                         variant="outlined"
                         onClick={handleMembershipViceSecMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<GroupsIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          borderColor: 'rgba(255,255,255,0.3)',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            borderColor: 'rgba(255,255,255,0.5)',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         සාමාජිකත්වය
                       </Button>
@@ -265,6 +375,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={membershipViceSecAnchorEl}
                         open={Boolean(membershipViceSecAnchorEl)}
                         onClose={handleMembershipViceSecMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         <MenuItem
                           onClick={() => {
@@ -294,7 +421,12 @@ const Header = ({ siteTitle }) => {
                       <Divider
                         orientation="vertical"
                         flexItem
-                        sx={{ bgcolor: "white", mx: 2 }}
+                        sx={{ 
+                          bgcolor: "rgba(255,255,255,0.3)", 
+                          mx: 2,
+                          height: 32,
+                          alignSelf: 'center'
+                        }}
                       />
                     </>
                   )}
@@ -306,7 +438,14 @@ const Header = ({ siteTitle }) => {
                         <Button
                           color="inherit"
                           onClick={() => navigate("/member/fullDetails")}
-                          sx={{ textTransform: "none" }}
+                          startIcon={<PersonIcon />}
+                          sx={{ 
+                            textTransform: "none",
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(255,255,255,0.2)',
+                            }
+                          }}
                         >
                           සාමාජික තොරතුරු
                         </Button>
@@ -314,7 +453,14 @@ const Header = ({ siteTitle }) => {
                       <Button
                         color="inherit"
                         onClick={handleLoanSchemeMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<MonetizationOnIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         ණය තොරතුරු
                       </Button>
@@ -322,6 +468,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={loanSchemeAnchorEl}
                         open={Boolean(loanSchemeAnchorEl)}
                         onClose={handleLoanSchemeMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         {/* Show New Loan only for loan-treasurer, not for treasurer */}
                         {isLoanTreasurer && !isTreasurer && (
@@ -376,7 +539,14 @@ const Header = ({ siteTitle }) => {
                         color="inherit"
                         // variant="outlined"
                         onClick={() => navigate("/member/fullDetails")}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<PersonIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         සාමාජික තොරතුරු
                       </Button>
@@ -384,7 +554,14 @@ const Header = ({ siteTitle }) => {
                         color="inherit"
                         // onClick={() => navigate("/member/payments")}
                         onClick={handleReceiptMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<PaymentIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         මුදල් ලැබීම්
                       </Button>
@@ -392,6 +569,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={receiptAnchorEl}
                         open={Boolean(receiptAnchorEl)}
                         onClose={handleReceiptMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         <MenuItem
                           onClick={() => {
@@ -421,7 +615,14 @@ const Header = ({ siteTitle }) => {
                       <Button
                         color="inherit"
                         onClick={handleExpenseMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<MonetizationOnIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         මුදල් ගෙවීම්
                       </Button>
@@ -429,6 +630,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={expenseAnchorEl}
                         open={Boolean(expenseAnchorEl)}
                         onClose={handleExpenseMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         <MenuItem
                           onClick={() => {
@@ -450,7 +668,14 @@ const Header = ({ siteTitle }) => {
                       <Button
                         color="inherit"
                         onClick={handleReportMenuOpen}
-                        sx={{ textTransform: "none" }}
+                        startIcon={<AssessmentIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
                       >
                         වාර්තා
                       </Button>
@@ -458,6 +683,23 @@ const Header = ({ siteTitle }) => {
                         anchorEl={reportAnchorEl}
                         open={Boolean(reportAnchorEl)}
                         onClose={handleReportMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
                       >
                         <MenuItem
                           onClick={() => {
@@ -471,43 +713,101 @@ const Header = ({ siteTitle }) => {
                       <Divider
                         orientation="vertical"
                         flexItem
-                        sx={{ bgcolor: "white", mx: 2 }}
+                        sx={{ 
+                          bgcolor: "rgba(255,255,255,0.3)", 
+                          mx: 2,
+                          height: 32,
+                          alignSelf: 'center'
+                        }}
                       />
                     </>
                   )}
                   <Button
                     color="inherit"
                     onClick={() => navigate("/member/payments")}
-                    sx={{ textTransform: "none" }}
+                    startIcon={<PaymentIcon />}
+                    sx={{ 
+                      textTransform: "none",
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                      }
+                    }}
                   >
                     මුදල් ගෙවීම්
                   </Button>
                   <Button
                     color="inherit"
                     onClick={() => navigate("/member/fines")}
-                    sx={{ textTransform: "none" }}
+                    startIcon={<MonetizationOnIcon />}
+                    sx={{ 
+                      textTransform: "none",
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                      }
+                    }}
                   >
                     දඩ මුදල්
                   </Button>
 
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/member/loan")}
-                    sx={{ textTransform: "none" }}
-                    disabled={!hasLoan}
+                  <Badge 
+                    variant="dot" 
+                    color="warning" 
+                    invisible={!hasLoan}
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        backgroundColor: '#ff9800',
+                        boxShadow: '0 0 0 2px white',
+                      }
+                    }}
                   >
-                    ණය
-                  </Button>
+                    <Button
+                      color="inherit"
+                      onClick={() => navigate("/member/loan")}
+                      startIcon={<AccountBalanceIcon />}
+                      sx={{ 
+                        textTransform: "none",
+                        backgroundColor: hasLoan ? 'rgba(255,152,0,0.2)' : 'rgba(255,255,255,0.1)',
+                        '&:hover': {
+                          backgroundColor: hasLoan ? 'rgba(255,152,0,0.3)' : 'rgba(255,255,255,0.2)',
+                        },
+                        '&:disabled': {
+                          backgroundColor: 'rgba(255,255,255,0.05)',
+                          color: 'rgba(255,255,255,0.4)',
+                        }
+                      }}
+                      disabled={!hasLoan}
+                    >
+                      ණය
+                    </Button>
+                  </Badge>
                   <Divider
                     orientation="vertical"
                     flexItem
-                    sx={{ bgcolor: "white", mx: 2 }}
+                    sx={{ 
+                      bgcolor: "rgba(255,255,255,0.3)", 
+                      mx: 2,
+                      height: 32,
+                      alignSelf: 'center'
+                    }}
                   />
 
                   <Button
                     color="inherit"
                     onClick={handleMemberMenuOpen}
-                    sx={{ textTransform: "none" }}
+                    startIcon={<Avatar sx={{ width: 24, height: 24, bgcolor: 'white', color: '#667eea', fontSize: '0.75rem' }}>
+                      {memberName.charAt(0).toUpperCase()}
+                    </Avatar>}
+                    sx={{ 
+                      textTransform: "none",
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                      },
+                      borderRadius: 3,
+                      px: 2
+                    }}
                   >
                     මගේ ගිණුම
                   </Button>
@@ -516,6 +816,24 @@ const Header = ({ siteTitle }) => {
                     open={Boolean(memberAnchorEl)}
                     onClose={handleMemberMenuClose}
                     anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+                    PaperProps={{
+                      sx: {
+                        mt: 1,
+                        borderRadius: 2,
+                        boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                        minWidth: 200,
+                        '& .MuiMenuItem-root': {
+                          py: 1.5,
+                          px: 2,
+                          borderRadius: 1,
+                          mx: 1,
+                          my: 0.5,
+                          '&:hover': {
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                          }
+                        }
+                      }
+                    }}
                   >
                     <MenuItem
                       onClick={() => {
@@ -523,6 +841,7 @@ const Header = ({ siteTitle }) => {
                         handleMemberMenuClose()
                       }}
                     >
+                      <HomeIcon sx={{ mr: 1, fontSize: 20 }} />
                       මුල් පිටුව
                     </MenuItem>
                     <MenuItem
@@ -531,14 +850,23 @@ const Header = ({ siteTitle }) => {
                         handleMemberMenuClose()
                       }}
                     >
+                      <EditIcon sx={{ mr: 1, fontSize: 20 }} />
                       ගිණුම සංස්කරණය
                     </MenuItem>
+                    <Divider sx={{ my: 1 }} />
                     <MenuItem
                       onClick={() => {
                         handleLogout()
                         handleMemberMenuClose()
                       }}
+                      sx={{
+                        color: '#f44336',
+                        '&:hover': {
+                          backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                        }
+                      }}
                     >
+                      <LogoutIcon sx={{ mr: 1, fontSize: 20 }} />
                       ඉවත් වන්න
                     </MenuItem>
                   </Menu>
@@ -548,7 +876,16 @@ const Header = ({ siteTitle }) => {
                 <Button
                   color="inherit"
                   onClick={() => navigate("/login/user-login")}
-                  sx={{ textTransform: "none" }}
+                  startIcon={<PersonIcon />}
+                  sx={{ 
+                    textTransform: "none",
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                    },
+                    borderRadius: 3,
+                    px: 3
+                  }}
                 >
                   ප්‍රවේශය
                 </Button>
@@ -797,27 +1134,57 @@ const Header = ({ siteTitle }) => {
         </AppBar>
       </Box>
 
-      <Box
+      <Paper
+        elevation={2}
         sx={{
           width: "100%",
           maxWidth: "1024px",
           margin: "0 auto",
-          justifyContent: "flex-end",
-          padding: "8px",
-          background: "#f5f5f5",
-          borderTop: "1px solid #ddd",
+          padding: "8px 16px",
+          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          borderRadius: 0,
           display: "flex",
-          // justifyContent: "space-between",
+          justifyContent: "space-between",
           alignItems: "center",
+          minHeight: 48,
         }}
       >
         {isAuthenticated && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Avatar sx={{ width: 28, height: 28, bgcolor: '#667eea', fontSize: '0.75rem' }}>
+              {memberName.charAt(0).toUpperCase()}
+            </Avatar>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                fontWeight: 'bold', 
+                color: '#333',
+                lineHeight: 1.2
+              }}
+            >
+              ආයුබෝවන්, {memberName} <span style={{ color: '#666', fontSize: '0.75rem', fontWeight: 'normal' }}>#{memberId}</span>
+            </Typography>
+          </Box>
+        )}
+        {!isAuthenticated && (
           <Typography variant="body2" color="textSecondary">
-            {" "}
-            ආයුබෝවන්, {memberName}
+            කරුණාකර පිවිසෙන්න
           </Typography>
         )}
-      </Box>
+        <Chip 
+          label={`${new Date().toLocaleDateString('si-LK', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}`}
+          size="small"
+          sx={{
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            color: '#667eea',
+            fontWeight: 'bold'
+          }}
+        />
+      </Paper>
     </header>
   )
 }
