@@ -252,215 +252,187 @@ export default function LoanPaymentsReport() {
   return (
     <Layout>
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
-      <section style={{ 
-        padding: "10px",
-        margin: "0 auto",
-        width: "100%" 
-      }} className="no-print">
-        <Box sx={{ width: "100%", margin: "0 auto" }}>
-          <Paper sx={{ padding: "20px", borderRadius: "10px" }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ textAlign: "center", marginBottom: "30px", color: "#2c3e50" }}
-            >
-              ණය ගෙවීම් වාර්තාව
+      <section style={{ padding: "0", margin: "0 auto", width: "100%" }} className="no-print">
+        <Box sx={{ maxWidth: 1200, mx: "auto", py: 4 }}>
+          {/* Modern Header */}
+          <Paper elevation={4} sx={{ p: 4, borderRadius: 4, mb: 4, background: 'linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
+              <DownloadIcon sx={{ fontSize: 40, color: '#1976d2' }} />
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                ණය ගෙවීම් වාර්තාව
+              </Typography>
+            </Box>
+            <Typography variant="subtitle1" sx={{ textAlign: 'center', color: '#333', mb: 2 }}>
+              සමිතිය සඳහා ණය ගෙවීම් වාර්තාව - වර්තමාන මාසය
             </Typography>
-
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {/* Date Range Filter */}
-              <Grid2 container spacing={3} sx={{ marginBottom: "30px" }}>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+              <Grid2 container spacing={2} sx={{ mb: 2 }}>
+                <Grid2 xs={12} sm={4}>
                   <DatePicker
                     label="ආරම්භක දිනය"
                     value={startDate}
                     onChange={setStartDate}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
+                    slotProps={{ textField: { fullWidth: true } }}
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+                <Grid2 xs={12} sm={4}>
                   <DatePicker
                     label="අවසාන දිනය"
                     value={endDate}
                     onChange={setEndDate}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
+                    slotProps={{ textField: { fullWidth: true } }}
                   />
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+                <Grid2 xs={12} sm={2}>
                   <Button
                     variant="contained"
                     onClick={fetchPaymentsData}
                     disabled={loading}
-                    sx={{ 
-                      height: "56px", 
-                      width: "100%",
-                      textTransform: "none" 
-                    }}
+                    sx={{ height: "56px", width: "100%", fontWeight: 'bold', fontSize: '1.1em', borderRadius: 2 }}
                   >
                     {loading ? "සකසමින්..." : "වාර්තාව සකසන්න"}
                   </Button>
                 </Grid2>
-                <Grid2 size={{ xs: 12, sm: 3 }}>
+                <Grid2 xs={12} sm={2}>
                   <Button
                     variant="outlined"
                     startIcon={<PrintIcon />}
                     onClick={handlePrint}
                     disabled={payments.length === 0}
-                    sx={{ 
-                      height: "56px", 
-                      width: "100%",
-                      textTransform: "none" 
-                    }}
+                    sx={{ height: "56px", width: "100%", fontWeight: 'bold', fontSize: '1.1em', borderRadius: 2 }}
                   >
                     මුද්‍රණය කරන්න
                   </Button>
                 </Grid2>
               </Grid2>
             </LocalizationProvider>
-
-            {payments.length > 0 && (
-              <Box id="report-content">
-                {/* Report Header */}
-                <Box sx={{ textAlign: "center", marginBottom: "30px" }} className="print-only">
-                  <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "10px" }}>
-                    එක්සත් සමිතිය
-                  </Typography>
-                  <Typography variant="h5" sx={{ marginBottom: "10px" }}>
-                    ණය ගෙවීම් වාර්තාව
-                  </Typography>
-                  <Typography variant="h6">
-                    {startDate.format('YYYY/MM/DD')} සිට {endDate.format('YYYY/MM/DD')} දක්වා
-                  </Typography>
-                </Box>
-
-                {/* Summary Alerts */}
-                <Box sx={{ marginBottom: "30px" }}>
-                  <Alert severity="success" sx={{ marginBottom: "10px", fontSize: "1.1em" }}>
-                    <Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
-                      මුළු ගෙවන ලද මුදල: {formatCurrency(summary.totalAmount)}
-                    </Typography>
-                  </Alert>
-                  <Alert severity="warning" sx={{ marginBottom: "10px", fontSize: "1.1em" }}>
-                    <Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
-                      මුළු ණය මුදල: {formatCurrency(summary.totalPrincipal)}
-                    </Typography>
-                  </Alert>
-                  <Alert severity="error" sx={{ marginBottom: "10px", fontSize: "1.1em" }}>
-                    <Typography variant="h6" component="span" sx={{ fontWeight: "bold" }}>
-                      මුළු පොලිය: {formatCurrency(summary.totalInterest + summary.totalPenaltyInterest)}
-                    </Typography>
-                  </Alert>
-                </Box>
-
-                {/* Payments Table */}
-                <Box sx={{ marginBottom: "30px" }}>
-                  <Typography variant="h5" sx={{ marginBottom: "15px", color: "#2e7d32" }}>
-                    ගෙවීම් විස්තර
-                  </Typography>
-                  <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                    <Table size="small" sx={{ minWidth: '100%' }}>
-                      <TableHead>
-                        <TableRow sx={{ backgroundColor: "#e8f5e8" }}>
-                          <TableCell sx={{ fontWeight: "bold" }}>දිනය</TableCell>
-                          <TableCell sx={{ fontWeight: "bold" }}>සාමාජික අංකය</TableCell>
-                          <TableCell sx={{ fontWeight: "bold" }}>සාමාජිකයා</TableCell>
-                          <TableCell sx={{ fontWeight: "bold" }}>ණය අංකය</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>මුළු මුදල</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>ණය මුදල</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>පොලිය</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>දඩ පොලිය</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: "bold" }} className="no-print">ක්‍රියා</TableCell>
+            {/* Summary Cards */}
+            <Grid2 container spacing={2} sx={{ mb: 2 }}>
+              <Grid2 xs={12} sm={4}>
+                <Card elevation={2} sx={{ bgcolor: '#e3fcec', borderRadius: 3 }}>
+                  <CardContent>
+                    <Typography variant="subtitle2" sx={{ color: '#388e3c', fontWeight: 'bold' }}>මුළු ගෙවීම්</Typography>
+                    <Typography variant="h5" sx={{ color: '#388e3c', fontWeight: 'bold' }}>{formatCurrency(summary.totalAmount)}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid2>
+              <Grid2 xs={12} sm={4}>
+                <Card elevation={2} sx={{ bgcolor: '#fffde7', borderRadius: 3 }}>
+                  <CardContent>
+                    <Typography variant="subtitle2" sx={{ color: '#fbc02d', fontWeight: 'bold' }}>මුළු ණය මුදල</Typography>
+                    <Typography variant="h5" sx={{ color: '#fbc02d', fontWeight: 'bold' }}>{formatCurrency(summary.totalPrincipal)}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid2>
+              <Grid2 xs={12} sm={4}>
+                <Card elevation={2} sx={{ bgcolor: '#ffebee', borderRadius: 3 }}>
+                  <CardContent>
+                    <Typography variant="subtitle2" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>මුළු පොලිය</Typography>
+                    <Typography variant="h5" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>{formatCurrency(summary.totalInterest + summary.totalPenaltyInterest)}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid2>
+            </Grid2>
+          </Paper>
+          {/* Payments Table Section */}
+          <Paper elevation={2} sx={{ p: 3, borderRadius: 3, mb: 4 }}>
+            <Typography variant="h5" sx={{ mb: 2, color: '#1976d2', fontWeight: 'bold' }}>
+              ගෙවීම් විස්තර
+            </Typography>
+            {payments.length > 0 ? (
+              <Box sx={{ width: '100%', overflowX: 'auto', maxWidth: '100vw' }}>
+                <TableContainer sx={{ minWidth: 600, borderRadius: 2 }}>
+                  <Table size="small" sx={{ tableLayout: 'fixed', minWidth: 600 }}>
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: "#e3f2fd" }}>
+                        <TableCell sx={{ fontWeight: "bold", minWidth: 40, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>දිනය</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", minWidth: 60, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>සා. අංකය</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", minWidth: 80, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>සාමාජිකයා</TableCell>
+                        <TableCell sx={{ fontWeight: "bold", minWidth: 40, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>ණය අංකය</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", minWidth: 40, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>මුළු මුදල</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", minWidth: 60, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>ණය මුදල</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", minWidth: 60, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>පොලිය</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", minWidth: 60, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }}>දඩ පොලිය</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: "bold", minWidth: 60, fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', px: 0.5 }} className="no-print">ක්‍රියා</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {payments.map((payment, index) => (
+                        <TableRow key={index} hover sx={{ transition: 'background 0.2s', '&:hover': { backgroundColor: '#f0f4c3' } }}>
+                          <TableCell sx={{ fontSize: '0.75rem', px: 0.5 }}>{formatDate(payment.paymentDate)}</TableCell>
+                          <TableCell sx={{ fontSize: '0.75rem', px: 0.5 }}>{payment.memberId?.member_id || 'N/A'}</TableCell>
+                          <TableCell sx={{ fontSize: '0.75rem', px: 0.5 }}>{payment.memberId?.name || 'N/A'}</TableCell>
+                          <TableCell sx={{ fontSize: '0.75rem', px: 0.5 }}>{payment.loanId?.loanNumber || 'N/A'}</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: "bold", fontSize: '0.75rem', px: 0.5 }}>
+                            {formatCurrency(payment.amount)}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontSize: '0.75rem', px: 0.5 }}>
+                            {formatCurrency(payment.principalAmount)}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontSize: '0.75rem', px: 0.5 }}>
+                            {formatCurrency(payment.interestAmount)}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontSize: '0.75rem', px: 0.5 }}>
+                            {formatCurrency(payment.penaltyInterestAmount)}
+                          </TableCell>
+                          <TableCell align="center" className="no-print" sx={{ fontSize: '0.75rem', px: 0.5 }}>
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleEditPayment(payment)}
+                              sx={{ marginRight: 1 }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleDeleteClick(payment)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {payments.map((payment, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{formatDate(payment.paymentDate)}</TableCell>
-                            <TableCell>{payment.memberId?.member_id || 'N/A'}</TableCell>
-                            <TableCell>{payment.memberId?.name || 'N/A'}</TableCell>
-                            <TableCell>{payment.loanId?.loanNumber || 'N/A'}</TableCell>
-                            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                              {formatCurrency(payment.amount)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {formatCurrency(payment.principalAmount)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {formatCurrency(payment.interestAmount)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {formatCurrency(payment.penaltyInterestAmount)}
-                            </TableCell>
-                            <TableCell align="center" className="no-print">
-                              <IconButton
-                                size="small"
-                                color="primary"
-                                onClick={() => handleEditPayment(payment)}
-                                sx={{ marginRight: 1 }}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => handleDeleteClick(payment)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        <TableRow sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}>
-                          <TableCell colSpan={4} sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
-                            මුළු එකතුව
-                          </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
-                            {formatCurrency(summary.totalAmount)}
-                          </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
-                            {formatCurrency(summary.totalPrincipal)}
-                          </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
-                            {formatCurrency(summary.totalInterest)}
-                          </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
-                            {formatCurrency(summary.totalPenaltyInterest)}
-                          </TableCell>
-                          <TableCell className="no-print"></TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-
-                {/* Report Footer */}
-                <Box sx={{ marginTop: "40px", textAlign: "center" }} className="print-only">
-                  <Typography variant="body2" color="textSecondary">
-                    වාර්තාව සකස් කළ දිනය: {dayjs().format('YYYY/MM/DD')}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    එක්සත් සමිතිය - ණය භාණ්ඩාගාරික වාර්තාව
-                  </Typography>
-                </Box>
+                      ))}
+                      <TableRow sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}>
+                        <TableCell colSpan={4} sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                          මුළු එකතුව
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                          {formatCurrency(summary.totalAmount)}
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                          {formatCurrency(summary.totalPrincipal)}
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                          {formatCurrency(summary.totalInterest)}
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                          {formatCurrency(summary.totalPenaltyInterest)}
+                        </TableCell>
+                        <TableCell className="no-print"></TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </Box>
-            )}
-
-            {payments.length === 0 && !loading && (
-              <Box sx={{ textAlign: "center", marginTop: "40px" }}>
+            ) : (
+              <Box sx={{ textAlign: "center", py: 6 }}>
                 <Typography variant="h6" color="textSecondary">
                   වාර්තාව නිර්මාණය කිරීමට මුල කරන්න
                 </Typography>
               </Box>
             )}
           </Paper>
+          {/* Report Footer for print */}
+          <Box sx={{ mt: 6, textAlign: "center" }} className="print-only">
+            <Typography variant="body2" color="textSecondary">
+              වාර්තාව සකස් කළ දිනය: {dayjs().format('YYYY/MM/DD')}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              එක්සත් සමිතිය - ණය භාණ්ඩාගාරික වාර්තාව
+            </Typography>
+          </Box>
         </Box>
       </section>
 
