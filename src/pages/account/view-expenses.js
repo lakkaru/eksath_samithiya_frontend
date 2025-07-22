@@ -79,7 +79,7 @@ export default function ViewExpenses() {
 
     setLoading(true)
     try {
-      const response = await api.get(`${baseUrl}/account/expenses`, {
+      const response = await api.get(`${baseUrl}/account/expenses/all`, {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString()
