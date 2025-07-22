@@ -50,7 +50,8 @@ export default function AddIncome() {
 
   const financialIncomeCategories = [
     "බැංකු පොලී ආදායම",
-    "බැංකු මුදල් ආපසු ගැනීම"
+    "බැංකු මුදල් ආපසු ගැනීම",
+    "අවමංගල්‍යයක් සඳහා අතිරේක ආධාර"
   ]
 
   const donationCategories = [
