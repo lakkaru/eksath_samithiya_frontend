@@ -533,34 +533,44 @@ export default function MonthlyReport() {
                       <TableHead>
                         <TableRow sx={{ backgroundColor: "#e8f5e8" }}>
                           <TableCell sx={{ fontWeight: "bold" }}>ප්‍රවර්ගය</TableCell>
+                          <TableCell sx={{ fontWeight: "bold" }}>විස්තර/මූලාශ්‍රය</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>මුදල</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>ප්‍රතිශතය</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {Object.entries(reportData.incomeByCategory).map(([category, amount]) => (
-                          <TableRow key={category}>
+                        {reportData.incomes.map((income, index) => (
+                          <TableRow key={income._id || index}>
                             <TableCell>
                               <Chip 
-                                label={category} 
-                                color={getIncomeColor(category)}
+                                label={income.category} 
+                                color={getIncomeColor(income.category)}
                                 size="small"
                               />
                             </TableCell>
-                            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                              {formatCurrency(amount)}
+                            <TableCell>
+                              {income.source && (
+                                <Typography variant="body2" sx={{ marginBottom: "2px" }}>
+                                  <strong>මූලාශ්‍රය:</strong> {income.source}
+                                </Typography>
+                              )}
+                              {income.description && (
+                                <Typography variant="body2">
+                                  <strong>විස්තරය:</strong> {income.description}
+                                </Typography>
+                              )}
+                              {!income.source && !income.description && "-"}
                             </TableCell>
-                            <TableCell align="right">
-                              {((amount / reportData.totals.totalIncome) * 100).toFixed(1)}%
+                            <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                              {formatCurrency(income.amount)}
                             </TableCell>
                           </TableRow>
                         ))}
                         <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                           <TableCell sx={{ fontWeight: "bold" }}>මුළු ආදායම</TableCell>
+                          <TableCell sx={{ fontWeight: "bold", fontStyle: "italic" }}>සියලුම ප්‍රවර්ග</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
                             {formatCurrency(reportData.totals.totalIncome)}
                           </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>100.0%</TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
@@ -577,34 +587,49 @@ export default function MonthlyReport() {
                       <TableHead>
                         <TableRow sx={{ backgroundColor: "#ffebee" }}>
                           <TableCell sx={{ fontWeight: "bold" }}>ප්‍රවර්ගය</TableCell>
+                          <TableCell sx={{ fontWeight: "bold" }}>විස්තර/ප්‍රතිලාභලාභී/ගෙවන ලද තැන</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>මුදල</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>ප්‍රතිශතය</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {Object.entries(reportData.expenseByCategory).map(([category, amount]) => (
-                          <TableRow key={category}>
+                        {reportData.expenses.map((expense, index) => (
+                          <TableRow key={expense._id || index}>
                             <TableCell>
                               <Chip 
-                                label={category} 
-                                color={getExpenseColor(category)}
+                                label={expense.category} 
+                                color={getExpenseColor(expense.category)}
                                 size="small"
                               />
                             </TableCell>
-                            <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                              {formatCurrency(amount)}
+                            <TableCell>
+                              {expense.beneficiaryMemberId && (
+                                <Typography variant="body2" sx={{ marginBottom: "2px" }}>
+                                  <strong>ප්‍රතිලාභලාභී සාමාජික ID:</strong> {expense.beneficiaryMemberId}
+                                </Typography>
+                              )}
+                              {expense.description && (
+                                <Typography variant="body2" sx={{ marginBottom: "2px" }}>
+                                  <strong>විස්තරය:</strong> {expense.description}
+                                </Typography>
+                              )}
+                              {expense.paidTo && (
+                                <Typography variant="body2">
+                                  <strong>ගෙවන ලද තැන:</strong> {expense.paidTo}
+                                </Typography>
+                              )}
+                              {!expense.beneficiaryMemberId && !expense.description && !expense.paidTo && "-"}
                             </TableCell>
-                            <TableCell align="right">
-                              {((amount / reportData.totals.totalExpense) * 100).toFixed(1)}%
+                            <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                              {formatCurrency(expense.amount)}
                             </TableCell>
                           </TableRow>
                         ))}
                         <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                           <TableCell sx={{ fontWeight: "bold" }}>මුළු වියදම</TableCell>
+                          <TableCell sx={{ fontWeight: "bold", fontStyle: "italic" }}>සියලුම ප්‍රවර්ග</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
                             {formatCurrency(reportData.totals.totalExpense)}
                           </TableCell>
-                          <TableCell align="right" sx={{ fontWeight: "bold" }}>100.0%</TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
