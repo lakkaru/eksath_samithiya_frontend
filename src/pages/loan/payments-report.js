@@ -262,9 +262,9 @@ export default function LoanPaymentsReport() {
                 ණය ගෙවීම් වාර්තාව
               </Typography>
             </Box>
-            <Typography variant="subtitle1" sx={{ textAlign: 'center', color: '#333', mb: 2 }}>
+            {/* <Typography variant="subtitle1" sx={{ textAlign: 'center', color: '#333', mb: 2 }}>
               සමිතිය සඳහා ණය ගෙවීම් වාර්තාව - වර්තමාන මාසය
-            </Typography>
+            </Typography> */}
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid2 container spacing={2} sx={{ mb: 2 }}>
                 <Grid2 xs={12} sm={4}>
@@ -398,16 +398,16 @@ export default function LoanPaymentsReport() {
                         <TableCell colSpan={4} sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
                           මුළු එකතුව
                         </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "0.6em" }}>
                           {formatCurrency(summary.totalAmount)}
                         </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "0.6em" }}>
                           {formatCurrency(summary.totalPrincipal)}
                         </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "0.6em" }}>
                           {formatCurrency(summary.totalInterest)}
                         </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                        <TableCell align="right" sx={{ fontWeight: "bold", fontSize: "0.6em" }}>
                           {formatCurrency(summary.totalPenaltyInterest)}
                         </TableCell>
                         <TableCell className="no-print"></TableCell>
@@ -418,9 +418,9 @@ export default function LoanPaymentsReport() {
               </Box>
             ) : (
               <Box sx={{ textAlign: "center", py: 6 }}>
-                <Typography variant="h6" color="textSecondary">
+                {/* <Typography variant="h6" color="textSecondary">
                   වාර්තාව නිර්මාණය කිරීමට මුල කරන්න
-                </Typography>
+                </Typography> */}
               </Box>
             )}
           </Paper>
