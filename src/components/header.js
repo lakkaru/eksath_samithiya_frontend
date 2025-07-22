@@ -528,7 +528,12 @@ const Header = ({ siteTitle }) => {
                       <Divider
                         orientation="vertical"
                         flexItem
-                        sx={{ bgcolor: "white", mx: 2 }}
+                        sx={{ 
+                          bgcolor: "rgba(255,255,255,0.3)", 
+                          mx: 2,
+                          height: 32,
+                          alignSelf: 'center'
+                        }}
                       />
                     </>
                   )}
@@ -894,124 +899,296 @@ const Header = ({ siteTitle }) => {
 
             {/* Mobile Menu */}
             {mobileMenuOpen && (
-              <Box
+              <Paper
+                elevation={8}
                 sx={{
                   position: "absolute",
-                  top: "64px",
+                  top: "100%",
+                  left: "0",
                   right: "0",
-                  width: "100%",
-                  backgroundColor: "#f5f5f5",
-                  color: "black",
-                  boxShadow: 3,
+                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
                   zIndex: 1000,
                   display: { xs: "block", sm: "none" },
+                  borderRadius: 0,
+                  borderTop: '2px solid rgba(102, 126, 234, 0.3)',
+                  maxHeight: 'calc(100vh - 64px)',
+                  overflowY: 'auto'
                 }}
               >
                 {isAuthenticated && (
-                  <>
+                  <Box sx={{ p: 2 }}>
+                    {/* User Info Header */}
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 1.5, 
+                      mb: 3,
+                      p: 2,
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      borderRadius: 2,
+                      color: 'white'
+                    }}>
+                      <Avatar sx={{ width: 32, height: 32, bgcolor: 'white', color: '#667eea', fontSize: '0.875rem' }}>
+                        {memberName.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                          {memberName}
+                        </Typography>
+                        <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                          සාමාජික අංකය: #{memberId}
+                        </Typography>
+                      </Box>
+                    </Box>
+
                     {isViceSecretary && (
-                      <>
-                        <Typography sx={{ textAlign: "center", color: "teal" }}>
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ 
+                          textAlign: "center", 
+                          color: "#667eea", 
+                          fontWeight: 'bold',
+                          mb: 2,
+                          py: 1,
+                          backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                          borderRadius: 1
+                        }}>
                           උප ලේකම්
                         </Typography>
                         <Button
                           color="inherit"
                           onClick={handleAttendanceMenuOpen}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          startIcon={<GroupsIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333'
+                          }}
                         >
                           පැමිණීම
                         </Button>
                         <Button
                           color="inherit"
-                          // variant="outlined"
                           onClick={handleMembershipMenuOpen}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          startIcon={<MonetizationOnIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333'
+                          }}
                         >
                           අවමංගල්‍ය
                         </Button>
                         <Button
                           color="inherit"
-                          // variant="outlined"
                           onClick={() => handleMobileNavigate("/member/fullDetails")}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          startIcon={<PersonIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333'
+                          }}
                         >
                           සාමාජික තොරතුරු
                         </Button>
-                        <Typography sx={{ textAlign: "center", color: "gray", fontSize: "0.9rem", padding: "5px" }}>
+                        <Typography variant="body2" sx={{ 
+                          color: "#666", 
+                          fontSize: "0.875rem", 
+                          fontWeight: 'bold',
+                          mb: 1,
+                          ml: 2
+                        }}>
                           සාමාජිකත්වය
                         </Typography>
                         <Button
                           color="inherit"
-                          // variant="outlined"
                           onClick={() => navigate("/member/add-member")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 0.5,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • සාමාජිකයෙකු ඇතුලත් කිරීම
                         </Button>
                         <Button
                           color="inherit"
-                          // variant="outlined"
                           onClick={() => navigate("/member/search-by-area")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 0.5,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • ප්‍රදේශය අනුව සෙවීම
                         </Button>
                         <Button
                           color="inherit"
-                          // variant="outlined"
                           onClick={() => navigate("/member/search-by-name")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • නම අනුව සෙවීම
                         </Button>
-                        <hr />
-                      </>
+                        <Divider sx={{ my: 2, backgroundColor: 'rgba(102, 126, 234, 0.2)' }} />
+                      </Box>
                     )}
                     {hasLoanAccess && !isTreasurer && (
-                      <>
-                        <Typography sx={{ textAlign: "center", color: "teal" }}>
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ 
+                          textAlign: "center", 
+                          color: "#667eea", 
+                          fontWeight: 'bold',
+                          mb: 2,
+                          py: 1,
+                          backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                          borderRadius: 1
+                        }}>
                           ණය භාණ්ඩාගාරික
                         </Typography>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/member/fullDetails")}
-                          sx={{ textTransform: "none", width: "100%" }}
+                          startIcon={<PersonIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333'
+                          }}
                         >
                           සාමාජික තොරතුරු
                         </Button>
-                        <Typography sx={{ textAlign: "center", color: "teal", marginTop: "10px" }}>
+                        <Typography variant="body2" sx={{ 
+                          color: "#666", 
+                          fontSize: "0.875rem", 
+                          fontWeight: 'bold',
+                          mb: 1,
+                          ml: 2
+                        }}>
                           ණය තොරතුරු
                         </Typography>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/loan/new-loan")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 0.5,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • නව ණයක්
                         </Button>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/loan/search")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 0.5,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • ණය සෙවීම
                         </Button>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/loan/active-loans")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 0.5,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • ක්‍රියාකාරී ණය
                         </Button>
                         <Button
                           color="inherit"
                           onClick={() => handleMobileNavigate("/loan/payments-report")}
-                          sx={{ textTransform: "none", width: "100%", paddingLeft: "20px" }}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%", 
+                            paddingLeft: "40px",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                            '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+                            borderRadius: 1,
+                            py: 1,
+                            color: '#555'
+                          }}
                         >
                           • ගෙවීම් වාර්තාව
                         </Button>
-                        <hr />
-                      </>
+                        <Divider sx={{ my: 2, backgroundColor: 'rgba(102, 126, 234, 0.2)' }} />
+                      </Box>
                     )}
                     {isTreasurer && (
                       <>
@@ -1082,53 +1259,172 @@ const Header = ({ siteTitle }) => {
                         </Menu> */}
                       </>
                     )}
-                    <Button
-                      color="inherit"
-                      onClick={() => navigate("/member/payments")}
-                      sx={{ textTransform: "none", width: "100%" }}
-                    >
-                      මුදල් ගෙවීම්
-                    </Button>
-                    <Button
-                      color="inherit"
-                      onClick={() => navigate("/member/fines")}
-                      sx={{ textTransform: "none", width: "100%" }}
-                    >
-                      දඩ මුදල්
-                    </Button>
-                    <Button
-                      color="inherit"
-                      onClick={() => navigate("/member/loan")}
-                      sx={{ textTransform: "none", width: "100%" }}
-                      disabled={!hasLoan}
-                    >
-                      ණය
-                    </Button>
-                    <hr />
-                    <Button
-                      color="inherit"
-                      onClick={handleMemberMenuOpen}
-                      sx={{ textTransform: "none", width: "100%" }}
-                    >
-                      මගේ ගිණුම
-                    </Button>
-                  </>
+                    {/* Common Member Buttons */}
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="subtitle2" sx={{ 
+                        color: "#666", 
+                        fontSize: "0.875rem", 
+                        fontWeight: 'bold',
+                        mb: 2,
+                        ml: 1
+                      }}>
+                        සාමාජික සේවා
+                      </Typography>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/member/payments")}
+                        startIcon={<PaymentIcon />}
+                        sx={{ 
+                          textTransform: "none", 
+                          width: "100%",
+                          mb: 1,
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                          '&:hover': { backgroundColor: 'rgba(76, 175, 80, 0.2)' },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#333'
+                        }}
+                      >
+                        මුදල් ගෙවීම්
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/member/fines")}
+                        startIcon={<MonetizationOnIcon />}
+                        sx={{ 
+                          textTransform: "none", 
+                          width: "100%",
+                          mb: 1,
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                          '&:hover': { backgroundColor: 'rgba(255, 152, 0, 0.2)' },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#333'
+                        }}
+                      >
+                        දඩ මුදල්
+                      </Button>
+                      <Badge 
+                        variant="dot" 
+                        color="warning" 
+                        invisible={!hasLoan}
+                        sx={{
+                          width: '100%',
+                          '& .MuiBadge-badge': {
+                            backgroundColor: '#ff9800',
+                          }
+                        }}
+                      >
+                        <Button
+                          color="inherit"
+                          onClick={() => navigate("/member/loan")}
+                          startIcon={<AccountBalanceIcon />}
+                          sx={{ 
+                            textTransform: "none",
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: hasLoan ? 'rgba(255,152,0,0.1)' : 'rgba(200, 200, 200, 0.1)',
+                            '&:hover': { backgroundColor: hasLoan ? 'rgba(255,152,0,0.2)' : 'rgba(200, 200, 200, 0.2)' },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: hasLoan ? '#333' : '#999',
+                            '&:disabled': {
+                              backgroundColor: 'rgba(200, 200, 200, 0.1)',
+                              color: '#999',
+                            }
+                          }}
+                          disabled={!hasLoan}
+                        >
+                          ණය {hasLoan && <span style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>● ක්‍රියාත්මක</span>}
+                        </Button>
+                      </Badge>
+                    </Box>
+
+                    <Divider sx={{ my: 2, backgroundColor: 'rgba(102, 126, 234, 0.2)' }} />
+
+                    {/* Account Menu */}
+                    <Box sx={{ mb: 2 }}>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/member/home")}
+                        startIcon={<HomeIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          width: "100%",
+                          mb: 1,
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                          '&:hover': { backgroundColor: 'rgba(33, 150, 243, 0.2)' },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#333'
+                        }}
+                      >
+                        මුල් පිටුව
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/member/profile-edit")}
+                        startIcon={<EditIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          width: "100%",
+                          mb: 2,
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                          '&:hover': { backgroundColor: 'rgba(33, 150, 243, 0.2)' },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#333'
+                        }}
+                      >
+                        ගිණුම සංස්කරණය
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={handleLogout}
+                        startIcon={<LogoutIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          width: "100%",
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                          '&:hover': { backgroundColor: 'rgba(244, 67, 54, 0.2)' },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#d32f2f'
+                        }}
+                      >
+                        ඉවත් වන්න
+                      </Button>
+                    </Box>
+                  </Box>
                 )}
                 {!isAuthenticated && (
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/login/user-login")}
-                    sx={{
-                      textTransform: "none",
-                      marginLeft: "auto",
-                      justifyContent: "flex-end",
-                      width: "100%",
-                    }}
-                  >
-                    ප්‍රවේශය
-                  </Button>
+                  <Box sx={{ p: 2, textAlign: 'center' }}>
+                    <Button
+                      color="inherit"
+                      onClick={() => navigate("/login/user-login")}
+                      startIcon={<PersonIcon />}
+                      sx={{
+                        textTransform: "none",
+                        width: "100%",
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.2)' },
+                        borderRadius: 2,
+                        py: 2,
+                        color: '#333',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      ප්‍රවේශය
+                    </Button>
+                  </Box>
                 )}
-              </Box>
+              </Paper>
             )}
           </Toolbar>
         </AppBar>
