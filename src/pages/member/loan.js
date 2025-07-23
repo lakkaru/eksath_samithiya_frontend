@@ -96,7 +96,7 @@ export default function MemberLoan() {
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Typography variant="h4" align="center" sx={{ mb: 3, fontWeight: "bold" }}>
-          සාමාජික ණය තොරතුරු
+          ඔබගේ ණය තොරතුරු
         </Typography>
         {loading && (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 6 }}>
@@ -126,24 +126,27 @@ export default function MemberLoan() {
                     <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                       ණය අංකය: {loan.loanNumber}
                     </Typography>
-                    <Chip
+                    {/* <Chip
                       label={loan.status === 'active' ? 'සක්‍රීය' : 'අවසන්'}
                       color={loan.status === 'active' ? 'success' : 'default'}
                       sx={{ mt: 1 }}
-                    />
+                    /> */}
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body1">
-                      <strong>ඉතිරි මුදල:</strong> {formatCurrency(loan.loanRemainingAmount)}
+                      <strong>ඉතිරි ණය මුදල:</strong> {formatCurrency(loan.loanRemainingAmount)}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>වාරිකය:</strong> {calculatedInterest?.installment ? formatCurrency(calculatedInterest.installment) : "-"}
+                      <strong>ණය වාරිකය:</strong> {calculatedInterest?.installment ? formatCurrency(calculatedInterest.installment) : 0}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>පොලිය:</strong> {calculatedInterest?.int ? formatCurrency(calculatedInterest.int) : "-"}
+                      <strong>පොලිය:</strong> {calculatedInterest?.int ? formatCurrency(calculatedInterest.int) : 0}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>දඩ පොලිය:</strong> {calculatedInterest?.penInt ? formatCurrency(calculatedInterest.penInt) : "-"}
+                      <strong>දඩ පොලිය:</strong> {calculatedInterest?.penInt ? formatCurrency(calculatedInterest.penInt) : 0}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>මුළු මුදල:</strong> {(calculatedInterest?.installment ? formatCurrency(calculatedInterest.installment) :0) + (calculatedInterest?.penInt ? formatCurrency(calculatedInterest.penInt) : 0) + (calculatedInterest?.int ? formatCurrency(calculatedInterest.int) : 0)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -174,6 +177,7 @@ export default function MemberLoan() {
                     interest: val.interestAmount || "-",
                     penaltyInterest: val.penaltyInterestAmount || "-",
                   }))}
+                  totalRow={false}
                 />
               </CardContent>
             </Card>

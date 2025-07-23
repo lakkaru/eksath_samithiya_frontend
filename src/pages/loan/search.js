@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react"
 import Layout from "../../components/layout"
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography, 
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
   Snackbar,
   Paper,
   Card,
@@ -16,7 +16,7 @@ import {
   Divider,
   Fade,
   Skeleton,
-  Tooltip
+  Tooltip,
 } from "@mui/material"
 import {
   Search as SearchIcon,
@@ -29,7 +29,7 @@ import {
   Security as SecurityIcon,
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
-  Receipt as ReceiptIcon
+  Receipt as ReceiptIcon,
 } from "@mui/icons-material"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
@@ -44,7 +44,6 @@ import loadable from "@loadable/component"
 const AuthComponent = loadable(() =>
   import("../../components/common/AuthComponent")
 )
-
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 // const token = localStorage.getItem("authToken")
@@ -76,10 +75,10 @@ export default function Search() {
   const memberId = queryParams.get("memberId")
 
   // Format currency helper function
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('si-LK', {
-      style: 'currency',
-      currency: 'LKR'
+  const formatCurrency = amount => {
+    return new Intl.NumberFormat("si-LK", {
+      style: "currency",
+      currency: "LKR",
     }).format(amount || 0)
   }
 
@@ -128,18 +127,23 @@ export default function Search() {
       totalMonths = totalMonths + 1
     }
     //getting installment
-    let loanInstallment=0
-    console.log('totalMonths:', totalMonths)
-    console.log('remainingAmount:', remainingAmount)
-    if (totalMonths<=10) {
-      loanInstallment=(totalMonths*1000)-(10000-remainingAmount)
+    let loanInstallment = 0
+    // console.log("totalMonths:", totalMonths)
+    // console.log("remainingAmount:", remainingAmount)
+    let principleShouldPay = (10000 / 10) * totalMonths
+    let totalPrinciplePaid = 10000 - remainingAmount
+    //  console.log("principleShouldPay: ", principleShouldPay);
+  // console.log("totalPrinciplePaid: ", totalPrinciplePaid);
+    if (totalPrinciplePaid >= principleShouldPay) {
+      loanInstallment = 0
+    } else if (totalMonths <= 10) {
+      loanInstallment = totalMonths * 1000 - (10000 - remainingAmount)
       // console.log(loanInstallment)
     } else {
-      loanInstallment=(remainingAmount)
+      loanInstallment = remainingAmount
       // console.log(loanInstallment)
     }
 
-    
     // console.log("totalMonths :", totalMonths)
     // console.log('lastIntPayDateObj.getFullYear():',lastIntPayDateObj.getFullYear())
     // console.log('lastIntPayDateObj.getMonth():',lastIntPayDateObj.getMonth())
@@ -148,8 +152,8 @@ export default function Search() {
       (lastIntPayDateObj.getFullYear() - loanDateObj.getFullYear()) * 12 +
       (lastIntPayDateObj.getMonth() - loanDateObj.getMonth())
     // //adding one month if loan date is exceed
-    if ((lastIntPayDateObj.getDate() - loanDateObj.getDate())>0) {
-      lastPaymentMonths=lastPaymentMonths+1
+    if (lastIntPayDateObj.getDate() - loanDateObj.getDate() > 0) {
+      lastPaymentMonths = lastPaymentMonths + 1
     }
     // console.log("lastPaymentMonths :", lastPaymentMonths)
 
@@ -172,7 +176,11 @@ export default function Search() {
       remainingAmount * interestUnpaidMonths * monthlyInterestRate
     const penaltyInterest =
       remainingAmount * penaltyMonths * monthlyInterestRate
-    return { int: Math.round(interest), penInt: Math.round(penaltyInterest), installment:Math.round(loanInstallment+interest+penaltyInterest) }
+    return {
+      int: Math.round(interest),
+      penInt: Math.round(penaltyInterest),
+      installment: Math.round(loanInstallment + interest + penaltyInterest),
+    }
   }
 
   const handleSearch = useCallback(
@@ -215,7 +223,7 @@ export default function Search() {
               ...loanData,
               interest: calculatedInterest.int,
               penaltyInterest: calculatedInterest.penInt,
-              installment:calculatedInterest.installment,
+              installment: calculatedInterest.installment,
               dueAmount:
                 loanData.loanRemainingAmount +
                 calculatedInterest.int +
@@ -286,18 +294,15 @@ export default function Search() {
     // console.log("payingPenaltyInterest: ", payingPenaltyInterest)
     try {
       await api
-        .post(
-          `${baseUrl}/loan/payments`,
-          {
-            loanId: loan._id,
-            amounts: {
-              principle: parseFloat(payingPrincipal),
-              interest: parseFloat(payingInterest),
-              penaltyInterest: parseFloat(payingPenaltyInterest),
-            },
-            date: paymentDate,
-          }
-        )
+        .post(`${baseUrl}/loan/payments`, {
+          loanId: loan._id,
+          amounts: {
+            principle: parseFloat(payingPrincipal),
+            interest: parseFloat(payingInterest),
+            penaltyInterest: parseFloat(payingPenaltyInterest),
+          },
+          date: paymentDate,
+        })
         .then(res => {
           // console.log(res)
         })
@@ -313,7 +318,10 @@ export default function Search() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || (!roles.includes("loan-treasurer") && !roles.includes("treasurer"))) {
+    if (
+      !isAuthenticated ||
+      (!roles.includes("loan-treasurer") && !roles.includes("treasurer"))
+    ) {
       navigate("/login/user-login")
     }
   }
@@ -330,21 +338,23 @@ export default function Search() {
   return (
     <Layout>
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
-      <Box sx={{ 
-        maxWidth: 1400, 
-        mx: 'auto', 
-        p: 3,
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        minHeight: '100vh'
-      }}>
+      <Box
+        sx={{
+          maxWidth: 1400,
+          mx: "auto",
+          p: 3,
+          background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+          minHeight: "100vh",
+        }}
+      >
         {/* Back button if navigated from active loans */}
         {memberId && (
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
             <Button
               variant="outlined"
               startIcon={<SearchIcon />}
-              sx={{ borderRadius: 2, fontWeight: 'bold' }}
-              onClick={() => navigate('/loan/active-loans')}
+              sx={{ borderRadius: 2, fontWeight: "bold" }}
+              onClick={() => navigate("/loan/active-loans")}
             >
               ආපසු - ක්‍රියාකාරී ණය
             </Button>
@@ -356,17 +366,19 @@ export default function Search() {
           sx={{
             p: 3,
             mb: 3,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            borderRadius: 3
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            borderRadius: 3,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Avatar sx={{ bgcolor: 'white', color: '#667eea', width: 56, height: 56 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Avatar
+              sx={{ bgcolor: "white", color: "#667eea", width: 56, height: 56 }}
+            >
               <SearchIcon fontSize="large" />
             </Avatar>
             <Box>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
                 ණය සෙවීම සහ ගෙවීම්
               </Typography>
               <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
@@ -379,15 +391,18 @@ export default function Search() {
         {/* Search Section */}
         <Card elevation={2} sx={{ mb: 3, borderRadius: 3 }}>
           <CardContent sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <Avatar sx={{ bgcolor: '#1976d2', width: 40, height: 40 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+              <Avatar sx={{ bgcolor: "#1976d2", width: 40, height: 40 }}>
                 <PersonIcon />
               </Avatar>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: "bold", color: "#1976d2" }}
+              >
                 සාමාජික සෙවීම
               </Typography>
             </Box>
-            
+
             <Grid2 container spacing={3} alignItems="end">
               <Grid2 xs={12} sm={4}>
                 <TextField
@@ -398,12 +413,14 @@ export default function Search() {
                   value={memberInputId}
                   onChange={handleIdChange}
                   InputProps={{
-                    startAdornment: <PersonIcon sx={{ mr: 1, color: '#666' }} />
+                    startAdornment: (
+                      <PersonIcon sx={{ mr: 1, color: "#666" }} />
+                    ),
                   }}
                   sx={{
-                    '& .MuiOutlinedInput-root': {
+                    "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
-                    }
+                    },
                   }}
                   disabled={!!memberId}
                 />
@@ -418,13 +435,15 @@ export default function Search() {
                   sx={{
                     py: 1.8,
                     borderRadius: 2,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    '&:hover': {
-                      background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                    }
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    },
                   }}
                 >
-                  {loading ? 'සෙවෙමින්...' : 'ණය සෙවීම'}
+                  {loading ? "සෙවෙමින්..." : "ණය සෙවීම"}
                 </Button>
               </Grid2>
             </Grid2>
@@ -434,8 +453,15 @@ export default function Search() {
         {/* Loading State */}
         {loading && (
           <Card elevation={1} sx={{ borderRadius: 3, mb: 3 }}>
-            <CardContent sx={{ p: 3, textAlign: 'center' }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <CardContent sx={{ p: 3, textAlign: "center" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
                 <Skeleton variant="circular" width={64} height={64} />
                 <Skeleton variant="text" width={200} height={32} />
                 <Typography variant="body1" color="textSecondary">
@@ -449,10 +475,11 @@ export default function Search() {
         {/* No Loan Found */}
         {!loading && member && !loan && (
           <Alert severity="info" sx={{ borderRadius: 2, mb: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <WarningIcon />
               <Typography variant="body1">
-                <strong>{member.name}</strong> සඳහා ක්‍රියාකාරී ණයක් සොයාගත නොහැකි විය.
+                <strong>{member.name}</strong> සඳහා ක්‍රියාකාරී ණයක් සොයාගත
+                නොහැකි විය.
               </Typography>
             </Box>
           </Alert>
@@ -465,27 +492,60 @@ export default function Search() {
               {/* Member Info Card */}
               <Card elevation={2} sx={{ mb: 3, borderRadius: 3 }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Avatar sx={{ bgcolor: '#4caf50', width: 40, height: 40 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 3,
+                    }}
+                  >
+                    <Avatar sx={{ bgcolor: "#4caf50", width: 40, height: 40 }}>
                       <PersonIcon />
                     </Avatar>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4caf50' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold", color: "#4caf50" }}
+                    >
                       සාමාජික තොරතුරු
                     </Typography>
                   </Box>
 
                   <Grid2 container spacing={3}>
                     <Grid2 xs={12} md={8}>
-                      <Paper elevation={1} sx={{ p: 3, borderRadius: 2, bgcolor: '#f9f9f9' }}>
+                      <Paper
+                        elevation={1}
+                        sx={{ p: 3, borderRadius: 2, bgcolor: "#f9f9f9" }}
+                      >
                         <Grid2 container spacing={2}>
                           <Grid2 xs={12} sm={3}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <Avatar
+                                sx={{
+                                  bgcolor: "#1976d2",
+                                  width: 32,
+                                  height: 32,
+                                }}
+                              >
                                 {member.name?.charAt(0).toUpperCase()}
                               </Avatar>
                               <Box>
-                                <Typography variant="caption" color="textSecondary">නම</Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                <Typography
+                                  variant="caption"
+                                  color="textSecondary"
+                                >
+                                  නම
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: "bold" }}
+                                >
                                   {member.name}
                                 </Typography>
                               </Box>
@@ -493,24 +553,48 @@ export default function Search() {
                           </Grid2>
                           <Grid2 xs={12} sm={3}>
                             <Box>
-                              <Typography variant="caption" color="textSecondary">සාමාජික අංකය</Typography>
-                              <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                              <Typography
+                                variant="caption"
+                                color="textSecondary"
+                              >
+                                සාමාජික අංකය
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontWeight: "bold" }}
+                              >
                                 {member.member_id}
                               </Typography>
                             </Box>
                           </Grid2>
                           <Grid2 xs={12} sm={3}>
                             <Box>
-                              <Typography variant="caption" color="textSecondary">ප්‍රදේශය</Typography>
-                              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                              <Typography
+                                variant="caption"
+                                color="textSecondary"
+                              >
+                                ප්‍රදේශය
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontWeight: "medium" }}
+                              >
                                 {member.area}
                               </Typography>
                             </Box>
                           </Grid2>
                           <Grid2 xs={12} sm={3}>
                             <Box>
-                              <Typography variant="caption" color="textSecondary">දුරකථන</Typography>
-                              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                              <Typography
+                                variant="caption"
+                                color="textSecondary"
+                              >
+                                දුරකථන
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontWeight: "medium" }}
+                              >
                                 {member.mobile}
                               </Typography>
                             </Box>
@@ -519,23 +603,41 @@ export default function Search() {
                       </Paper>
                     </Grid2>
                     <Grid2 xs={12} md={4}>
-                      <Paper elevation={1} sx={{ p: 3, borderRadius: 2, bgcolor: '#e3f2fd' }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#1976d2', mb: 2 }}>
+                      <Paper
+                        elevation={1}
+                        sx={{ p: 3, borderRadius: 2, bgcolor: "#e3f2fd" }}
+                      >
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ fontWeight: "bold", color: "#1976d2", mb: 2 }}
+                        >
                           ඇපකරුවන්
                         </Typography>
                         <Box sx={{ mb: 2 }}>
-                          <Typography variant="caption" color="textSecondary">පළමු ඇපකරු</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                            {loan?.guarantor1Id.member_id} - {loan?.guarantor1Id.name}
+                          <Typography variant="caption" color="textSecondary">
+                            පළමු ඇපකරු
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "medium" }}
+                          >
+                            {loan?.guarantor1Id.member_id} -{" "}
+                            {loan?.guarantor1Id.name}
                           </Typography>
                           <Typography variant="caption" color="textSecondary">
                             {loan?.guarantor1Id.mobile}
                           </Typography>
                         </Box>
                         <Box>
-                          <Typography variant="caption" color="textSecondary">දෙවන ඇපකරු</Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                            {loan?.guarantor2Id.member_id} - {loan?.guarantor2Id.name}
+                          <Typography variant="caption" color="textSecondary">
+                            දෙවන ඇපකරු
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "medium" }}
+                          >
+                            {loan?.guarantor2Id.member_id} -{" "}
+                            {loan?.guarantor2Id.name}
                           </Typography>
                           <Typography variant="caption" color="textSecondary">
                             {loan?.guarantor2Id.mobile}
@@ -550,74 +652,123 @@ export default function Search() {
               {/* Loan Details Card */}
               <Card elevation={2} sx={{ mb: 3, borderRadius: 3 }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Avatar sx={{ bgcolor: '#ff9800', width: 40, height: 40 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 3,
+                    }}
+                  >
+                    <Avatar sx={{ bgcolor: "#ff9800", width: 40, height: 40 }}>
                       <AccountBalanceIcon />
                     </Avatar>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#ff9800' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold", color: "#ff9800" }}
+                    >
                       ණය විස්තර
                     </Typography>
                   </Box>
 
-                  <Paper elevation={1} sx={{ p: 3, borderRadius: 2, bgcolor: '#fff3e0' }}>
+                  <Paper
+                    elevation={1}
+                    sx={{ p: 3, borderRadius: 2, bgcolor: "#fff3e0" }}
+                  >
                     <Grid2 container spacing={3}>
                       <Grid2 xs={12} sm={6} md={2}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">ණය දිනය</Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                            {new Date(loan.loanDate).toLocaleDateString("si-LK")}
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            ණය දිනය
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{ fontWeight: "bold", color: "#1976d2" }}
+                          >
+                            {new Date(loan.loanDate).toLocaleDateString(
+                              "si-LK"
+                            )}
                           </Typography>
                         </Box>
                       </Grid2>
                       <Grid2 xs={12} sm={6} md={2}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">ණය අංකය</Typography>
-                          <Chip 
-                            label={loan.loanNumber} 
-                            color="primary" 
-                            sx={{ fontWeight: 'bold', fontSize: '1rem' }}
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            ණය අංකය
+                          </Typography>
+                          <Chip
+                            label={loan.loanNumber}
+                            color="primary"
+                            sx={{ fontWeight: "bold", fontSize: "1rem" }}
                           />
                         </Box>
                       </Grid2>
                       <Grid2 xs={12} sm={6} md={2}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">ඉතිරි මුදල</Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#d32f2f' }}>
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            ඉතිරි මුදල
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{ fontWeight: "bold", color: "#d32f2f" }}
+                          >
                             {formatCurrency(loan.loanRemainingAmount)}
                           </Typography>
                         </Box>
                       </Grid2>
                       <Grid2 xs={12} sm={6} md={2}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">පොලිය</Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#ff5722' }}>
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            පොලිය
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{ fontWeight: "bold", color: "#ff5722" }}
+                          >
                             {formatCurrency(loan.interest)}
                           </Typography>
                         </Box>
                       </Grid2>
                       <Grid2 xs={12} sm={6} md={2}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">දඩ පොලිය</Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#e91e63' }}>
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            දඩ පොලිය
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{ fontWeight: "bold", color: "#e91e63" }}
+                          >
                             {formatCurrency(loan.penaltyInterest)}
                           </Typography>
                         </Box>
                       </Grid2>
                       <Grid2 xs={12} sm={6} md={2}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">මුළු මුදල</Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4caf50' }}>
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            මුළු මුදල
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{ fontWeight: "bold", color: "#4caf50" }}
+                          >
                             {formatCurrency(loan.dueAmount)}
                           </Typography>
                         </Box>
                       </Grid2>
                     </Grid2>
-                    
+
                     {loan.installment && (
-                      <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0' }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="caption" color="textSecondary">මාසික වාරිකය</Typography>
-                          <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#2e7d32' }}>
+                      <Box
+                        sx={{ mt: 2, pt: 2, borderTop: "1px solid #e0e0e0" }}
+                      >
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography variant="caption" color="textSecondary">
+                            මාසික වාරිකය
+                          </Typography>
+                          <Typography
+                            variant="h5"
+                            sx={{ fontWeight: "bold", color: "#2e7d32" }}
+                          >
                             {formatCurrency(loan.installment)}
                           </Typography>
                         </Box>
@@ -630,79 +781,138 @@ export default function Search() {
               {/* Payment History Card */}
               <Card elevation={2} sx={{ mb: 3, borderRadius: 3 }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Avatar sx={{ bgcolor: '#9c27b0', width: 40, height: 40 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 3,
+                    }}
+                  >
+                    <Avatar sx={{ bgcolor: "#9c27b0", width: 40, height: 40 }}>
                       <ReceiptIcon />
                     </Avatar>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9c27b0' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold", color: "#9c27b0" }}
+                    >
                       ණය ආපසු ගෙවීම් ඉතිහාසය
                     </Typography>
                   </Box>
 
                   {earlyPayments.length === 0 ? (
                     <Alert severity="info" sx={{ borderRadius: 2 }}>
-                      <Typography>මෙම ණය සඳහා තවම කිසිදු ගෙවීමක් සිදු කර නොමැත.</Typography>
+                      <Typography>
+                        මෙම ණය සඳහා තවම කිසිදු ගෙවීමක් සිදු කර නොමැත.
+                      </Typography>
                     </Alert>
                   ) : (
                     <Box>
                       {earlyPayments.map((payment, index) => (
                         <Fade in={true} timeout={300 + index * 100} key={index}>
-                          <Paper 
-                            elevation={1} 
-                            sx={{ 
-                              p: 2, 
-                              mb: 2, 
+                          <Paper
+                            elevation={1}
+                            sx={{
+                              p: 2,
+                              mb: 2,
                               borderRadius: 2,
-                              borderLeft: '4px solid #9c27b0',
-                              '&:hover': {
+                              borderLeft: "4px solid #9c27b0",
+                              "&:hover": {
                                 boxShadow: 3,
-                                transform: 'translateY(-2px)',
-                                transition: 'all 0.2s ease-in-out'
-                              }
+                                transform: "translateY(-2px)",
+                                transition: "all 0.2s ease-in-out",
+                              },
                             }}
                           >
                             <Grid2 container spacing={2} alignItems="center">
                               <Grid2 xs={12} sm={2}>
                                 <Box>
-                                  <Typography variant="caption" color="textSecondary">දිනය</Typography>
-                                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                    {new Date(payment.date).toLocaleDateString("si-LK")}
+                                  <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                  >
+                                    දිනය
                                   </Typography>
-                                </Box>
-                              </Grid2>
-                              <Grid2 xs={12} sm={2.5}>
-                                <Box>
-                                  <Typography variant="caption" color="textSecondary">මුළු ගෙවීම</Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#2e7d32' }}>
-                                    {formatCurrency(
-                                      payment.principleAmount +
-                                      payment.interestAmount +
-                                      payment.penaltyInterestAmount
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: "bold" }}
+                                  >
+                                    {new Date(payment.date).toLocaleDateString(
+                                      "si-LK"
                                     )}
                                   </Typography>
                                 </Box>
                               </Grid2>
                               <Grid2 xs={12} sm={2.5}>
                                 <Box>
-                                  <Typography variant="caption" color="textSecondary">ණය මුදල</Typography>
-                                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                                  <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                  >
+                                    මුළු ගෙවීම
+                                  </Typography>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{
+                                      fontWeight: "bold",
+                                      color: "#2e7d32",
+                                    }}
+                                  >
+                                    {formatCurrency(
+                                      payment.principleAmount +
+                                        payment.interestAmount +
+                                        payment.penaltyInterestAmount
+                                    )}
+                                  </Typography>
+                                </Box>
+                              </Grid2>
+                              <Grid2 xs={12} sm={2.5}>
+                                <Box>
+                                  <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                  >
+                                    ණය මුදල
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: "medium" }}
+                                  >
                                     {formatCurrency(payment.principleAmount)}
                                   </Typography>
                                 </Box>
                               </Grid2>
                               <Grid2 xs={12} sm={2.5}>
                                 <Box>
-                                  <Typography variant="caption" color="textSecondary">පොලිය</Typography>
-                                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                                  <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                  >
+                                    පොලිය
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: "medium" }}
+                                  >
                                     {formatCurrency(payment.interestAmount)}
                                   </Typography>
                                 </Box>
                               </Grid2>
                               <Grid2 xs={12} sm={2.5}>
                                 <Box>
-                                  <Typography variant="caption" color="textSecondary">දඩ පොලිය</Typography>
-                                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                                    {formatCurrency(payment.penaltyInterestAmount)}
+                                  <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                  >
+                                    දඩ පොලිය
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: "medium" }}
+                                  >
+                                    {formatCurrency(
+                                      payment.penaltyInterestAmount
+                                    )}
                                   </Typography>
                                 </Box>
                               </Grid2>
@@ -717,17 +927,30 @@ export default function Search() {
               {/* Payment Form Card */}
               <Card elevation={2} sx={{ borderRadius: 3 }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Avatar sx={{ bgcolor: '#4caf50', width: 40, height: 40 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 3,
+                    }}
+                  >
+                    <Avatar sx={{ bgcolor: "#4caf50", width: 40, height: 40 }}>
                       <PaymentIcon />
                     </Avatar>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4caf50' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold", color: "#4caf50" }}
+                    >
                       ණය ගෙවීම
                     </Typography>
                   </Box>
 
                   {roles.includes("loan-treasurer") ? (
-                    <Paper elevation={1} sx={{ p: 3, borderRadius: 2, bgcolor: '#f1f8e9' }}>
+                    <Paper
+                      elevation={1}
+                      sx={{ p: 3, borderRadius: 2, bgcolor: "#f1f8e9" }}
+                    >
                       <Grid2 container spacing={3}>
                         <Grid2 xs={12} md={4}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -736,7 +959,7 @@ export default function Search() {
                               value={paymentDate}
                               onChange={handleDateChange}
                               format="YYYY/MM/DD"
-                              sx={{ width: '100%' }}
+                              sx={{ width: "100%" }}
                             />
                           </LocalizationProvider>
                         </Grid2>
@@ -751,12 +974,14 @@ export default function Search() {
                               calculatePaymentSplit(e.target.value)
                             }}
                             InputProps={{
-                              startAdornment: <MoneyIcon sx={{ mr: 1, color: '#666' }} />
+                              startAdornment: (
+                                <MoneyIcon sx={{ mr: 1, color: "#666" }} />
+                              ),
                             }}
                             sx={{
-                              '& .MuiOutlinedInput-root': {
+                              "& .MuiOutlinedInput-root": {
                                 borderRadius: 2,
-                              }
+                              },
                             }}
                           />
                         </Grid2>
@@ -768,22 +993,24 @@ export default function Search() {
                               !paymentAmount ||
                               parseFloat(paymentAmount) <= 0 ||
                               parseFloat(paymentAmount) <
-                              loan.interest + loan.penaltyInterest
+                                loan.interest + loan.penaltyInterest
                             }
                             startIcon={<CheckCircleIcon />}
                             fullWidth
-                            sx={{ 
-                              py: 1.8, 
+                            sx={{
+                              py: 1.8,
                               borderRadius: 2,
-                              background: 'linear-gradient(45deg, #4caf50 30%, #66bb6a 90%)',
-                              boxShadow: '0 3px 5px 2px rgba(76, 175, 80, .3)',
-                              '&:hover': {
-                                background: 'linear-gradient(45deg, #388e3c 30%, #4caf50 90%)',
+                              background:
+                                "linear-gradient(45deg, #4caf50 30%, #66bb6a 90%)",
+                              boxShadow: "0 3px 5px 2px rgba(76, 175, 80, .3)",
+                              "&:hover": {
+                                background:
+                                  "linear-gradient(45deg, #388e3c 30%, #4caf50 90%)",
                               },
-                              '&:disabled': {
-                                background: '#e0e0e0',
-                                color: '#bdbdbd'
-                              }
+                              "&:disabled": {
+                                background: "#e0e0e0",
+                                color: "#bdbdbd",
+                              },
                             }}
                           >
                             ගෙවන්න
@@ -794,19 +1021,49 @@ export default function Search() {
                       {paymentAmount && (
                         <Box sx={{ mt: 3 }}>
                           <Divider sx={{ mb: 2 }} />
-                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 2, color: '#388e3c' }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{ fontWeight: "bold", mb: 2, color: "#388e3c" }}
+                          >
                             ගෙවීමේ විශ්ලේෂණය
                           </Typography>
                           <Grid2 container spacing={2}>
                             <Grid2 xs={12} sm={4}>
-                              <Paper elevation={0} sx={{ p: 2, bgcolor: '#ffebee', borderRadius: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Avatar sx={{ bgcolor: '#e91e63', width: 24, height: 24 }}>
+                              <Paper
+                                elevation={0}
+                                sx={{
+                                  p: 2,
+                                  bgcolor: "#ffebee",
+                                  borderRadius: 2,
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  <Avatar
+                                    sx={{
+                                      bgcolor: "#e91e63",
+                                      width: 24,
+                                      height: 24,
+                                    }}
+                                  >
                                     <WarningIcon fontSize="small" />
                                   </Avatar>
                                   <Box>
-                                    <Typography variant="caption" color="textSecondary">ගෙවන දඩ පොලිය</Typography>
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                    <Typography
+                                      variant="caption"
+                                      color="textSecondary"
+                                    >
+                                      ගෙවන දඩ පොලිය
+                                    </Typography>
+                                    <Typography
+                                      variant="body1"
+                                      sx={{ fontWeight: "bold" }}
+                                    >
                                       {formatCurrency(payingPenaltyInterest)}
                                     </Typography>
                                   </Box>
@@ -814,14 +1071,41 @@ export default function Search() {
                               </Paper>
                             </Grid2>
                             <Grid2 xs={12} sm={4}>
-                              <Paper elevation={0} sx={{ p: 2, bgcolor: '#fff3e0', borderRadius: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Avatar sx={{ bgcolor: '#ff9800', width: 24, height: 24 }}>
+                              <Paper
+                                elevation={0}
+                                sx={{
+                                  p: 2,
+                                  bgcolor: "#fff3e0",
+                                  borderRadius: 2,
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  <Avatar
+                                    sx={{
+                                      bgcolor: "#ff9800",
+                                      width: 24,
+                                      height: 24,
+                                    }}
+                                  >
                                     <TrendingUpIcon fontSize="small" />
                                   </Avatar>
                                   <Box>
-                                    <Typography variant="caption" color="textSecondary">ගෙවන පොලිය</Typography>
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                    <Typography
+                                      variant="caption"
+                                      color="textSecondary"
+                                    >
+                                      ගෙවන පොලිය
+                                    </Typography>
+                                    <Typography
+                                      variant="body1"
+                                      sx={{ fontWeight: "bold" }}
+                                    >
                                       {formatCurrency(payingInterest)}
                                     </Typography>
                                   </Box>
@@ -829,14 +1113,41 @@ export default function Search() {
                               </Paper>
                             </Grid2>
                             <Grid2 xs={12} sm={4}>
-                              <Paper elevation={0} sx={{ p: 2, bgcolor: '#e8f5e8', borderRadius: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Avatar sx={{ bgcolor: '#4caf50', width: 24, height: 24 }}>
+                              <Paper
+                                elevation={0}
+                                sx={{
+                                  p: 2,
+                                  bgcolor: "#e8f5e8",
+                                  borderRadius: 2,
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  <Avatar
+                                    sx={{
+                                      bgcolor: "#4caf50",
+                                      width: 24,
+                                      height: 24,
+                                    }}
+                                  >
                                     <AccountBalanceIcon fontSize="small" />
                                   </Avatar>
                                   <Box>
-                                    <Typography variant="caption" color="textSecondary">ගෙවන ණය මුදල</Typography>
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                    <Typography
+                                      variant="caption"
+                                      color="textSecondary"
+                                    >
+                                      ගෙවන ණය මුදල
+                                    </Typography>
+                                    <Typography
+                                      variant="body1"
+                                      sx={{ fontWeight: "bold" }}
+                                    >
                                       {formatCurrency(payingPrincipal)}
                                     </Typography>
                                   </Box>
@@ -845,10 +1156,17 @@ export default function Search() {
                             </Grid2>
                           </Grid2>
 
-                          {parseFloat(paymentAmount) < (loan.interest + loan.penaltyInterest) && (
-                            <Alert severity="warning" sx={{ mt: 2, borderRadius: 2 }}>
+                          {parseFloat(paymentAmount) <
+                            loan.interest + loan.penaltyInterest && (
+                            <Alert
+                              severity="warning"
+                              sx={{ mt: 2, borderRadius: 2 }}
+                            >
                               <Typography variant="body2">
-                                <strong>අවශ්‍ය අවම ගෙවීම:</strong> {formatCurrency(loan.interest + loan.penaltyInterest)}
+                                <strong>අවශ්‍ය අවම ගෙවීම:</strong>{" "}
+                                {formatCurrency(
+                                  loan.interest + loan.penaltyInterest
+                                )}
                                 <br />
                                 පොලිය සහ දඩ පොලිය අවම වශයෙන් ගෙවිය යුතුය.
                               </Typography>
@@ -859,10 +1177,13 @@ export default function Search() {
                     </Paper>
                   ) : (
                     <Alert severity="info" sx={{ borderRadius: 2 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                      >
                         <SecurityIcon />
                         <Typography variant="body1">
-                          ණය ගෙවීම් කළමනාකරණය කිරීමට <strong>ණය භාණ්ඩාගාරික</strong> අවසර අවශ්‍ය වේ.
+                          ණය ගෙවීම් කළමනාකරණය කිරීමට{" "}
+                          <strong>ණය භාණ්ඩාගාරික</strong> අවසර අවශ්‍ය වේ.
                         </Typography>
                       </Box>
                     </Alert>
@@ -878,16 +1199,16 @@ export default function Search() {
           open={snackbarOpen}
           autoHideDuration={4000}
           onClose={() => setSnackbarOpen(false)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           sx={{ mt: 8 }}
         >
-          <Alert 
-            onClose={() => setSnackbarOpen(false)} 
+          <Alert
+            onClose={() => setSnackbarOpen(false)}
             severity="success"
-            sx={{ 
+            sx={{
               borderRadius: 2,
               boxShadow: 3,
-              minWidth: '300px'
+              minWidth: "300px",
             }}
           >
             ගෙවීම සාර්ථකව සටහන් කරන ලදී
