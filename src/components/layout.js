@@ -10,6 +10,7 @@ import { useStaticQuery, graphql } from "gatsby"
 
 import Header from "./header"
 import "./layout.css"
+import { Box } from "@mui/material"
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
@@ -25,11 +26,12 @@ const Layout = ({ children }) => {
   return (
     <>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <div
-        style={{
+      <Box
+        sx={{
+          px: { xs: 'var(--size-gutter)' ,sm: '0px' },
+          py:'var(--size-gutter)',
           margin: `0 auto`,
           maxWidth: `var(--size-content)`,
-          padding: `var(--size-gutter)`,
         }}
       >
         <main>{children}</main>
@@ -43,7 +45,7 @@ const Layout = ({ children }) => {
           {` `}
           <a href="https://www.gatsbyjs.com">Gatsby</a> by <a href="https://lakkaru.com">Lakkaru</a> Soft Technologies
         </footer>
-      </div>
+      </Box>
     </>
   )
 }
