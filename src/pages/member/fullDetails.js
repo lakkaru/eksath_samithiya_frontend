@@ -1,6 +1,12 @@
 import React, { useState } from "react"
 import Layout from "../../components/layout"
-import { Box, Button, Paper, TextField, Typography } from "@mui/material"
+import { Box, Button, Paper, TextField, Typography, Grid, Divider } from "@mui/material"
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import GroupIcon from '@mui/icons-material/Group';
+import GavelIcon from '@mui/icons-material/Gavel';
+import PaymentsIcon from '@mui/icons-material/Payments';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 import { navigate } from "gatsby"
 import api from "../../utils/api"
@@ -109,144 +115,101 @@ export default function FullDetails() {
   return (
     <Layout>
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
-      {/* member search */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          padding: "20px",
-          gap: "50px",
-        }}
-      >
-        <Typography>සාමාජික අංකය</Typography>
-        <TextField
-          id="outlined-basic"
-          label="Your ID"
-          variant="outlined"
-          type="number"
-          value={memberId}
-          onChange={e => setMemberId(e.target.value)}
-          // onBlur={e => setMemberId(e.target.value)}
-        />
-        <Button variant="contained" onClick={getMemberById}>
-          Search
-        </Button>
-      </Box>
-      {/* member basic info */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography> {member.memberDetails?.name}</Typography>
-        <Typography> {member.memberDetails?.area}</Typography>
-        <Typography>
-          {{
-            regular: "සාමාන්‍ය",
-            "funeral-free": "අවමංගල්‍ය වැඩවලින් නිදහස්",
-            "attendance-free": "පැමිණීමෙන් නිදහස්",
-            free: "නිදහස්",
-          }[member.memberDetails?.status] || member.memberDetails?.status}
-        </Typography>
-        <Typography> මාසික සාමාජික මුදල:- {member.membershipRate}</Typography>
-      </Box>
-      <hr />
-      {/* member loan info */}
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography>ඇපවීම් :-</Typography>
-        {member.loanInfo?.asGuarantor?.map((val, key) => {
-          return (
-            <Typography key={key}>
-              {val.memberId.name} - {val.loanNumber}
+      {/* Member Search */}
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, mb: 3, mt: 2 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={2} sx={{ display: 'flex', alignItems: 'center' }}>
+            <AccountCircleIcon color="primary" sx={{ mr: 1 }} />
+            <Typography>සාමාජික අංකය</Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="outlined-basic"
+              label="Your ID"
+              variant="outlined"
+              type="number"
+              value={memberId}
+              onChange={e => setMemberId(e.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Button variant="contained" onClick={getMemberById} fullWidth>
+              Search
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+      {/* Member Basic Info */}
+      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 2, bgcolor: '#f5f7fa' }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={3} sx={{ display: 'flex', alignItems: 'center' }}>
+            <SummarizeIcon color="primary" sx={{ mr: 1 }} />
+            <Typography fontWeight={700}>{member.memberDetails?.name}</Typography>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Typography>{member.memberDetails?.area}</Typography>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Typography>
+              {{
+                regular: "සාමාන්‍ය",
+                "funeral-free": "අවමංගල්‍ය වැඩවලින් නිදහස්",
+                "attendance-free": "පැමිණීමෙන් නිදහස්",
+                free: "නිදහස්",
+              }[member.memberDetails?.status] || member.memberDetails?.status}
             </Typography>
-          )
-        })}
-      </Box>
-      <hr />
-      {/* member account summery */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "20px",
-          gap: "20px",
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: "800",
-            fontSize: { xs: ".6rem", sm: "1rem" },
-            color: member.memberDetails?.previousDue < 0 ? "green" : "orange",
-          }}
-        >
-          {member.memberDetails?.previousDue < 0 && (
-            <>2024 ඉතිරිය රු. {Math.abs(member.memberDetails.previousDue)}</>
-          )}
-          {member.memberDetails?.previousDue >= 0 && (
-            <>2024 හිඟ රු. {Math.abs(member.memberDetails.previousDue)}</>
-          )}
-        </Typography>
-        <Typography
-          sx={{
-            fontWeight: "800",
-            fontSize: { xs: ".6rem", sm: "1rem" },
-            color: member.currentMembershipDue < 0 ? "green" : "orange",
-          }}
-        >
-          {member.currentMembershipDue < 0 && (
-            <>
-              සාමාජික මුදල් ඉතිරිය රු. {Math.abs(member.currentMembershipDue)}
-            </>
-          )}
-          {member.currentMembershipDue >= 0 && (
-            <>සාමාජික මුදල් හිඟ රු. {Math.abs(member.currentMembershipDue)}</>
-          )}
-        </Typography>
-
-        {/* <Typography
-          sx={{
-            fontWeight: "800",
-            fontSize: { xs: ".6rem", sm: "1rem" },
-            color: "orange",
-          }}
-        >
-          දඩ මුදල් රු.
-          {memberInfo?.fineTotal || "0"}
-        </Typography> */}
-        <Typography
-          sx={{
-            fontWeight: "800",
-            fontSize: { xs: ".6rem", sm: "1rem" },
-            color: member.totalDue < 0 ? "green" : "orange",
-          }}
-        >
-          {member.totalDue < 0 && (
-            <>ඉතිරි මුදල රු. {Math.abs(member.totalDue)}</>
-          )}
-          {member.totalDue >= 0 && (
-            <>හිඟ එකතුව රු. {Math.abs(member.totalDue)}</>
-          )}
-        </Typography>
-      </Box>
-
-      <Box sx={{ marginBottom: "20px" }}>
-        <Typography variant="h6" align="center" sx={{ marginBottom: "10px" }}>
-          යැපෙන්නන්
-        </Typography>
-        <Paper elevation={3} sx={{ padding: "20px" }}>
-          <StickyHeadTable
-            columnsArray={dependentsColumnsArray}
-            dataArray={dependentsDataArray}
-            totalRow={false}
-            headingAlignment={"left"}
-            dataAlignment={"left"}
-          />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Typography>මාසික සාමාජික මුදල: {member.membershipRate}</Typography>
+          </Grid>
+        </Grid>
+      </Paper>
+      {/* Guarantor Info */}
+      {member.loanInfo?.asGuarantor?.length > 0 && (
+        <Paper elevation={1} sx={{ p: { xs: 2, sm: 3 }, mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <GroupIcon color="primary" sx={{ mr: 1 }} />
+            <Typography fontWeight={700}>ඇපවීම්</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            {member.loanInfo?.asGuarantor?.map((val, key) => (
+              <Typography key={key} sx={{ mr: 2 }}>
+                {val.memberId.name} - {val.loanNumber}
+              </Typography>
+            ))}
+          </Box>
         </Paper>
-      </Box>
+      )}
+      {/* Account Summary */}
+      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 3, bgcolor: '#e3f2fd' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
+          <Typography sx={{ fontWeight: 800, fontSize: { xs: '.8rem', sm: '1.1rem' }, color: member.memberDetails?.previousDue < 0 ? 'green' : 'orange' }}>
+            {member.memberDetails?.previousDue < 0 ? `2024 ඉතිරිය රු. ${Math.abs(member.memberDetails.previousDue)}` : `2024 හිඟ රු. ${Math.abs(member.memberDetails?.previousDue || 0)}`}
+          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: { xs: '.8rem', sm: '1.1rem' }, color: member.currentMembershipDue < 0 ? 'green' : 'orange' }}>
+            {member.currentMembershipDue < 0 ? `සාමාජික මුදල් ඉතිරිය රු. ${Math.abs(member.currentMembershipDue)}` : `සාමාජික මුදල් හිඟ රු. ${Math.abs(member.currentMembershipDue || 0)}`}
+          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: { xs: '.8rem', sm: '1.1rem' }, color: member.totalDue < 0 ? 'green' : 'orange' }}>
+            {member.totalDue < 0 ? `ඉතිරි මුදල රු. ${Math.abs(member.totalDue)}` : `හිඟ එකතුව රු. ${Math.abs(member.totalDue || 0)}`}
+          </Typography>
+        </Box>
+      </Paper>
+      <Divider sx={{ mb: 3 }} />
+      {/* Dependents */}
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <GroupIcon color="primary" sx={{ mr: 1 }} />
+          <Typography variant="h6">යැපෙන්නන්</Typography>
+        </Box>
+        <StickyHeadTable
+          columnsArray={dependentsColumnsArray}
+          dataArray={dependentsDataArray}
+          totalRow={false}
+          headingAlignment={"left"}
+          dataAlignment={"left"}
+        />
+      </Paper>
       {member.fines &&
         Object.keys(member.fines)
           .sort((a, b) => b - a) // Sort years in descending order
