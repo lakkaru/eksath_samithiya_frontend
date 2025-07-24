@@ -68,9 +68,9 @@ export default function UserLogin() {
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1976d2', mb: 1 }}>
                 පරිශීලක පිවිසුම
               </Typography>
-              <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
+              {/* <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
                 ඔබගේ සාමාජික අංකය සහ මුරපදය ඇතුල් කරන්න
-              </Typography>
+              </Typography> */}
             </Box>
             <Box sx={{ width: '100%', mb: 2 }}>
               <Alert severity={error === "සාමාජික අංකයට මුරපදය නොගැලපේ." ? "error" : "info"} sx={{ fontSize: '0.95em', borderRadius: 2 }}>
