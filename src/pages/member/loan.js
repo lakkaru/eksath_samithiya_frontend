@@ -94,14 +94,14 @@ export default function MemberLoan() {
     }
     const now = new Date()
     let years = now.getFullYear() - fromDate.getFullYear()
-    console.log("years:", years)
+    // console.log("years:", years)
     let months = now.getMonth() - fromDate.getMonth()
-    console.log("months:", months)
+    // console.log("months:", months)
     unpaidMonths = years * 12 + months // +1 to include current month
     if (unpaidMonths < 1) unpaidMonths = 1
   }
 
-  console.log("unpaidMonths:", unpaidMonths)
+  // console.log("unpaidMonths:", unpaidMonths)
   // If paid principal >= expected principal, unpaid months should be zero
   let expectedPrincipalPaid = loan?.loanAmount
     ? (loan.loanAmount / 10) * totalMonths
@@ -113,8 +113,8 @@ export default function MemberLoan() {
     (sum, p) => sum + (p.principleAmount || 0),
     0
   )
-  console.log("expectedPrincipalPaid:", expectedPrincipalPaid)
-  console.log("paidPrincipal:", paidPrincipal)
+  // console.log("expectedPrincipalPaid:", expectedPrincipalPaid)
+  // console.log("paidPrincipal:", paidPrincipal)
   if (expectedPrincipalPaid && paidPrincipal >= expectedPrincipalPaid) {
     unpaidMonths = 0
   }
