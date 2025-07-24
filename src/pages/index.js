@@ -18,9 +18,9 @@ export default function Index() {
               </Typography>
             </Box>
             <Typography sx={{ fontSize: { xs: '.95rem', sm: '1.1rem' }, mb: 2, color: '#444' }}>
-              මෙම පද්ධතිය වෙත
+              මෙම පද්ධතිය වෙත &nbsp;
               <Link href="/login/user-login" underline="hover" sx={{ cursor: 'pointer', color: 'primary.main', fontWeight: 'bold' }}>
-                ඇතුළු වී
+                 ඇතුළු වී
               </Link>
               , සාමාජික ඔබගේ තොරතුරු වල නිවැරදිතාවය පිරික්සන්න.
             </Typography>
