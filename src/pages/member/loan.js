@@ -49,6 +49,39 @@ export default function MemberLoan() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
+  // Calculate totals for payment table (after earlyPayments is defined)
+  const paymentTotals = earlyPayments && earlyPayments.length > 0 ? earlyPayments.reduce(
+    (acc, val) => {
+      acc.payedTotal += (val.principleAmount || 0) + (val.interestAmount || 0) + (val.penaltyInterestAmount || 0);
+      acc.amount += val.principleAmount || 0;
+      acc.interest += val.interestAmount || 0;
+      acc.penaltyInterest += val.penaltyInterestAmount || 0;
+      return acc;
+    },
+    { payedTotal: 0, amount: 0, interest: 0, penaltyInterest: 0 }
+  ) : { payedTotal: 0, amount: 0, interest: 0, penaltyInterest: 0 };
+
+  // Prepare payment data array with total row at the end
+  const paymentDataArray = [
+    ...earlyPayments.map(val => ({
+      date: new Date(val.date).toLocaleDateString("en-CA"),
+      payedTotal:
+        val.principleAmount +
+        val.interestAmount +
+        val.penaltyInterestAmount,
+      amount: val.principleAmount,
+      interest: val.interestAmount || "-",
+      penaltyInterest: val.penaltyInterestAmount || "-",
+    })),
+    earlyPayments.length > 0 ? {
+      date: 'එකතුව',
+      payedTotal: formatCurrency(paymentTotals.payedTotal),
+      amount: formatCurrency(paymentTotals.amount),
+      interest: formatCurrency(paymentTotals.interest),
+      penaltyInterest: formatCurrency(paymentTotals.penaltyInterest)
+    } : null
+  ].filter(Boolean);
+
   const loanColumns = [
     { id: "date", label: "ණය වු දිනය", minWidth: 50 },
     { id: "id", label: "අංකය", minWidth: 50 },
@@ -167,17 +200,7 @@ export default function MemberLoan() {
                 </Typography>
                 <StickyHeadTable
                   columnsArray={paymentColumns}
-                  dataArray={earlyPayments.map(val => ({
-                    date: new Date(val.date).toLocaleDateString("en-CA"),
-                    payedTotal:
-                      val.principleAmount +
-                      val.interestAmount +
-                      val.penaltyInterestAmount,
-                    amount: val.principleAmount,
-                    interest: val.interestAmount || "-",
-                    penaltyInterest: val.penaltyInterestAmount || "-",
-                  }))}
-                  totalRow={false}
+                  dataArray={paymentDataArray}
                 />
               </CardContent>
             </Card>
