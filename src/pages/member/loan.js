@@ -265,12 +265,7 @@ export default function MemberLoan() {
                     <strong>ඉතිරි ණය මුදල:</strong>{" "}
                     {formatCurrency(loan.loanRemainingAmount)}
                   </Typography>
-                  <Typography variant="body1"sx={{ mt: 1 }}>
-                    <strong>ණය වාරිකය:</strong>{" "}
-                    {calculatedInterest?.installment
-                      ? formatCurrency(calculatedInterest.installment)
-                      : 0}
-                  </Typography>
+                  
                   <Typography variant="body1" sx={{ mt: 1 }}>
                     <strong>පොලිය:</strong>{" "}
                     {calculatedInterest?.int
@@ -283,16 +278,21 @@ export default function MemberLoan() {
                       ? formatCurrency(calculatedInterest.penInt)
                       : 0}
                   </Typography>
+                  <Typography variant="body1"sx={{ mt: 1 }}>
+                    <strong>ණය වාරිකය:</strong>{" "}
+                    {calculatedInterest?.installment
+                      ? formatCurrency(calculatedInterest.installment)
+                      : 0}
+                  </Typography>
                   <Typography variant="body1" sx={{ mt: 1 }}>
                     <strong>මුළු මුදල:</strong>{" "}
                     {formatCurrency(
-                      (calculatedInterest?.installment
-                        ? calculatedInterest.installment
-                        : 0) +
-                        (calculatedInterest?.penInt
-                          ? calculatedInterest.penInt
-                          : 0) +
-                        (calculatedInterest?.int ? calculatedInterest.int : 0)
+                      (Number(totalMonths) > 10
+                        ? (loan?.loanPrincipalRemainingAmount ?? loan?.loanRemainingAmount ?? 0)
+                        : (loan?.loanRemainingAmount ?? 0)
+                      )
+                      + (calculatedInterest?.penInt ? calculatedInterest.penInt : 0)
+                      + (calculatedInterest?.int ? calculatedInterest.int : 0)
                     )}
                   </Typography>
                 </Grid2>
