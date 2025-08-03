@@ -39,5 +39,34 @@ module.exports = {
         icon: `src/images/lakkaru_Logo.png`, // This path is relative to the root of the site.
       },
     },
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        // You can add multiple tracking IDs and a tracking for each property (optional)
+        trackingIds: [
+          "G-749GE0BSJ4", // Google Analytics / GA4 Measurement ID
+          // "AW-CONVERSION_ID", // Google Ads / Adwords / AW
+          // "DC-FLOODLIGHT_ID", // Marketing Platform advertising products (Display & Video 360, Search Ads 360, and Campaign Manager)
+        ],
+        // This object gets passed directly to the gtag config command
+        // This config will be used for all tracking IDs
+        gtagConfig: {
+          anonymize_ip: true,
+          cookie_expires: 0,
+        },
+        // This object is used for configuration specific to this plugin
+        pluginConfig: {
+          // Puts tracking script in the head instead of the body
+          head: false,
+          // Setting this parameter is optional
+          respectDNT: true,
+          // Avoids sending pageview hits from custom paths
+          // exclude: ["/preview/**", "/do-not-track/"],
+          // Delays processing pageview events on route update (in milliseconds)
+          // Use when your site uses custom transitions
+          // delayOnRouteUpdate: 0,
+        },
+      },
+    },
   ],
 }

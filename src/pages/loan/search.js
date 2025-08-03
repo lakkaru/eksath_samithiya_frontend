@@ -30,6 +30,7 @@ import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
   Receipt as ReceiptIcon,
+  Visibility as VisibilityIcon,
 } from "@mui/icons-material"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
@@ -320,7 +321,7 @@ export default function Search() {
     setRoles(roles)
     if (
       !isAuthenticated ||
-      (!roles.includes("loan-treasurer") && !roles.includes("treasurer"))
+      (!roles.includes("loan-treasurer") && !roles.includes("treasurer") && !roles.includes("chairman"))
     ) {
       navigate("/login/user-login")
     }
@@ -1175,6 +1176,17 @@ export default function Search() {
                         </Box>
                       )}
                     </Paper>
+                  ) : roles.includes("chairman") ? (
+                    <Alert severity="info" sx={{ borderRadius: 2 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                      >
+                        <VisibilityIcon />
+                        <Typography variant="body1">
+                          <strong>සභාපති</strong> ලෙස ඔබට ණය තොරතුරු බැලීමට පමණක් අවසර ඇත.
+                        </Typography>
+                      </Box>
+                    </Alert>
                   ) : (
                     <Alert severity="info" sx={{ borderRadius: 2 }}>
                       <Box

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import Layout from "../../components/layout"
+import AuthComponent from "../../components/common/AuthComponent"
+import { navigate } from "gatsby"
 import {
   Table,
   TableBody,
@@ -17,12 +19,24 @@ const baseUrl = process.env.GATSBY_API_BASE_URL
 export default function MeetingAttendance() {
   const [loading, setLoading] = useState(true) // Handle loading state
   const [error, setError] = useState(null)
+  const [roles, setRoles] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const [attendanceRecords, setAttendanceRecords] = useState([])
   const [memberIds, setMemberIds] = useState([])
 
+  const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+    setIsAuthenticated(isAuthenticated)
+    setRoles(roles)
+    if (!isAuthenticated || (!roles.includes("vice-secretary") && !roles.includes("chairman"))) {
+      navigate("/login/user-login")
+    }
+  }
+
   useEffect(() => {
     const fetchAttendance = async () => {
+      if (!isAuthenticated) return
+      
       try {
         const attendance = await api.get(`${baseUrl}/meeting/attendance`)
         // console.log("attendance: ", attendance.data)
@@ -37,7 +51,7 @@ export default function MeetingAttendance() {
       }
     }
     fetchAttendance()
-  }, [])
+  }, [isAuthenticated])
   const transformAttendanceData = (attendanceRecords, memberIds) => {
     // Initialize rows with memberId
     const rows = memberIds.map(id => ({ memberId: id }))
@@ -74,6 +88,7 @@ export default function MeetingAttendance() {
 
   return (
     <Layout>
+      <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

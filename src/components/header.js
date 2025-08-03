@@ -55,6 +55,7 @@ const Header = ({ siteTitle }) => {
   const isViceSecretary = roles.includes("vice-secretary")
   const isLoanTreasurer = roles.includes("loan-treasurer")
   const isTreasurer = roles.includes("treasurer")
+  const isChairman = roles.includes("chairman")
   const hasLoanAccess = isLoanTreasurer || isTreasurer
 
   const handleMemberMenuOpen = event => setMemberAnchorEl(event.currentTarget)
@@ -529,6 +530,77 @@ const Header = ({ siteTitle }) => {
                           </MenuItem>
                         )}
                       </Menu>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ 
+                          bgcolor: "rgba(255,255,255,0.3)", 
+                          mx: 2,
+                          height: 32,
+                          alignSelf: 'center'
+                        }}
+                      />
+                    </>
+                  )}
+
+                  {isChairman && (
+                    <>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/member/fullDetails")}
+                        startIcon={<PersonIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
+                      >
+                        සාමාජික තොරතුරු
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/loan/active-loans")}
+                        startIcon={<AccountBalanceIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
+                      >
+                        ක්‍රියාකාරී ණය
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/reports/meetingAttendance")}
+                        startIcon={<GroupsIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
+                      >
+                        මහා සභාව පැමිණීම
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={() => navigate("/account/monthly-report")}
+                        startIcon={<AssessmentIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
+                      >
+                        මාසික ආදායම්/වියදම් වාර්තාව
+                      </Button>
                       <Divider
                         orientation="vertical"
                         flexItem
@@ -1093,6 +1165,114 @@ const Header = ({ siteTitle }) => {
                           • නම අනුව සෙවීම
                         </Button>
                         <Divider sx={{ my: 2, backgroundColor: 'rgba(102, 126, 234, 0.2)' }} />
+                      </Box>
+                    )}
+                    {isChairman && (
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ 
+                          textAlign: "center", 
+                          color: "#e91e63", 
+                          fontWeight: 'bold',
+                          mb: 2,
+                          py: 1,
+                          backgroundColor: 'rgba(233, 30, 99, 0.1)',
+                          borderRadius: 1
+                        }}>
+                          සභාපති
+                        </Typography>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/member/fullDetails")}
+                          startIcon={<PersonIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(233, 30, 99, 0.15)',
+                            border: '1px solid rgba(233, 30, 99, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(233, 30, 99, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          සාමාජික තොරතුරු
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/loan/active-loans")}
+                          startIcon={<AccountBalanceIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(233, 30, 99, 0.15)',
+                            border: '1px solid rgba(233, 30, 99, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(233, 30, 99, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          ක්‍රියාකාරී ණය
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/reports/meetingAttendance")}
+                          startIcon={<GroupsIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 1,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(233, 30, 99, 0.15)',
+                            border: '1px solid rgba(233, 30, 99, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(233, 30, 99, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          මහා සභාව පැමිණීම
+                        </Button>
+                        <Button
+                          color="inherit"
+                          onClick={() => handleMobileNavigate("/account/monthly-report")}
+                          startIcon={<AssessmentIcon />}
+                          sx={{ 
+                            textTransform: "none", 
+                            width: "100%",
+                            mb: 2,
+                            justifyContent: 'flex-start',
+                            backgroundColor: 'rgba(233, 30, 99, 0.15)',
+                            border: '1px solid rgba(233, 30, 99, 0.2)',
+                            '&:hover': { 
+                              backgroundColor: 'rgba(233, 30, 99, 0.25)',
+                              transform: 'translateX(2px)'
+                            },
+                            borderRadius: 2,
+                            py: 1.5,
+                            color: '#333',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          මාසික ආදායම්/වියදම් වාර්තාව
+                        </Button>
+                        <Divider sx={{ my: 2, backgroundColor: 'rgba(233, 30, 99, 0.2)' }} />
                       </Box>
                     )}
                     {hasLoanAccess && !isTreasurer && (

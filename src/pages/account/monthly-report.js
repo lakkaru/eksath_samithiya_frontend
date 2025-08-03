@@ -67,7 +67,7 @@ export default function MonthlyReport() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("treasurer")) {
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("chairman"))) {
       navigate("/login/user-login")
     }
   }
@@ -89,7 +89,7 @@ export default function MonthlyReport() {
 
   // Fetch saved reports when switching to saved mode
   const fetchSavedReports = async () => {
-    if (!isAuthenticated || !roles.includes("treasurer")) return
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("chairman"))) return
     
     setLoadingSavedReports(true)
     try {
@@ -581,22 +581,24 @@ export default function MonthlyReport() {
                       මුද්‍රණය කරන්න
                     </Button>
                   </Grid2>
-                  <Grid2 size={{ xs: 12, sm: 4, md: 2.4 }}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      startIcon={<SaveIcon />}
-                      onClick={handleSaveBalance}
-                      disabled={!reportData}
-                      sx={{ 
-                        height: "56px", 
-                        width: "100%",
-                        textTransform: "none" 
-                      }}
-                    >
-                      ශේෂය සුරකින්න
-                    </Button>
-                  </Grid2>
+                  {roles.includes("treasurer") && (
+                    <Grid2 size={{ xs: 12, sm: 4, md: 2.4 }}>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        startIcon={<SaveIcon />}
+                        onClick={handleSaveBalance}
+                        disabled={!reportData}
+                        sx={{ 
+                          height: "56px", 
+                          width: "100%",
+                          textTransform: "none" 
+                        }}
+                      >
+                        ශේෂය සුරකින්න
+                      </Button>
+                    </Grid2>
+                  )}
                 </Grid2>
               ) : (
                 <Grid2 container spacing={2} sx={{ marginBottom: "30px" }}>
