@@ -292,6 +292,13 @@ export default function ActiveLoans() {
               <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', mb: 2 }}>
                 ණය ලැයිස්තුව
               </Typography>
+              <Alert severity="info" sx={{ mb: 2, borderRadius: 2 }}>
+                <Typography variant="body2">
+                  <strong>සටහන:</strong> ණය කාලය මාස 10ක් ඉක්මවන සාමාජිකයින් 
+                  <span style={{ color: '#9c27b0', fontWeight: 'bold' }}> ජම්බු </span> 
+                  පැහැයෙන් හඳුන්වනු ලබයි. එවැනි ණය සම්පූර්ණ කිරීමෙන් පසු සාමාජිකයා වසරක් නව ණය සඳහා තහනම් වේ.
+                </Typography>
+              </Alert>
             </Box>
             
             <TableContainer>
@@ -311,7 +318,13 @@ export default function ActiveLoans() {
                     <TableCell sx={{ fontWeight: "bold", color: '#1976d2' }}>සාමාජිකයා</TableCell>
                     <TableCell align="right" sx={{ fontWeight: "bold", color: '#1976d2' }}>ණය මුදල</TableCell>
                     <TableCell align="right" sx={{ fontWeight: "bold", color: '#1976d2' }}>ඉතිරි මුදල</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold", color: '#1976d2' }}>තත්ත්වය</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold", color: '#1976d2' }}>
+                      <Tooltip title="ණය ගැනීමේ දිනයේ සිට නොගෙවු මාස ගණන / මුළු ණය කාලය">
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                          නොගෙවු මාස / මුළු කාලය
+                        </Box>
+                      </Tooltip>
+                    </TableCell>
                     <TableCell align="center" sx={{ fontWeight: "bold", color: '#1976d2' }}>ක්‍රියා</TableCell>
                   </TableRow>
                 </TableHead>
@@ -346,19 +359,28 @@ export default function ActiveLoans() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    activeLoans.map((loan, index) => (
-                      <Fade in={true} timeout={300 + index * 50} key={index}>
-                        <TableRow 
-                          sx={{ 
-                            '&:hover': { 
-                              backgroundColor: '#f8f9fa',
-                              transform: 'scale(1.001)',
-                              transition: 'all 0.2s ease-in-out'
-                            },
-                            borderLeft: (loan.unpaidDuration > 2) ? '4px solid #f44336' : 
-                                       (loan.loanRemainingAmount === 0) ? '4px solid #4caf50' : '4px solid transparent'
-                          }}
-                        >
+                    activeLoans.map((loan, index) => {
+                      // Calculate total loan duration in months from loan date to today
+                      const loanStartDate = dayjs(loan.loanDate)
+                      const currentDate = dayjs()
+                      const totalDurationMonths = currentDate.diff(loanStartDate, 'month')
+                      
+                      return (
+                        <Fade in={true} timeout={300 + index * 50} key={index}>
+                          <TableRow 
+                            sx={{ 
+                              '&:hover': { 
+                                backgroundColor: '#f8f9fa',
+                                transform: 'scale(1.001)',
+                                transition: 'all 0.2s ease-in-out'
+                              },
+                              backgroundColor: (totalDurationMonths > 10) ? 'rgba(156, 39, 176, 0.1)' : 'transparent',
+                              borderLeft: (totalDurationMonths > 10) ? '4px solid #9c27b0' :
+                                         (loan.unpaidDuration > 2) ? '4px solid #f44336' : 
+                                         (loan.loanRemainingAmount === 0) ? '4px solid #4caf50' : '4px solid transparent',
+                              border: (totalDurationMonths > 10) ? '2px solid rgba(156, 39, 176, 0.3)' : 'none'
+                            }}
+                          >
                           <TableCell sx={{ py: 2 }}>
                             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
                               {formatDate(loan.loanDate)}
@@ -407,12 +429,26 @@ export default function ActiveLoans() {
                           <TableCell align="center">
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                               <Chip
-                                label={`${loan.unpaidDuration} මාස`}
+                                label={`${loan.unpaidDuration} `}
                                 size="small"
-                                color={loan.unpaidDuration > 2 ? 'error' : loan.unpaidDuration > 0 ? 'warning' : 'success'}
+                                color={loan.unpaidDuration > 2 ? 'error' : loan.unpaidDuration > 1 ? 'warning' : 'success'}
                                 icon={loan.unpaidDuration > 2 ? <WarningIcon /> : <CheckCircleIcon />}
                                 sx={{ fontWeight: 'bold' }}
                               />
+                              {totalDurationMonths > 10 && (
+                                <Chip
+                                  label={`මුළු කාලය: ${totalDurationMonths}මාස`}
+                                  size="small"
+                                  color="secondary"
+                                  variant="outlined"
+                                  sx={{ 
+                                    fontWeight: 'bold',
+                                    fontSize: '0.7rem',
+                                    backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                                    border: '1px solid #9c27b0'
+                                  }}
+                                />
+                              )}
                               {loan.loanRemainingAmount === 0 && (
                                 <Chip
                                   label="සම්පූර්ණ"
@@ -466,7 +502,8 @@ export default function ActiveLoans() {
                           </TableCell>
                         </TableRow>
                       </Fade>
-                    ))
+                    )
+                    })
                   )}
                 </TableBody>
               </Table>
