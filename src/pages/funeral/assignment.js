@@ -39,8 +39,10 @@ export default function Assignment() {
   const [allMembers, setAllMembers] = useState([])
   // const [dependents, setDependents] = useState([])
   const [member, setMember] = useState({})
+  const [areaAdminInfo, setAreaAdminInfo] = useState({})
   const [deceasedOptions, setDeceasedOptions] = useState([])
   const [selectedDeceased, setSelectedDeceased] = useState("")
+  const [selectedDeceasedInfo, setSelectedDeceasedInfo] = useState({})
   const [removedMembers, setRemovedMembers] = useState([]) // Track removed members
   const [releasedMembers, setReleasedMembers] = useState([]) // Track members with status 'free' or 'convenient'
   const [selectedDate, setSelectedDate] = useState(dayjs())
@@ -80,7 +82,7 @@ export default function Assignment() {
           await api
             .get(`${baseUrl}/member/getActiveMembers`)
             .then(response => {
-              console.log('allMembers: ',response.data.data)
+              // console.log('allMembers: ',response.data.data)
               allMembers = response.data.data
             })
             .catch(error => {
@@ -94,7 +96,7 @@ export default function Assignment() {
             await api
               .get(`${baseUrl}/member/getAdminsForFuneral?area=${member.area}`)
               .then(response => {
-                console.log("Admins: ", response.data)
+                // console.log("Admins: ", response.data)
                 allAdmins = response.data
               })
               .catch(error => {
@@ -118,9 +120,8 @@ export default function Assignment() {
           const activeMembers = nextMembers.filter(
             member =>
               member.status !== "free" &&
-              member.status !== "convenient" &&
-              member.status !== "Funeral-free" &&
-              member.status !== "Attendance-free"
+              member.status !== "funeral-free" &&
+              member.status !== "attendance-free"
           )
           // console.log('activeMembers: ',activeMembers)
           //removing admins
@@ -128,7 +129,7 @@ export default function Assignment() {
           const filteredMembers = activeMembers.filter(
             member => !allAdmins.includes(member.member_id)
           )
-          console.log("lastRemovedMember_ids", lastRemovedMember_ids)
+          // console.log("lastRemovedMember_ids", lastRemovedMember_ids)
 
           // console.log('filteredMembers: ',filteredMembers)
           setAllMembers(filteredMembers)
@@ -138,13 +139,13 @@ export default function Assignment() {
           // Separate out 'free' or 'convenient' members
           const releasedMembers = nextMembers.filter(
             member =>
-              member.member_id <= filteredMembers[14].member_id &&
+              member.member_id <= filteredMembers[30].member_id &&
               (member.status === "free" ||
-                member.status === "convenient" ||
-                member.status === "Funeral-free" ||
-                member.status === "Attendance-free")
+                member.status === "funeral-free" ||
+                member.status === "attendance-free")
           )
           setReleasedMembers(releasedMembers)
+          // console.log('releasedMembers: ', releasedMembers)
         }
         // Execute sequentially
         await fetchLastAssignedMember()
@@ -160,49 +161,67 @@ export default function Assignment() {
     fetchData()
   }, [member.area])
 
-  const getMemberById = e => {
+  const getMemberById = async e => {
     // console.log('search:', memberId)
-    api
-      .get(`${baseUrl}/member/getMembershipDeathById?member_id=${memberId}`)
-      .then(response => {
-        const data = response?.data?.data || {}
-        console.log(data.member)
-        setMember(data.member || {})
-        // setDependents(data.dependents || [])
+    try {
+      const response = await api.get(`${baseUrl}/member/getMembershipDeathById?member_id=${memberId}`)
+      const data = response?.data?.data || {}
+      console.log(data.member)
+      setMember(data.member || {})
+      // setDependents(data.dependents || [])
 
-        // Prepare deceased options
-        const deceased = []
-        // console.log(data.member?.dateOfDeath)
-        if (data.member?.dateOfDeath) {
+      // Fetch area admin information
+      if (data.member?.area) {
+        try {
+          const adminResponse = await api.get(`${baseUrl}/member/getAreaAdminByArea?area=${data.member.area}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+          })
+          setAreaAdminInfo(adminResponse.data || {})
+        } catch (adminError) {
+          console.error("Error fetching area admin:", adminError)
+          setAreaAdminInfo({})
+        }
+      }
+
+      // Prepare deceased options
+      const deceased = []
+      // console.log(data.member?.dateOfDeath)
+      if (data.member?.dateOfDeath) {
+        deceased.push({
+          name: data.member.name,
+          id: "member",
+          isMember: true,
+          relationship: null
+        })
+      }
+      data.dependents.forEach(dependent => {
+        if (dependent.dateOfDeath) {
           deceased.push({
-            name: data.member.name,
-            id: "member",
-            isMember: true,
+            name: dependent.name,
+            id: dependent._id,
+            isMember: false,
+            relationship: dependent.relationship
           })
         }
-        data.dependents.forEach(dependent => {
-          if (dependent.dateOfDeath) {
-            deceased.push({
-              name: dependent.name,
-              id: dependent._id,
-              isMember: false,
-            })
-          }
-          // deceased.push({
-          //   name: dependent.name,
-          //   id: dependent._id,
-          //   isMember: false,
-          // });
-        })
-        setDeceasedOptions(deceased)
+        // deceased.push({
+        //   name: dependent.name,
+        //   id: dependent._id,
+        //   isMember: false,
+        // });
       })
-      .catch(error => {
-        console.error("Axios error: ", error)
-      })
+      setDeceasedOptions(deceased)
+    } catch (error) {
+      console.error("Axios error: ", error)
+    }
   }
 
   const handleSelectChange = event => {
-    setSelectedDeceased(event.target.value)
+    const selectedId = event.target.value
+    setSelectedDeceased(selectedId)
+    
+    // Find the selected deceased info for PDF generation
+    const selectedInfo = deceasedOptions.find(option => option.id === selectedId)
+    setSelectedDeceasedInfo(selectedInfo || {})
   }
 
   const getNextMember = () => {
@@ -249,6 +268,7 @@ export default function Assignment() {
   const columnsArray = [
     { id: "member_id", label: "සා. අංකය" },
     { id: "name", label: "නම" },
+    { id: "attendance", label: "" }, // Blank column for attendance marking
     {
       id: "remove",
       label: "Remove",
@@ -264,10 +284,18 @@ export default function Assignment() {
     },
   ]
 
+  // Columns for PDF (without remove button but with attendance column)
+  const pdfColumnsArray = [
+    { id: "member_id", label: "සා. අංකය" },
+    { id: "name", label: "නම" },
+    { id: "attendance", label: "" } // Blank column for attendance marking
+  ]
+
   const formatDataForTable = (dataArray, type) =>
     dataArray.map((member, index) => ({
       member_id: member.member_id,
       name: member.name,
+      attendance: "", // Blank field for attendance marking
       remove: (
         <Button
           variant="outlined"
@@ -276,6 +304,14 @@ export default function Assignment() {
           onClick={() => handleRemoveMember(type, index)}
         ></Button>
       ),
+    }))
+
+  // Format data for PDF (without remove column but with attendance column)
+  const formatDataForPDF = (dataArray) =>
+    dataArray.map((member) => ({
+      member_id: member.member_id,
+      name: member.name,
+      attendance: "" // Blank field for attendance marking
     }))
 
   const saveDuties = () => {
@@ -314,15 +350,253 @@ export default function Assignment() {
       })
   }
 
+  const generateHeaderContent = () => {
+    if (!member || !selectedDeceasedInfo || !areaAdminInfo) return ""
+    
+    const deceasedName = selectedDeceasedInfo.isMember 
+      ? member.name 
+      : selectedDeceasedInfo.name
+    
+    const relationshipText = selectedDeceasedInfo.isMember 
+      ? "" 
+      : `${selectedDeceasedInfo.relationship} වන ${selectedDeceasedInfo.name}`
+    
+    const deathSubject = selectedDeceasedInfo.isMember 
+      ? "ගේ අභාවය" 
+      : `${relationshipText} ගේ අභාවය`
+    
+    const formattedDate = selectedDate.format('YYYY/MM/DD')
+    
+    const adminName = areaAdminInfo.admin?.name || ""
+    const helper1Name = areaAdminInfo.helper1?.name || ""
+    const helper2Name = areaAdminInfo.helper2?.name || ""
+    
+    return `විල්බාගෙදර එක්සත් අවමංග්‍යාධාර සමිතිය
+විල්බාගෙදර වැව් ඉහල ගංගොඩ පදිංචිව සිටි සාමාජික අංක ${member.member_id} :- ${member.name} ${deathSubject} පිලිබඳ අවසන් කටයුතු කිරීම ${formattedDate} දින ${member.area} කාරක සභික ${adminName} ගේ ප්‍රධානත්වයෙන් ${helper1Name} සහ ${helper2Name} ගේ සහයෝගිත්ව යෙනි.`
+  }
+
   const saveAsPDF = () => {
-    const input = document.getElementById("assignments-content") // Target the content
-    html2canvas(input, { scale: 2 }).then(canvas => {
+    // Create a temporary container for the PDF content
+    const tempContainer = document.createElement('div')
+    tempContainer.style.padding = '36px' // 0.5 inch margins (36px = 0.5 inch at 72 DPI)
+    tempContainer.style.fontFamily = 'Arial, sans-serif'
+    tempContainer.style.backgroundColor = 'white'
+    tempContainer.style.fontSize = '14px' // Increased from 12px
+    tempContainer.style.lineHeight = '1.5'
+    tempContainer.style.width = '210mm' // A4 width
+    tempContainer.style.minHeight = '297mm' // A4 height
+    tempContainer.style.boxSizing = 'border-box'
+    
+    // Add main header - centered and underlined
+    const mainHeaderDiv = document.createElement('div')
+    mainHeaderDiv.style.textAlign = 'center'
+    mainHeaderDiv.style.fontSize = '18px' // Increased from 16px
+    mainHeaderDiv.style.fontWeight = 'bold'
+    mainHeaderDiv.style.marginBottom = '20px'
+    mainHeaderDiv.style.textDecoration = 'underline'
+    mainHeaderDiv.innerHTML = 'විල්බාගෙදර එක්සත් අවමංග්‍යාධාර සමිතිය'
+    tempContainer.appendChild(mainHeaderDiv)
+    
+    // Add content header
+    const contentHeaderDiv = document.createElement('div')
+    contentHeaderDiv.style.marginBottom = '30px'
+    contentHeaderDiv.style.lineHeight = '1.6'
+    contentHeaderDiv.style.fontSize = '14px' // Increased from 12px
+    contentHeaderDiv.style.textAlign = 'justify'
+    
+    const headerContent = generateHeaderContent()
+    const contentWithoutMainTitle = headerContent.replace('විල්බාගෙදර එක්සත් අවමංග්‍යාධාර සමිතිය\n', '')
+    contentHeaderDiv.innerHTML = contentWithoutMainTitle
+    tempContainer.appendChild(contentHeaderDiv)
+    
+    // Add a separator line
+    const separator = document.createElement('hr')
+    separator.style.marginBottom = '20px'
+    separator.style.border = '1px solid #000'
+    separator.style.width = '100%'
+    tempContainer.appendChild(separator)
+    
+    // Create assignments section manually for PDF (without Remove buttons)
+    const assignmentsDiv = document.createElement('div')
+    assignmentsDiv.style.display = 'flex'
+    assignmentsDiv.style.gap = '20px'
+    assignmentsDiv.style.marginBottom = '30px'
+    
+    // Cemetery assignments table
+    const cemeteryDiv = document.createElement('div')
+    cemeteryDiv.style.width = '50%'
+    cemeteryDiv.style.border = '1px solid #000'
+    
+    const cemeteryHeader = document.createElement('div')
+    cemeteryHeader.style.textAlign = 'center'
+    cemeteryHeader.style.border = '1px solid #000'
+    cemeteryHeader.style.padding = '8px'
+    cemeteryHeader.style.fontWeight = 'bold'
+    cemeteryHeader.style.fontSize = '14px'
+    cemeteryHeader.innerHTML = 'සුසාන භුමියේ කටයුතු'
+    cemeteryDiv.appendChild(cemeteryHeader)
+    
+    const cemeteryTable = document.createElement('table')
+    cemeteryTable.style.width = '100%'
+    cemeteryTable.style.borderCollapse = 'collapse'
+    cemeteryTable.style.fontSize = '13px'
+    
+    // Cemetery table header
+    const cemeteryTableHeader = document.createElement('tr')
+    cemeteryTableHeader.innerHTML = `
+      <th style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold;">සා. අංකය</th>
+      <th style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold;">නම</th>
+      <th style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold; width: 40px;"></th>
+    `
+    cemeteryTable.appendChild(cemeteryTableHeader)
+    
+    // Cemetery table rows
+    cemeteryAssignments.forEach(member => {
+      const row = document.createElement('tr')
+      row.innerHTML = `
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold;">${member.member_id}</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: left;">${member.name}</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 40px;"></td>
+      `
+      cemeteryTable.appendChild(row)
+    })
+    
+    cemeteryDiv.appendChild(cemeteryTable)
+    assignmentsDiv.appendChild(cemeteryDiv)
+    
+    // Funeral assignments table
+    const funeralDiv = document.createElement('div')
+    funeralDiv.style.width = '50%'
+    funeralDiv.style.border = '1px solid #000'
+    
+    const funeralHeader = document.createElement('div')
+    funeralHeader.style.textAlign = 'center'
+    funeralHeader.style.border = '1px solid #000'
+    funeralHeader.style.padding = '8px'
+    funeralHeader.style.fontWeight = 'bold'
+    funeralHeader.style.fontSize = '14px'
+    funeralHeader.innerHTML = 'දේහය ගෙනයාම'
+    funeralDiv.appendChild(funeralHeader)
+    
+    const funeralTable = document.createElement('table')
+    funeralTable.style.width = '100%'
+    funeralTable.style.borderCollapse = 'collapse'
+    funeralTable.style.fontSize = '13px'
+    
+    // Funeral table header
+    const funeralTableHeader = document.createElement('tr')
+    funeralTableHeader.innerHTML = `
+      <th style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold;">සා. අංකය</th>
+      <th style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold;">නම</th>
+      <th style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold; width: 40px;"></th>
+    `
+    funeralTable.appendChild(funeralTableHeader)
+    
+    // Funeral table rows
+    funeralAssignments.forEach(member => {
+      const row = document.createElement('tr')
+      row.innerHTML = `
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold;">${member.member_id}</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: left;">${member.name}</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 40px;"></td>
+      `
+      funeralTable.appendChild(row)
+    })
+    
+    funeralDiv.appendChild(funeralTable)
+    assignmentsDiv.appendChild(funeralDiv)
+    
+    tempContainer.appendChild(assignmentsDiv)
+    
+    // Add released members section
+    const releasedDiv = document.createElement('div')
+    releasedDiv.style.marginBottom = '30px'
+    releasedDiv.style.fontSize = '13px'
+    
+    const removedMembersText = removedMembers.map(m => m.member_id).join(', ')
+    const releasedMembersText = releasedMembers.map(m => m.member_id).join(', ')
+    
+    releasedDiv.innerHTML = `
+      <div style="margin-bottom: 10px;">විශේෂයෙන් නිදහස් කල සාමාජිකයන් :- ${removedMembersText}</div>
+      <div>සුසාන භුමි වැඩ වලින් නිදහස් සාමාජිකයන් :- ${releasedMembersText}</div>
+    `
+    tempContainer.appendChild(releasedDiv)
+    
+    // Add footer with signature section
+    const footerDiv = document.createElement('div')
+    footerDiv.style.marginTop = '60px'
+    footerDiv.style.fontSize = '14px' // Increased from 12px
+    footerDiv.style.lineHeight = '1.6'
+    
+    const footerContent = `
+      <div style="margin-bottom: 20px;">ස්තුතියි.</div>
+      <div style="margin-bottom: 10px;">මෙයට,</div>
+      <div style="margin-bottom: 40px;"></div>
+      <div>උප ලේකම්.</div>
+    `
+    footerDiv.innerHTML = footerContent
+    tempContainer.appendChild(footerDiv)
+    
+    // Temporarily add to document
+    document.body.appendChild(tempContainer)
+    
+    html2canvas(tempContainer, { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      width: tempContainer.scrollWidth,
+      height: tempContainer.scrollHeight
+    }).then(canvas => {
       const imgData = canvas.toDataURL("image/png")
       const pdf = new jsPDF("p", "mm", "a4")
-      const imgWidth = 210 // A4 width in mm
+      
+      // Calculate dimensions to fit A4 with proper margins
+      const pdfWidth = 210 // A4 width in mm
+      const pdfHeight = 297 // A4 height in mm
+      const imgWidth = pdfWidth - 25.4 // Subtract 1 inch total margin (0.5 inch each side)
       const imgHeight = (canvas.height * imgWidth) / canvas.width
-      pdf.addImage(imgData, "PNG", 0, 10, imgWidth, imgHeight)
-      pdf.save("assignments.pdf")
+      
+      // Center the content
+      const xOffset = 12.7 // 0.5 inch left margin
+      const yOffset = 10
+      
+      if (imgHeight <= pdfHeight - 20) {
+        // Content fits on one page
+        pdf.addImage(imgData, "PNG", xOffset, yOffset, imgWidth, imgHeight)
+      } else {
+        // Content spans multiple pages
+        let remainingHeight = imgHeight
+        let yPosition = 0
+        
+        while (remainingHeight > 0) {
+          const pageHeight = Math.min(remainingHeight, pdfHeight - 20)
+          
+          pdf.addImage(
+            imgData, 
+            "PNG", 
+            xOffset, 
+            yOffset, 
+            imgWidth, 
+            pageHeight,
+            undefined,
+            'FAST',
+            0,
+            -yPosition
+          )
+          
+          remainingHeight -= pageHeight
+          yPosition += pageHeight
+          
+          if (remainingHeight > 0) {
+            pdf.addPage()
+          }
+        }
+      }
+      
+      pdf.save("funeral-assignments.pdf")
+      
+      // Remove temporary container
+      document.body.removeChild(tempContainer)
     })
   }
   return (
@@ -377,6 +651,37 @@ export default function Assignment() {
         <hr />
         {selectedDeceased && (
           <Box>
+            {/* PDF Header Preview */}
+            <Box sx={{ 
+              mb: 3, 
+              p: 2, 
+              border: '1px solid #ccc', 
+              borderRadius: 1, 
+              backgroundColor: '#f9f9f9' 
+            }}>
+              <Typography variant="h6" sx={{ mb: 1, color: '#1976d2' }}>
+                PDF හි ඇතුළත් වන තොරතුරු:
+              </Typography>
+              <Typography variant="body1" sx={{ 
+                fontWeight: 'bold', 
+                textAlign: 'center', 
+                textDecoration: 'underline',
+                mb: 2 
+              }}>
+                විල්බාගෙදර එක්සත් අවමංග්‍යාධාර සමිතිය
+              </Typography>
+              <Typography variant="body2" sx={{ lineHeight: 1.6, mb: 3 }}>
+                {generateHeaderContent().replace('විල්බාගෙදර එක්සත් අවමංග්‍යාධාර සමිතිය\n', '')}
+              </Typography>
+              <Typography variant="body2" sx={{ lineHeight: 1.6, fontStyle: 'italic' }}>
+                <strong>අවසානයේ ඇතුළත් වන අත්සන කොටස:</strong><br/>
+                ස්තුතියි.<br/><br/>
+                මෙයට,<br/><br/><br/>
+                .............................<br/>
+                උප ලේකම්.
+              </Typography>
+            </Box>
+            
             <Box id="assignments-content">
               {/* assignments */}
               <Box
@@ -392,9 +697,13 @@ export default function Assignment() {
                   <Typography
                     sx={{
                       textAlign: "center",
-                      // mb: 2,
                       border: "1px solid #000",
                       mb: 0,
+                      py: 1, // Add consistent vertical padding
+                      minHeight: "40px", // Ensure consistent height
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
                     }}
                   >
                     සුසාන භුමියේ කටයුතු
@@ -417,9 +726,13 @@ export default function Assignment() {
                   <Typography
                     sx={{
                       textAlign: "center",
-                      // mb: 2,
                       border: "1px solid #000",
                       mb: 0,
+                      py: 1, // Add consistent vertical padding
+                      minHeight: "40px", // Ensure consistent height
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
                     }}
                   >
                     දේහය ගෙනයාම
