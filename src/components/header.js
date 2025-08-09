@@ -13,6 +13,9 @@ import {
   Avatar,
   Badge,
   Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material"
 import {
   Menu as MenuIcon,
@@ -26,6 +29,7 @@ import {
   Logout as LogoutIcon,
   Home as HomeIcon,
   Edit as EditIcon,
+  ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material"
 import { navigate } from "gatsby"
 import loadable from "@loadable/component"
@@ -36,7 +40,19 @@ const AuthComponent = loadable(() => import("./common/AuthComponent"))
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 
+
+// ...existing imports...
+
 const Header = ({ siteTitle }) => {
+  // ...existing state...
+  // State for 'මුදල්' (Money) parent menu
+  const [moneyAnchorEl, setMoneyAnchorEl] = React.useState(null);
+  const handleMoneyMenuOpen = (event) => {
+    setMoneyAnchorEl(event.currentTarget);
+  };
+  const handleMoneyMenuClose = () => {
+    setMoneyAnchorEl(null);
+  };
   const [roles, setRoles] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [memberName, setMemberName] = useState("")
@@ -50,6 +66,7 @@ const Header = ({ siteTitle }) => {
   const [receiptAnchorEl, setReceiptAnchorEl] = useState(null)
   const [expenseAnchorEl, setExpenseAnchorEl] = useState(null)
   const [reportAnchorEl, setReportAnchorEl] = useState(null)
+  const [funeralAnchorEl, setFuneralAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isViceSecretary = roles.includes("vice-secretary")
@@ -79,6 +96,9 @@ const Header = ({ siteTitle }) => {
 
   const handleReportMenuOpen = event => setReportAnchorEl(event.currentTarget)
   const handleReportMenuClose = () => setReportAnchorEl(null)
+
+  const handleFuneralMenuOpen = event => setFuneralAnchorEl(event.currentTarget)
+  const handleFuneralMenuClose = () => setFuneralAnchorEl(null)
 
   const handleAuthStateChange = ({
     isAuthenticated,
@@ -618,10 +638,243 @@ const Header = ({ siteTitle }) => {
                     <>
                       <Button
                         color="inherit"
-                        // variant="outlined"
+                        onClick={handleMoneyMenuOpen}
+                        startIcon={<PaymentIcon />}
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
+                      >
+                        මුදල්
+                      </Button>
+                      <Menu
+                        anchorEl={moneyAnchorEl}
+                        open={Boolean(moneyAnchorEl)}
+                        onClose={handleMoneyMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            minWidth: 260,
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
+                      >
+                        <MenuItem
+                          onClick={handleReceiptMenuOpen}
+                          sx={{ fontWeight: 600 }}
+                        >
+                          මුදල් ලැබීම්
+                        </MenuItem>
+                        <Menu
+                          anchorEl={receiptAnchorEl}
+                          open={Boolean(receiptAnchorEl)}
+                          onClose={handleReceiptMenuClose}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          PaperProps={{
+                            sx: {
+                              mt: 1,
+                              borderRadius: 2,
+                              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                              minWidth: 220,
+                              '& .MuiMenuItem-root': {
+                                py: 1.5,
+                                px: 2,
+                                borderRadius: 1,
+                                mx: 1,
+                                my: 0.5,
+                                '&:hover': {
+                                  backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                }
+                              }
+                            }
+                          }}
+                        >
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/receipts")
+                              handleReceiptMenuClose()
+                              handleMoneyMenuClose()
+                            }}
+                          >
+                            සාමාජික මුදල්/හිඟ ලැබීම්
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/add-income")
+                              handleReceiptMenuClose()
+                              handleMoneyMenuClose()
+                            }}
+                          >
+                            වෙනත් ආදායම් ඇතුලත් කරන්න
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/view-income")
+                              handleReceiptMenuClose()
+                              handleMoneyMenuClose()
+                            }}
+                          >
+                            වෙනත් ආදායම් බලන්න
+                          </MenuItem>
+                        </Menu>
+                        <MenuItem
+                          onClick={handleExpenseMenuOpen}
+                          sx={{ fontWeight: 600 }}
+                        >
+                          මුදල් ගෙවීම්
+                        </MenuItem>
+                        <Menu
+                          anchorEl={expenseAnchorEl}
+                          open={Boolean(expenseAnchorEl)}
+                          onClose={handleExpenseMenuClose}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          PaperProps={{
+                            sx: {
+                              mt: 1,
+                              borderRadius: 2,
+                              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                              minWidth: 220,
+                              '& .MuiMenuItem-root': {
+                                py: 1.5,
+                                px: 2,
+                                borderRadius: 1,
+                                mx: 1,
+                                my: 0.5,
+                                '&:hover': {
+                                  backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                }
+                              }
+                            }
+                          }}
+                        >
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/add-expense")
+                              handleExpenseMenuClose()
+                              handleMoneyMenuClose()
+                            }}
+                          >
+                            වියදම් ඇතුලත් කරන්න
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/view-expenses")
+                              handleExpenseMenuClose()
+                              handleMoneyMenuClose()
+                            }}
+                          >
+                            වියදම් බලන්න
+                          </MenuItem>
+                        </Menu>
+                        <MenuItem
+                          onClick={handleReportMenuOpen}
+                          sx={{ fontWeight: 600 }}
+                        >
+                          වාර්තා
+                        </MenuItem>
+                        <Menu
+                          anchorEl={reportAnchorEl}
+                          open={Boolean(reportAnchorEl)}
+                          onClose={handleReportMenuClose}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          PaperProps={{
+                            sx: {
+                              mt: 1,
+                              borderRadius: 2,
+                              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                              minWidth: 220,
+                              '& .MuiMenuItem-root': {
+                                py: 1.5,
+                                px: 2,
+                                borderRadius: 1,
+                                mx: 1,
+                                my: 0.5,
+                                '&:hover': {
+                                  backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                }
+                              }
+                            }
+                          }}
+                        >
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/account/monthly-report")
+                              handleReportMenuClose()
+                              handleMoneyMenuClose()
+                            }}
+                          >
+                            මාසික ආදායම්/වියදම් වාර්තාව
+                          </MenuItem>
+                        </Menu>
+                      </Menu>
+                      <Button
+                        color="inherit"
+                        onClick={handleFuneralMenuOpen}
+                        startIcon={<MonetizationOnIcon />}
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                          }
+                        }}
+                      >
+                        අවමංගල්‍ය
+                      </Button>
+                      <Menu
+                        anchorEl={funeralAnchorEl}
+                        open={Boolean(funeralAnchorEl)}
+                        onClose={handleFuneralMenuClose}
+                        PaperProps={{
+                          sx: {
+                            mt: 1,
+                            borderRadius: 2,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                            minWidth: 220,
+                            '& .MuiMenuItem-root': {
+                              py: 1.5,
+                              px: 2,
+                              borderRadius: 1,
+                              mx: 1,
+                              my: 0.5,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                              }
+                            }
+                          }
+                        }}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/funeral/extraDue")
+                            handleFuneralMenuClose()
+                          }}
+                        >
+                          ද්‍රව්‍ය ආධාර හිඟ
+                        </MenuItem>
+                      </Menu>
+                      <Button
+                        color="inherit"
                         onClick={() => navigate("/member/fullDetails")}
                         startIcon={<PersonIcon />}
-                        sx={{ 
+                        sx={{
                           textTransform: "none",
                           backgroundColor: 'rgba(255,255,255,0.1)',
                           '&:hover': {
@@ -631,171 +884,11 @@ const Header = ({ siteTitle }) => {
                       >
                         සාමාජික තොරතුරු
                       </Button>
-                      <Button
-                        color="inherit"
-                        // onClick={() => navigate("/member/payments")}
-                        onClick={handleReceiptMenuOpen}
-                        startIcon={<PaymentIcon />}
-                        sx={{ 
-                          textTransform: "none",
-                          backgroundColor: 'rgba(255,255,255,0.1)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255,255,255,0.2)',
-                          }
-                        }}
-                      >
-                        මුදල් ලැබීම්
-                      </Button>
-                      <Menu
-                        anchorEl={receiptAnchorEl}
-                        open={Boolean(receiptAnchorEl)}
-                        onClose={handleReceiptMenuClose}
-                        PaperProps={{
-                          sx: {
-                            mt: 1,
-                            borderRadius: 2,
-                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                            '& .MuiMenuItem-root': {
-                              py: 1.5,
-                              px: 2,
-                              borderRadius: 1,
-                              mx: 1,
-                              my: 0.5,
-                              '&:hover': {
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                              }
-                            }
-                          }
-                        }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/account/receipts")
-                            handleReceiptMenuClose()
-                          }}
-                        >
-                          සාමාජික මුදල්/හිඟ ලැබීම්
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/account/add-income")
-                            handleReceiptMenuClose()
-                          }}
-                        >
-                          වෙනත් ආදායම් ඇතුලත් කරන්න
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/account/view-income")
-                            handleReceiptMenuClose()
-                          }}
-                        >
-                          වෙනත් ආදායම් බලන්න
-                        </MenuItem>
-                      </Menu>
-                      <Button
-                        color="inherit"
-                        onClick={handleExpenseMenuOpen}
-                        startIcon={<MonetizationOnIcon />}
-                        sx={{ 
-                          textTransform: "none",
-                          backgroundColor: 'rgba(255,255,255,0.1)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255,255,255,0.2)',
-                          }
-                        }}
-                      >
-                        මුදල් ගෙවීම්
-                      </Button>
-                      <Menu
-                        anchorEl={expenseAnchorEl}
-                        open={Boolean(expenseAnchorEl)}
-                        onClose={handleExpenseMenuClose}
-                        PaperProps={{
-                          sx: {
-                            mt: 1,
-                            borderRadius: 2,
-                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                            '& .MuiMenuItem-root': {
-                              py: 1.5,
-                              px: 2,
-                              borderRadius: 1,
-                              mx: 1,
-                              my: 0.5,
-                              '&:hover': {
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                              }
-                            }
-                          }
-                        }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/account/add-expense")
-                            handleExpenseMenuClose()
-                          }}
-                        >
-                          වියදම් ඇතුලත් කරන්න
-                        </MenuItem>
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/account/view-expenses")
-                            handleExpenseMenuClose()
-                          }}
-                        >
-                          වියදම් බලන්න
-                        </MenuItem>
-                      </Menu>
-                      <Button
-                        color="inherit"
-                        onClick={handleReportMenuOpen}
-                        startIcon={<AssessmentIcon />}
-                        sx={{ 
-                          textTransform: "none",
-                          backgroundColor: 'rgba(255,255,255,0.1)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255,255,255,0.2)',
-                          }
-                        }}
-                      >
-                        වාර්තා
-                      </Button>
-                      <Menu
-                        anchorEl={reportAnchorEl}
-                        open={Boolean(reportAnchorEl)}
-                        onClose={handleReportMenuClose}
-                        PaperProps={{
-                          sx: {
-                            mt: 1,
-                            borderRadius: 2,
-                            boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                            '& .MuiMenuItem-root': {
-                              py: 1.5,
-                              px: 2,
-                              borderRadius: 1,
-                              mx: 1,
-                              my: 0.5,
-                              '&:hover': {
-                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                              }
-                            }
-                          }
-                        }}
-                      >
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/account/monthly-report")
-                            handleReportMenuClose()
-                          }}
-                        >
-                          මාසික ආදායම්/වියදම් වාර්තාව
-                        </MenuItem>
-                      </Menu>
                       <Divider
                         orientation="vertical"
                         flexItem
-                        sx={{ 
-                          bgcolor: "rgba(255,255,255,0.3)", 
+                        sx={{
+                          bgcolor: "rgba(255,255,255,0.3)",
                           mx: 2,
                           height: 32,
                           alignSelf: 'center'
@@ -803,77 +896,7 @@ const Header = ({ siteTitle }) => {
                       />
                     </>
                   )}
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/member/payments")}
-                    startIcon={<PaymentIcon />}
-                    sx={{ 
-                      textTransform: "none",
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255,255,255,0.2)',
-                      }
-                    }}
-                  >
-                    මුදල් ගෙවීම්
-                  </Button>
-                  <Button
-                    color="inherit"
-                    onClick={() => navigate("/member/fines")}
-                    startIcon={<MonetizationOnIcon />}
-                    sx={{ 
-                      textTransform: "none",
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255,255,255,0.2)',
-                      }
-                    }}
-                  >
-                    දඩ මුදල්
-                  </Button>
-
-                  <Badge 
-                    variant="dot" 
-                    color="warning" 
-                    invisible={!hasLoan}
-                    sx={{
-                      '& .MuiBadge-badge': {
-                        backgroundColor: '#ff9800',
-                        boxShadow: '0 0 0 2px white',
-                      }
-                    }}
-                  >
-                    <Button
-                      color="inherit"
-                      onClick={() => navigate("/member/loan")}
-                      startIcon={<AccountBalanceIcon />}
-                      sx={{ 
-                        textTransform: "none",
-                        backgroundColor: hasLoan ? 'rgba(255,152,0,0.2)' : 'rgba(255,255,255,0.1)',
-                        '&:hover': {
-                          backgroundColor: hasLoan ? 'rgba(255,152,0,0.3)' : 'rgba(255,255,255,0.2)',
-                        },
-                        '&:disabled': {
-                          backgroundColor: 'rgba(255,255,255,0.05)',
-                          color: 'rgba(255,255,255,0.4)',
-                        }
-                      }}
-                      disabled={!hasLoan}
-                    >
-                      ණය
-                    </Button>
-                  </Badge>
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ 
-                      bgcolor: "rgba(255,255,255,0.3)", 
-                      mx: 2,
-                      height: 32,
-                      alignSelf: 'center'
-                    }}
-                  />
-
+                  {/* Account menu moved here - no separate buttons for payments, fines, loan */}
                   <Button
                     color="inherit"
                     onClick={handleMemberMenuOpen}
@@ -902,7 +925,7 @@ const Header = ({ siteTitle }) => {
                         mt: 1,
                         borderRadius: 2,
                         boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                        minWidth: 200,
+                        minWidth: 220,
                         '& .MuiMenuItem-root': {
                           py: 1.5,
                           px: 2,
@@ -934,6 +957,53 @@ const Header = ({ siteTitle }) => {
                       <EditIcon sx={{ mr: 1, fontSize: 20 }} />
                       ගිණුම සංස්කරණය
                     </MenuItem>
+                    <Divider sx={{ my: 1 }} />
+                    {/* Member financial services moved here */}
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/member/payments")
+                        handleMemberMenuClose()
+                      }}
+                    >
+                      <PaymentIcon sx={{ mr: 1, fontSize: 20 }} />
+                      මුදල් ගෙවීම්
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/member/fines")
+                        handleMemberMenuClose()
+                      }}
+                    >
+                      <MonetizationOnIcon sx={{ mr: 1, fontSize: 20 }} />
+                      දඩ මුදල්
+                    </MenuItem>
+                    {hasLoan && (
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/member/loan")
+                          handleMemberMenuClose()
+                        }}
+                        sx={{
+                          backgroundColor: 'rgba(255,152,0,0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255,152,0,0.2)',
+                          }
+                        }}
+                      >
+                        <AccountBalanceIcon sx={{ mr: 1, fontSize: 20, color: '#ff9800' }} />
+                        ණය 
+                        <Badge 
+                          variant="dot" 
+                          color="warning" 
+                          sx={{ 
+                            ml: 1,
+                            '& .MuiBadge-badge': {
+                              backgroundColor: '#ff9800',
+                            }
+                          }} 
+                        />
+                      </MenuItem>
+                    )}
                     <Divider sx={{ my: 1 }} />
                     <MenuItem
                       onClick={() => {
@@ -1415,7 +1485,7 @@ const Header = ({ siteTitle }) => {
                           sx={{ 
                             textTransform: "none", 
                             width: "100%",
-                            mb: 1,
+                            mb: 2,
                             justifyContent: 'flex-start',
                             backgroundColor: 'rgba(0, 150, 136, 0.15)',
                             border: '1px solid rgba(0, 150, 136, 0.2)',
@@ -1431,52 +1501,267 @@ const Header = ({ siteTitle }) => {
                         >
                           සාමාජික තොරතුරු
                         </Button>
-                        <Button
-                          color="inherit"
-                          onClick={() => handleMobileNavigate("/account/receipts")}
-                          startIcon={<PaymentIcon />}
-                          sx={{ 
-                            textTransform: "none", 
-                            width: "100%",
-                            mb: 1,
-                            justifyContent: 'flex-start',
-                            backgroundColor: 'rgba(0, 150, 136, 0.15)',
-                            border: '1px solid rgba(0, 150, 136, 0.2)',
-                            '&:hover': { 
-                              backgroundColor: 'rgba(0, 150, 136, 0.25)',
-                              transform: 'translateX(2px)'
-                            },
-                            borderRadius: 2,
-                            py: 1.5,
-                            color: '#333',
-                            transition: 'all 0.2s ease'
-                          }}
-                        >
-                          මුදල් ලැබීම්
-                        </Button>
-                        <Button
-                          color="inherit"
-                          onClick={() => handleMobileNavigate("/account/add-expense")}
-                          startIcon={<MonetizationOnIcon />}
-                          sx={{ 
-                            textTransform: "none", 
-                            width: "100%",
+
+                        {/* Grouped Financial Menu */}
+                        <Accordion
+                          sx={{
                             mb: 2,
-                            justifyContent: 'flex-start',
-                            backgroundColor: 'rgba(0, 150, 136, 0.15)',
-                            border: '1px solid rgba(0, 150, 136, 0.2)',
-                            '&:hover': { 
-                              backgroundColor: 'rgba(0, 150, 136, 0.25)',
-                              transform: 'translateX(2px)'
-                            },
+                            backgroundColor: 'rgba(0, 150, 136, 0.1)',
+                            '&:before': { display: 'none' },
                             borderRadius: 2,
-                            py: 1.5,
-                            color: '#333',
-                            transition: 'all 0.2s ease'
+                            overflow: 'hidden',
+                            boxShadow: 'none',
                           }}
                         >
-                          මුදල් ගෙවීම්
-                        </Button>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon sx={{ color: '#00897b' }} />}
+                            sx={{
+                              backgroundColor: 'rgba(0, 150, 136, 0.15)',
+                              borderRadius: 2,
+                              '&:hover': {
+                                backgroundColor: 'rgba(0, 150, 136, 0.25)',
+                              },
+                              minHeight: 56,
+                              '& .MuiAccordionSummary-content': {
+                                alignItems: 'center',
+                              }
+                            }}
+                          >
+                            <PaymentIcon sx={{ mr: 2, color: '#00897b' }} />
+                            <Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+                              මුදල්
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails sx={{ p: 0 }}>
+                            {/* Money Receipts Accordion */}
+                            <Accordion
+                              sx={{
+                                backgroundColor: 'transparent',
+                                '&:before': { display: 'none' },
+                                boxShadow: 'none',
+                              }}
+                            >
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon sx={{ color: '#666', fontSize: 20 }} />}
+                                sx={{
+                                  backgroundColor: 'rgba(0, 150, 136, 0.05)',
+                                  '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.1)' },
+                                  minHeight: 48,
+                                  pl: 4,
+                                }}
+                              >
+                                <Typography sx={{ fontWeight: 600, color: '#555' }}>
+                                  මුදල් ලැබීම්
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails sx={{ p: 0, pl: 6 }}>
+                                <Button
+                                  color="inherit"
+                                  onClick={() => handleMobileNavigate("/account/receipts")}
+                                  sx={{ 
+                                    textTransform: "none", 
+                                    width: "100%",
+                                    justifyContent: 'flex-start',
+                                    backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                    '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                    borderRadius: 1,
+                                    py: 1,
+                                    mb: 0.5,
+                                    color: '#555'
+                                  }}
+                                >
+                                  • සාමාජික මුදල්/හිඟ ලැබීම්
+                                </Button>
+                                <Button
+                                  color="inherit"
+                                  onClick={() => handleMobileNavigate("/account/add-income")}
+                                  sx={{ 
+                                    textTransform: "none", 
+                                    width: "100%",
+                                    justifyContent: 'flex-start',
+                                    backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                    '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                    borderRadius: 1,
+                                    py: 1,
+                                    mb: 0.5,
+                                    color: '#555'
+                                  }}
+                                >
+                                  • වෙනත් ආදායම් ඇතුලත් කරන්න
+                                </Button>
+                                <Button
+                                  color="inherit"
+                                  onClick={() => handleMobileNavigate("/account/view-income")}
+                                  sx={{ 
+                                    textTransform: "none", 
+                                    width: "100%",
+                                    justifyContent: 'flex-start',
+                                    backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                    '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                    borderRadius: 1,
+                                    py: 1,
+                                    mb: 1,
+                                    color: '#555'
+                                  }}
+                                >
+                                  • වෙනත් ආදායම් බලන්න
+                                </Button>
+                              </AccordionDetails>
+                            </Accordion>
+
+                            {/* Money Expenses Accordion */}
+                            <Accordion
+                              sx={{
+                                backgroundColor: 'transparent',
+                                '&:before': { display: 'none' },
+                                boxShadow: 'none',
+                              }}
+                            >
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon sx={{ color: '#666', fontSize: 20 }} />}
+                                sx={{
+                                  backgroundColor: 'rgba(0, 150, 136, 0.05)',
+                                  '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.1)' },
+                                  minHeight: 48,
+                                  pl: 4,
+                                }}
+                              >
+                                <Typography sx={{ fontWeight: 600, color: '#555' }}>
+                                  මුදල් ගෙවීම්
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails sx={{ p: 0, pl: 6 }}>
+                                <Button
+                                  color="inherit"
+                                  onClick={() => handleMobileNavigate("/account/add-expense")}
+                                  sx={{ 
+                                    textTransform: "none", 
+                                    width: "100%",
+                                    justifyContent: 'flex-start',
+                                    backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                    '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                    borderRadius: 1,
+                                    py: 1,
+                                    mb: 0.5,
+                                    color: '#555'
+                                  }}
+                                >
+                                  • වියදම් ඇතුලත් කරන්න
+                                </Button>
+                                <Button
+                                  color="inherit"
+                                  onClick={() => handleMobileNavigate("/account/view-expenses")}
+                                  sx={{ 
+                                    textTransform: "none", 
+                                    width: "100%",
+                                    justifyContent: 'flex-start',
+                                    backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                    '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                    borderRadius: 1,
+                                    py: 1,
+                                    mb: 1,
+                                    color: '#555'
+                                  }}
+                                >
+                                  • වියදම් බලන්න
+                                </Button>
+                              </AccordionDetails>
+                            </Accordion>
+
+                            {/* Reports Accordion */}
+                            <Accordion
+                              sx={{
+                                backgroundColor: 'transparent',
+                                '&:before': { display: 'none' },
+                                boxShadow: 'none',
+                              }}
+                            >
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon sx={{ color: '#666', fontSize: 20 }} />}
+                                sx={{
+                                  backgroundColor: 'rgba(0, 150, 136, 0.05)',
+                                  '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.1)' },
+                                  minHeight: 48,
+                                  pl: 4,
+                                }}
+                              >
+                                <Typography sx={{ fontWeight: 600, color: '#555' }}>
+                                  වාර්තා
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails sx={{ p: 0, pl: 6 }}>
+                                <Button
+                                  color="inherit"
+                                  onClick={() => handleMobileNavigate("/account/monthly-report")}
+                                  sx={{ 
+                                    textTransform: "none", 
+                                    width: "100%",
+                                    justifyContent: 'flex-start',
+                                    backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                    '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                    borderRadius: 1,
+                                    py: 1,
+                                    mb: 1,
+                                    color: '#555'
+                                  }}
+                                >
+                                  • මාසික ආදායම්/වියදම් වාර්තාව
+                                </Button>
+                              </AccordionDetails>
+                            </Accordion>
+                          </AccordionDetails>
+                        </Accordion>
+
+                        {/* Funeral Accordion */}
+                        <Accordion
+                          sx={{
+                            mb: 2,
+                            backgroundColor: 'rgba(0, 150, 136, 0.1)',
+                            '&:before': { display: 'none' },
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            boxShadow: 'none',
+                          }}
+                        >
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon sx={{ color: '#00897b' }} />}
+                            sx={{
+                              backgroundColor: 'rgba(0, 150, 136, 0.15)',
+                              borderRadius: 2,
+                              '&:hover': {
+                                backgroundColor: 'rgba(0, 150, 136, 0.25)',
+                              },
+                              minHeight: 56,
+                              '& .MuiAccordionSummary-content': {
+                                alignItems: 'center',
+                              }
+                            }}
+                          >
+                            <MonetizationOnIcon sx={{ mr: 2, color: '#00897b' }} />
+                            <Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+                              අවමංගල්‍ය
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails sx={{ p: 0, pl: 2 }}>
+                            <Button
+                              color="inherit"
+                              onClick={() => handleMobileNavigate("/funeral/extraDue")}
+                              sx={{ 
+                                textTransform: "none", 
+                                width: "100%",
+                                justifyContent: 'flex-start',
+                                backgroundColor: 'rgba(0, 150, 136, 0.02)',
+                                '&:hover': { backgroundColor: 'rgba(0, 150, 136, 0.05)' },
+                                borderRadius: 1,
+                                py: 1,
+                                mb: 1,
+                                color: '#555'
+                              }}
+                            >
+                              • ද්‍රව්‍ය ආධාර හිඟ
+                            </Button>
+                          </AccordionDetails>
+                        </Accordion>
 
                         {/* Loan menu items for treasurers */}
                         <Typography variant="body2" sx={{ 
@@ -1527,7 +1812,7 @@ const Header = ({ siteTitle }) => {
                         <Divider sx={{ my: 2, backgroundColor: 'rgba(0, 150, 136, 0.2)' }} />
                       </Box>
                     )}
-                    {/* Common Member Buttons */}
+                    {/* Common Member Account & Services */}
                     <Box sx={{ mb: 3 }}>
                       <Typography variant="subtitle2" sx={{ 
                         color: "#666", 
@@ -1536,8 +1821,59 @@ const Header = ({ siteTitle }) => {
                         mb: 2,
                         ml: 1
                       }}>
-                        සාමාජික සේවා
+                        මගේ ගිණුම
                       </Typography>
+                      <Button
+                        color="inherit"
+                        onClick={() => handleMobileNavigate("/member/home")}
+                        startIcon={<HomeIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          width: "100%",
+                          mb: 1,
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(33, 150, 243, 0.15)',
+                          border: '1px solid rgba(33, 150, 243, 0.2)',
+                          '&:hover': { 
+                            backgroundColor: 'rgba(33, 150, 243, 0.25)',
+                            transform: 'translateX(2px)'
+                          },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#333',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        මුල් පිටුව
+                      </Button>
+                      <Button
+                        color="inherit"
+                        onClick={() => handleMobileNavigate("/member/profile-edit")}
+                        startIcon={<EditIcon />}
+                        sx={{ 
+                          textTransform: "none",
+                          width: "100%",
+                          mb: 1,
+                          justifyContent: 'flex-start',
+                          backgroundColor: 'rgba(33, 150, 243, 0.15)',
+                          border: '1px solid rgba(33, 150, 243, 0.2)',
+                          '&:hover': { 
+                            backgroundColor: 'rgba(33, 150, 243, 0.25)',
+                            transform: 'translateX(2px)'
+                          },
+                          borderRadius: 2,
+                          py: 1.5,
+                          color: '#333',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        ගිණුම සංස්කරණය
+                      </Button>
+                      
+                      {/* Divider for member financial services */}
+                      <Divider sx={{ my: 2, backgroundColor: 'rgba(33, 150, 243, 0.2)' }} />
+                      
+                      {/* Member Financial Services */}
                       <Button
                         color="inherit"
                         onClick={() => handleMobileNavigate("/member/payments")}
@@ -1584,93 +1920,45 @@ const Header = ({ siteTitle }) => {
                       >
                         දඩ මුදල්
                       </Button>
-                      <Badge 
-                        variant="dot" 
-                        color="warning" 
-                        invisible={!hasLoan}
-                        sx={{
-                          width: '100%',
-                          '& .MuiBadge-badge': {
-                            backgroundColor: '#ff9800',
-                          }
-                        }}
-                      >
-                        <Button
-                          color="inherit"
-                          onClick={() => handleMobileNavigate("/member/loan")}
-                          startIcon={<AccountBalanceIcon />}
-                          sx={{ 
-                            textTransform: "none",
-                            width: "100%",
-                            mb: 1,
-                            justifyContent: 'flex-start',
-                            backgroundColor: hasLoan ? 'rgba(255,152,0,0.1)' : 'rgba(200, 200, 200, 0.1)',
-                            '&:hover': { backgroundColor: hasLoan ? 'rgba(255,152,0,0.2)' : 'rgba(200, 200, 200, 0.2)' },
-                            borderRadius: 2,
-                            py: 1.5,
-                            color: hasLoan ? '#333' : '#999',
-                            '&:disabled': {
-                              backgroundColor: 'rgba(200, 200, 200, 0.1)',
-                              color: '#999',
+                      {hasLoan && (
+                        <Badge 
+                          variant="dot" 
+                          color="warning" 
+                          sx={{
+                            width: '100%',
+                            '& .MuiBadge-badge': {
+                              backgroundColor: '#ff9800',
                             }
                           }}
-                          disabled={!hasLoan}
                         >
-                          ණය {hasLoan && <span style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>● ක්‍රියාත්මක</span>}
-                        </Button>
-                      </Badge>
-                    </Box>
-
-                    <Divider sx={{ my: 2, backgroundColor: 'rgba(102, 126, 234, 0.2)' }} />
-
-                    {/* Account Menu */}
-                    <Box sx={{ mb: 2 }}>
-                      <Button
-                        color="inherit"
-                        onClick={() => handleMobileNavigate("/member/home")}
-                        startIcon={<HomeIcon />}
-                        sx={{ 
-                          textTransform: "none",
-                          width: "100%",
-                          mb: 1,
-                          justifyContent: 'flex-start',
-                          backgroundColor: 'rgba(33, 150, 243, 0.15)',
-                          border: '1px solid rgba(33, 150, 243, 0.2)',
-                          '&:hover': { 
-                            backgroundColor: 'rgba(33, 150, 243, 0.25)',
-                            transform: 'translateX(2px)'
-                          },
-                          borderRadius: 2,
-                          py: 1.5,
-                          color: '#333',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        මුල් පිටුව
-                      </Button>
-                      <Button
-                        color="inherit"
-                        onClick={() => handleMobileNavigate("/member/profile-edit")}
-                        startIcon={<EditIcon />}
-                        sx={{ 
-                          textTransform: "none",
-                          width: "100%",
-                          mb: 2,
-                          justifyContent: 'flex-start',
-                          backgroundColor: 'rgba(33, 150, 243, 0.15)',
-                          border: '1px solid rgba(33, 150, 243, 0.2)',
-                          '&:hover': { 
-                            backgroundColor: 'rgba(33, 150, 243, 0.25)',
-                            transform: 'translateX(2px)'
-                          },
-                          borderRadius: 2,
-                          py: 1.5,
-                          color: '#333',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        ගිණුම සංස්කරණය
-                      </Button>
+                          <Button
+                            color="inherit"
+                            onClick={() => handleMobileNavigate("/member/loan")}
+                            startIcon={<AccountBalanceIcon />}
+                            sx={{ 
+                              textTransform: "none",
+                              width: "100%",
+                              mb: 1,
+                              justifyContent: 'flex-start',
+                              backgroundColor: 'rgba(255,152,0,0.15)',
+                              border: '1px solid rgba(255,152,0,0.2)',
+                              '&:hover': { 
+                                backgroundColor: 'rgba(255,152,0,0.25)',
+                                transform: 'translateX(2px)'
+                              },
+                              borderRadius: 2,
+                              py: 1.5,
+                              color: '#333',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            ණය <span style={{ marginLeft: 'auto', fontSize: '0.75rem' }}>● ක්‍රියාත්මක</span>
+                          </Button>
+                        </Badge>
+                      )}
+                      
+                      {/* Logout button */}
+                      <Divider sx={{ my: 2, backgroundColor: 'rgba(33, 150, 243, 0.2)' }} />
                       <Button
                         color="inherit"
                         onClick={handleLogout}
