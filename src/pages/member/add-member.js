@@ -15,6 +15,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
 
 import { navigate } from "gatsby"
 import api from "../../utils/api"
@@ -24,6 +26,10 @@ import loadable from "@loadable/component"
 const AuthComponent = loadable(() =>
   import("../../components/common/AuthComponent")
 )
+
+// Initialize dayjs plugins
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
 

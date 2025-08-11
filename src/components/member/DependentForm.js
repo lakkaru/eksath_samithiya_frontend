@@ -1,18 +1,18 @@
 import React, { useState } from "react"
-import { Box, Button, TextField, MenuItem, Grid2, Typography } from "@mui/material"
+import { Box, Button, TextField, MenuItem, Grid, Typography } from "@mui/material"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs"
 
 const relationshipOptions = [
-  "පියා", "මව", "බිරිඳ", "සැමියා", "දුව", "පුතා", "සහෝදරයා", "සහෝදරිය","කිරිඅම්මා", "කිරිඅත්තා", "කලත්‍රයාගේ පියා", "කලත්‍රයාගේ මව", "වෙනත්"
+  "පියා", "මව", "බිරිඳ", "සැමියා", "දුව", "පුතා", "සහෝදරයා", "සහෝදරිය", "කලත්‍රයාගේ පියා", "කලත්‍රයාගේ මව", "වෙනත්"
 ]
 
 export default function DependentForm({ dependent, onChange, onRemove, showRemove }) {
   return (
     <Box sx={{ border: "1px solid #eee", borderRadius: 2, p: 2, mb: 2, background: "#fafafa" }}>
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             label="නම"
@@ -22,8 +22,8 @@ export default function DependentForm({ dependent, onChange, onRemove, showRemov
             required
             placeholder="නම ඇතුලත් කරන්න"
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             select
@@ -37,8 +37,8 @@ export default function DependentForm({ dependent, onChange, onRemove, showRemov
               <MenuItem key={opt} value={opt}>{opt}</MenuItem>
             ))}
           </TextField>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="උපන් දිනය"
@@ -48,8 +48,8 @@ export default function DependentForm({ dependent, onChange, onRemove, showRemov
               slotProps={{ textField: { fullWidth: true } }}
             />
           </LocalizationProvider>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             label="ජාතික හැඳුනුම්පත් අංකය"
@@ -58,8 +58,8 @@ export default function DependentForm({ dependent, onChange, onRemove, showRemov
             onChange={onChange}
             placeholder="123456789V හෝ 123456789012"
           />
-        </Grid2>
-        {/* <Grid2 size={{ xs: 12, sm: 6 }}>
+        </Grid>
+        {/* <Grid item xs={12} sm={6}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="මරණ දිනය"
@@ -69,15 +69,15 @@ export default function DependentForm({ dependent, onChange, onRemove, showRemov
               slotProps={{ textField: { fullWidth: true } }}
             />
           </LocalizationProvider>
-        </Grid2> */}
+        </Grid> */}
         {showRemove && (
-          <Grid2 size={12}>
+          <Grid item xs={12}>
             <Button color="error" variant="outlined" onClick={onRemove} sx={{ mt: 1 }}>
               ඉවත් කරන්න
             </Button>
-          </Grid2>
+          </Grid>
         )}
-      </Grid2>
+      </Grid>
     </Box>
   )
 }

@@ -16,6 +16,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
 
 import { navigate } from "gatsby"
 import api from "../../utils/api"
@@ -26,7 +28,39 @@ const AuthComponent = loadable(() =>
   import("../../components/common/AuthComponent")
 )
 
+// Initialize dayjs plugins
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 const baseUrl = process.env.GATSBY_API_BASE_URL
+
+// Safe date parsing function
+const safeDateParse = (dateValue) => {
+  if (!dateValue || dateValue === "" || dateValue === null || dateValue === undefined) {
+    return null
+  }
+  
+  try {
+    // Handle different date formats
+    let parsed
+    if (typeof dateValue === 'string') {
+      parsed = dayjs(dateValue)
+    } else if (dayjs.isDayjs(dateValue)) {
+      return dateValue
+    } else {
+      parsed = dayjs(dateValue)
+    }
+    
+    // Check if the parsed date is valid
+    if (parsed && typeof parsed.isValid === 'function' && parsed.isValid()) {
+      return parsed
+    }
+    return null
+  } catch (error) {
+    console.warn("Date parsing error:", error, "for value:", dateValue)
+    return null
+  }
+}
 
 export default function UpdateMember() {
   //un authorized access preventing
@@ -53,6 +87,7 @@ export default function UpdateMember() {
     email: "",
     nic: "",
     birthday: null,
+    gender: "",
     siblingsCount: 0,
     status: "regular",
   })
@@ -67,6 +102,69 @@ export default function UpdateMember() {
     return dependents.filter(dep => 
       dep.relationship === "සහෝදරයා" || dep.relationship === "සහෝදරිය"
     ).length
+  }
+
+  // Handle URL parameters for direct member loading
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      const memberId = urlParams.get('id')
+      if (memberId) {
+        setSearchMemberId(memberId)
+        // Auto-load member data if ID is provided in URL
+        loadMemberData(memberId)
+      }
+    }
+  }, [])
+
+  const loadMemberData = async (memberId) => {
+    if (!memberId) return
+    
+    setSearchLoading(true)
+    try {
+      const response = await api.get(`${baseUrl}/member/get/${memberId}`)
+      
+      if (response.data.success) {
+        const member = response.data.member
+        setMemberData({
+          member_id: member.member_id,
+          name: member.name,
+          area: member.area,
+          phone: member.phone || "",
+          mobile: member.mobile || "",
+          whatsApp: member.whatsApp || "",
+          address: member.address,
+          nic: member.nic,
+          birthday: safeDateParse(member.birthday),
+          gender: member.gender,
+          status: member.status,
+        })
+        
+        // Process dependents with safe date parsing
+        if (member.dependents && member.dependents.length > 0) {
+          setDependents(member.dependents.map(dep => ({
+            _id: dep._id,
+            name: dep.name || "",
+            relationship: dep.relationship || "",
+            birthday: safeDateParse(dep.birthday),
+            nic: dep.nic || "",
+            dateOfDeath: safeDateParse(dep.dateOfDeath),
+          })))
+        } else {
+          setDependents([{ name: "", relationship: "", birthday: null, nic: "", dateOfDeath: null }])
+        }
+        
+        setMemberFound(true)
+        showAlert("සාමාජික විස්තර සාර්ථකව ලබා ගන්නා ලදී", "success")
+      } else {
+        showAlert("සාමාජිකයා සොයා ගත නොහැක", "error")
+      }
+    } catch (error) {
+      console.error("Error loading member:", error)
+      showAlert("සාමාජික විස්තර ලබා ගැනීමේදී දෝෂයක් සිදුවිය", "error")
+    } finally {
+      setSearchLoading(false)
+    }
   }
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
@@ -144,7 +242,7 @@ export default function UpdateMember() {
           address: member.address || "",
           email: member.email || "",
           nic: member.nic || "",
-          birthday: member.birthday ? dayjs(member.birthday) : null,
+          birthday: safeDateParse(member.birthday),
           siblingsCount: member.siblingsCount || 0,
           status: member.status || "regular",
         })
@@ -155,9 +253,9 @@ export default function UpdateMember() {
             _id: dep._id,
             name: dep.name || "",
             relationship: dep.relationship || "",
-            birthday: dep.birthday ? dayjs(dep.birthday) : null,
+            birthday: safeDateParse(dep.birthday),
             nic: dep.nic || "",
-            dateOfDeath: dep.dateOfDeath ? dayjs(dep.dateOfDeath) : null,
+            dateOfDeath: safeDateParse(dep.dateOfDeath),
           })))
         } else {
           setDependents([{ name: "", relationship: "", birthday: null, nic: "", dateOfDeath: null }])
@@ -477,7 +575,16 @@ export default function UpdateMember() {
                       dependent={dep}
                       onChange={e => {
                         const { name, value } = e.target
-                        setDependents(prev => prev.map((d, i) => i === idx ? { ...d, [name]: value } : d))
+                        setDependents(prev => prev.map((d, i) => {
+                          if (i === idx) {
+                            // Handle date fields specially
+                            if (name === "birthday" || name === "dateOfDeath") {
+                              return { ...d, [name]: value } // value is already a dayjs object or null
+                            }
+                            return { ...d, [name]: value }
+                          }
+                          return d
+                        }))
                       }}
                       onRemove={() => setDependents(prev => prev.filter((_, i) => i !== idx))}
                       showRemove={dependents.length > 1}

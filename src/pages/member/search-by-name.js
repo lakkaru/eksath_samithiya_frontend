@@ -8,9 +8,14 @@ import {
   Snackbar,
   Paper,
   Grid2,
+  IconButton,
+  Tooltip,
 } from "@mui/material"
+import { Visibility, Edit, Delete } from "@mui/icons-material"
 import Layout from "../../components/layout"
 import StickyHeadTable from "../../components/StickyHeadTable"
+import MemberDetailView from "../../components/member/MemberDetailView"
+import DeleteConfirmDialog from "../../components/member/DeleteConfirmDialog"
 import { navigate } from "gatsby"
 import api from "../../utils/api"
 
@@ -33,6 +38,11 @@ export default function SearchByName() {
   const [searchedName, setSearchedName] = useState("")
   const [members, setMembers] = useState([])
   const [searchPerformed, setSearchPerformed] = useState(false)
+  
+  // Dialog states
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedMember, setSelectedMember] = useState(null)
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
@@ -50,6 +60,97 @@ export default function SearchByName() {
     setAlert({ open: true, message, severity })
   }
 
+  // Action handlers
+  const handleViewMember = async (memberId) => {
+    try {
+      const response = await api.get(`${baseUrl}/member/get/${memberId}`)
+      if (response.data.success) {
+        console.log('member data (search-by-name):', response.data.member)
+        console.log('dependents (search-by-name):', response.data.member?.dependents)
+        setSelectedMember(response.data.member)
+        setDetailDialogOpen(true)
+      } else {
+        showAlert("සාමාජික විස්තර ලබා ගැනීමේදී දෝෂයක් සිදුවිය", "error")
+      }
+    } catch (error) {
+      console.error("Error fetching member details:", error)
+      showAlert("සාමාජික විස්තර ලබා ගැනීමේදී දෝෂයක් සිදුවිය", "error")
+    }
+  }
+
+  const handleUpdateMember = (memberId) => {
+    navigate(`/member/update-member?id=${memberId}`)
+  }
+
+  const handleDeleteMember = async (memberId, memberName) => {
+    try {
+      const response = await api.get(`${baseUrl}/member/get/${memberId}`)
+      if (response.data.success) {
+        setSelectedMember(response.data.member)
+        setDeleteDialogOpen(true)
+      } else {
+        showAlert("සාමාජික විස්තර ලබා ගැනීමේදී දෝෂයක් සිදුවිය", "error")
+      }
+    } catch (error) {
+      console.error("Error fetching member for delete:", error)
+      showAlert("සාමාජික විස්තර ලබා ගැනීමේදී දෝෂයක් සිදුවිය", "error")
+    }
+  }
+
+  const handleDeleteConfirm = async (memberId) => {
+    try {
+      const response = await api.delete(`${baseUrl}/member/delete/${memberId}`)
+      if (response.data.success) {
+        setMembers(members.filter(member => member.member_id !== memberId))
+        setDeleteDialogOpen(false)
+        setSelectedMember(null)
+        showAlert("සාමාජිකයා සාර්ථකව මකා දමන ලදී", "success")
+      } else {
+        showAlert(response.data.message || "සාමාජිකයා මකා දැමීමේදී දෝෂයක් සිදුවිය", "error")
+      }
+    } catch (error) {
+      console.error("Error deleting member:", error)
+      showAlert("සාමාජිකයා මකා දැමීමේදී දෝෂයක් සිදුවිය", "error")
+    }
+  }
+
+  const handleCloseDetailDialog = () => {
+    setDetailDialogOpen(false)
+    setSelectedMember(null)
+  }
+
+  const renderActionButtons = (memberId, memberName) => (
+    <Box sx={{ display: "flex", gap: 0.5 }}>
+      <Tooltip title="විස්තර බලන්න">
+        <IconButton
+          size="small"
+          onClick={() => handleViewMember(memberId)}
+          color="primary"
+        >
+          <Visibility fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="සංස්කරණය කරන්න">
+        <IconButton
+          size="small"
+          onClick={() => handleUpdateMember(memberId)}
+          color="success"
+        >
+          <Edit fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="මකන්න">
+        <IconButton
+          size="small"
+          onClick={() => handleDeleteMember(memberId, memberName)}
+          color="error"
+        >
+          <Delete fontSize="small" />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  )
+
   // Table columns definition
   const columnsArray = [
     { id: "member_id", label: "සාමාජික අංකය", minWidth: 80 },
@@ -59,6 +160,7 @@ export default function SearchByName() {
     { id: "mobile", label: "ජංගම දුරකථනය", minWidth: 120 },
     { id: "whatsApp", label: "WhatsApp", minWidth: 120 },
     { id: "status", label: "තත්වය", minWidth: 100 },
+    { id: "actions", label: "ක්‍රියාමාර්ග", minWidth: 120, align: "center" },
   ]
 
   const handleSearch = async () => {
@@ -127,6 +229,7 @@ export default function SearchByName() {
         mobile: member.mobile || "-",
         whatsApp: member.whatsApp || "-",
         status: statusTranslation,
+        actions: renderActionButtons(member.member_id, member.name),
       })
     }
 
@@ -144,6 +247,7 @@ export default function SearchByName() {
           mobile: "-", // Dependents don't have their own contact info
           whatsApp: "-",
           status: fullDependent?.dateOfDeath ? "මියගිය" : "ජීවත්",
+          actions: renderActionButtons(member.member_id, member.name),
         })
       })
     }
@@ -151,6 +255,22 @@ export default function SearchByName() {
 
   return (
     <Layout>
+      {/* Dialog components */}
+      <MemberDetailView
+        open={detailDialogOpen}
+        onClose={handleCloseDetailDialog}
+        member={selectedMember}
+        onEdit={handleUpdateMember}
+        onDelete={handleDeleteMember}
+      />
+      
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        member={selectedMember}
+        onConfirm={handleDeleteConfirm}
+      />
+      
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <section>
         <Snackbar

@@ -248,12 +248,14 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         >
           සාමාජික තොරතුරු යාවත්කාලීන කිරීම
         </MenuItem>
+        <hr/>
         <MenuItem
           onClick={() => {
             navigate("/member/search-by-area")
             handleMembershipViceSecMenuClose()
           }}
         >
+        
           ප්‍රදේශය අනුව සෙවීම
         </MenuItem>
         <MenuItem
