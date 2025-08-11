@@ -18,52 +18,164 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
       }}>
         උප ලේකම්
       </Typography>
+
+      {/* Attendance Section */}
+      <Typography variant="body2" sx={{ 
+        color: "#667eea", 
+        fontSize: "0.875rem", 
+        fontWeight: 'bold',
+        mb: 1,
+        ml: 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.5
+      }}>
+        <GroupsIcon fontSize="small" />
+        පැමිණීම
+      </Typography>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/funeral/funeralAttendance")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • අවමංගල්‍ය උත්සවය
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • සුසන භුමි කටයුතු
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/meeting/Attendance")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • මහා සභාව
+      </Button>
       <Button
         color="inherit"
         onClick={() => onMenuItemClick("/forms/MeetingSheet")}
-        startIcon={<GroupsIcon />}
         sx={{ 
           textTransform: "none", 
-          width: "100%",
-          mb: 1,
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
           justifyContent: 'flex-start',
-          backgroundColor: 'rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.2)',
-          '&:hover': { 
-            backgroundColor: 'rgba(102, 126, 234, 0.25)',
-            transform: 'translateX(2px)'
-          },
-          borderRadius: 2,
-          py: 1.5,
-          color: '#333',
-          transition: 'all 0.2s ease'
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
         }}
       >
-        පැමිණීම
+        📋 මහා සභාව ලේඛණය
       </Button>
       <Button
         color="inherit"
-        onClick={() => onMenuItemClick("/member/deathById")}
-        startIcon={<MonetizationOnIcon />}
+        onClick={() => onMenuItemClick("/reports/meetingAttendance")}
         sx={{ 
           textTransform: "none", 
-          width: "100%",
-          mb: 1,
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 1.5,
           justifyContent: 'flex-start',
-          backgroundColor: 'rgba(102, 126, 234, 0.15)',
-          border: '1px solid rgba(102, 126, 234, 0.2)',
-          '&:hover': { 
-            backgroundColor: 'rgba(102, 126, 234, 0.25)',
-            transform: 'translateX(2px)'
-          },
-          borderRadius: 2,
-          py: 1.5,
-          color: '#333',
-          transition: 'all 0.2s ease'
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
         }}
       >
-        අවමංගල්‍ය
+        📊 මහා සභාව පැමිණීම
       </Button>
+
+      {/* Funeral Section */}
+      <Typography variant="body2" sx={{ 
+        color: "#667eea", 
+        fontSize: "0.875rem", 
+        fontWeight: 'bold',
+        mb: 1,
+        ml: 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.5
+      }}>
+        <MonetizationOnIcon fontSize="small" />
+        අවමංගල්‍ය
+      </Typography>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/member/deathById")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • ඇතුලත් කිරීම
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/funeral/assignment")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 1.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • අවමංගල්‍ය පැවරීම
+      </Button>
+
+      {/* Member Information Section */}
       <Button
         color="inherit"
         onClick={() => onMenuItemClick("/member/fullDetails")}
@@ -71,7 +183,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
         sx={{ 
           textTransform: "none", 
           width: "100%",
-          mb: 2,
+          mb: 1.5,
           justifyContent: 'flex-start',
           backgroundColor: 'rgba(102, 126, 234, 0.15)',
           border: '1px solid rgba(102, 126, 234, 0.2)',
@@ -87,13 +199,19 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
       >
         සාමාජික තොරතුරු
       </Button>
+
+      {/* Membership Section */}
       <Typography variant="body2" sx={{ 
-        color: "#666", 
+        color: "#667eea", 
         fontSize: "0.875rem", 
         fontWeight: 'bold',
         mb: 1,
-        ml: 2
+        ml: 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.5
       }}>
+        <GroupsIcon fontSize="small" />
         සාමාජිකත්වය
       </Typography>
       <Button
@@ -130,7 +248,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
           color: '#555'
         }}
       >
-        • යාවත්කාලීන කිරීම
+        • සාමාජික තොරතුරු යාවත්කාලීන කිරීම
       </Button>
       <Button
         color="inherit"
@@ -168,6 +286,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
       >
         • නම අනුව සෙවීම
       </Button>
+
       <Divider sx={{ my: 2, backgroundColor: 'rgba(102, 126, 234, 0.2)' }} />
     </Box>
   )

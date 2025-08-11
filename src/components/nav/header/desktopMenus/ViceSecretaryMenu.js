@@ -165,14 +165,14 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         >
           අවමංගල්‍ය පැවරීම
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             navigate("/funeral/extraDue")
             handleMembershipMenuClose()
           }}
         >
           ද්‍රව්‍ය ආධාර හිඟ
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
 
       <Button
