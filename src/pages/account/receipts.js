@@ -45,7 +45,7 @@ export default function Receipts() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("treasurer")) {
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("auditor"))) {
       navigate("/login/user-login")
     }
   }
@@ -162,7 +162,7 @@ export default function Receipts() {
         parseFloat(payment.finePayment || 0) +
         parseFloat(payment.memPayment || 0)
       ).toFixed(2),
-      delete: (
+      delete: !roles.includes("auditor") ? (
         <Button
           variant="contained"
           color="error"
@@ -173,7 +173,7 @@ export default function Receipts() {
         >
           Delete
         </Button>
-      ),
+      ) : null,
     })),
     totalsRow,
   ]
@@ -201,56 +201,59 @@ export default function Receipts() {
     <Layout>
       <AuthComponent onAuthStateChange={handleAuthStateChange} />
       <section>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            gap: 3,
-          }}
-        >
-          <TextField
-            id="outlined-basic"
-            inputRef={inputRef}
-            label="සා. අංකය"
-            variant="outlined"
-            type="number"
-            value={memberId}
-            onChange={e => setMemberId(e.target.value)}
-            onBlur={getMemberDueId}
-            onFocus={resetFields}
-            sx={{ maxWidth: "120px" }}
-          />
-          
-          <TextField
-            id="outlined-basic"
-            label="සා. මුදල්"
-            placeholder={String(membershipDue || "")}
-            variant="outlined"
-            type="number"
-            value={membershipPayment}
-            onChange={e => setMembershipPayment(e.target.value)}
-            sx={{ maxWidth: "120px" }}
-            // disabled={memPayDisabled}
-          />
-          <TextField
-            id="outlined-basic"
-            label="හිග මුදල්"
-            placeholder={String(totalDue || "")}
-            variant="outlined"
-            type="number"
-            value={finePayment}
-            onChange={e => setFinePayment(e.target.value)}
-            sx={{ maxWidth: "120px" }}
-          />
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={nextDisabled}
+        {/* Hide payment form for auditors - they should only view data */}
+        {!roles.includes("auditor") && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: 3,
+            }}
           >
-            Next
-          </Button>
-        </Box>
+            <TextField
+              id="outlined-basic"
+              inputRef={inputRef}
+              label="සා. අංකය"
+              variant="outlined"
+              type="number"
+              value={memberId}
+              onChange={e => setMemberId(e.target.value)}
+              onBlur={getMemberDueId}
+              onFocus={resetFields}
+              sx={{ maxWidth: "120px" }}
+            />
+            
+            <TextField
+              id="outlined-basic"
+              label="සා. මුදල්"
+              placeholder={String(membershipDue || "")}
+              variant="outlined"
+              type="number"
+              value={membershipPayment}
+              onChange={e => setMembershipPayment(e.target.value)}
+              sx={{ maxWidth: "120px" }}
+              // disabled={memPayDisabled}
+            />
+            <TextField
+              id="outlined-basic"
+              label="හිග මුදල්"
+              placeholder={String(totalDue || "")}
+              variant="outlined"
+              type="number"
+              value={finePayment}
+              onChange={e => setFinePayment(e.target.value)}
+              sx={{ maxWidth: "120px" }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              disabled={nextDisabled}
+            >
+              Next
+            </Button>
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",

@@ -58,7 +58,7 @@ export default function ViewExpenses() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("treasurer")) {
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("auditor"))) {
       navigate("/login/user-login")
     }
   }
@@ -319,20 +319,25 @@ export default function ViewExpenses() {
                           >
                             <ViewIcon />
                           </IconButton>
-                          <IconButton
-                            onClick={() => navigate(`/account/edit-expense?id=${expense._id}`)}
-                            color="warning"
-                            size="small"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => setDeleteDialog({ open: true, expenseId: expense._id })}
-                            color="error"
-                            size="small"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          {/* Hide edit/delete buttons for auditors */}
+                          {!roles.includes("auditor") && (
+                            <>
+                              <IconButton
+                                onClick={() => navigate(`/account/edit-expense?id=${expense._id}`)}
+                                color="warning"
+                                size="small"
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                onClick={() => setDeleteDialog({ open: true, expenseId: expense._id })}
+                                color="error"
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}

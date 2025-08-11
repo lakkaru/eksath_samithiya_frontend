@@ -47,7 +47,7 @@ export default function MonthlyReport() {
   const [loading, setLoading] = useState(false)
   const [reportData, setReportData] = useState(null)
   
-  // View mode state
+  // View mode state - auditors can only view saved reports
   const [viewMode, setViewMode] = useState('new') // 'new' or 'saved'
   const [savedReports, setSavedReports] = useState([])
   const [selectedSavedReport, setSelectedSavedReport] = useState('')
@@ -67,10 +67,21 @@ export default function MonthlyReport() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("treasurer")) {
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("auditor"))) {
       navigate("/login/user-login")
     }
+    // Set auditors to only view saved reports
+    if (roles.includes("auditor")) {
+      setViewMode('saved')
+    }
   }
+
+  // Fetch saved reports when roles change and user is auditor
+  useEffect(() => {
+    if (roles.includes("auditor") && viewMode === 'saved') {
+      fetchSavedReports()
+    }
+  }, [roles, viewMode])
 
   const showNotification = (message, severity = 'info') => {
     setNotification({
@@ -89,7 +100,7 @@ export default function MonthlyReport() {
 
   // Fetch saved reports when switching to saved mode
   const fetchSavedReports = async () => {
-    if (!isAuthenticated || !roles.includes("treasurer")) return
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("auditor"))) return
     
     setLoadingSavedReports(true)
     try {
@@ -505,24 +516,26 @@ export default function MonthlyReport() {
               මාසික ආදායම්/වියදම් වාර්තාව
             </Typography>
 
-            {/* View Mode Toggle */}
-            <Box sx={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={viewMode === 'saved'}
-                    onChange={handleViewModeChange}
-                    color="primary"
-                  />
-                }
-                label={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <HistoryIcon />
-                    <Typography>සුරකින ලද වාර්තා බලන්න</Typography>
-                  </Box>
-                }
-              />
-            </Box>
+            {/* View Mode Toggle - Hide for auditors since they can only view saved reports */}
+            {!roles.includes("auditor") && (
+              <Box sx={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={viewMode === 'saved'}
+                      onChange={handleViewModeChange}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <HistoryIcon />
+                      <Typography>සුරකින ලද වාර්තා බලන්න</Typography>
+                    </Box>
+                  }
+                />
+              </Box>
+            )}
 
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               {/* Date Range Filter or Saved Report Selector */}

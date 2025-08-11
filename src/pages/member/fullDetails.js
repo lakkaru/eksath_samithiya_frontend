@@ -33,7 +33,7 @@ export default function FullDetails() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    const allowedRoles = ["vice-secretary", "treasurer", "loan-treasurer"]
+    const allowedRoles = ["vice-secretary", "treasurer", "loan-treasurer", "auditor"]
     if (!isAuthenticated || !roles.some(role => allowedRoles.includes(role))) {
       navigate("/login/user-login")
     }

@@ -320,7 +320,7 @@ export default function Search() {
     setRoles(roles)
     if (
       !isAuthenticated ||
-      (!roles.includes("loan-treasurer") && !roles.includes("treasurer"))
+      (!roles.includes("loan-treasurer") && !roles.includes("treasurer") && !roles.includes("auditor"))
     ) {
       navigate("/login/user-login")
     }

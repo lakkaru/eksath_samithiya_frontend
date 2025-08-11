@@ -137,7 +137,7 @@ export default function ActiveLoans() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || (!roles.includes("loan-treasurer") && !roles.includes("treasurer") && !roles.includes("chairman"))) {
+    if (!isAuthenticated || (!roles.includes("loan-treasurer") && !roles.includes("treasurer") && !roles.includes("chairman") && !roles.includes("auditor"))) {
       navigate("/login/user-login")
     }
   }

@@ -67,7 +67,7 @@ export default function ExtraDue() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !(roles.includes("vice-secretary") || roles.includes("treasurer"))) {
+    if (!isAuthenticated || !(roles.includes("vice-secretary") || roles.includes("treasurer") || roles.includes("auditor"))) {
       navigate("/login/user-login")
     }
   }
@@ -199,7 +199,7 @@ export default function ExtraDue() {
           setDataArray(
             addedDues.map(addedDue => ({
               ...addedDue,
-              delete: (
+              delete: !roles.includes("auditor") ? (
                 <Button
                   variant="contained"
                   color="error"
@@ -214,7 +214,7 @@ export default function ExtraDue() {
                 >
                   ඉවත් කරන්න
                 </Button>
-              ),
+              ) : null,
             }))
           )
         })
@@ -381,8 +381,8 @@ export default function ExtraDue() {
             </Card>
           )}
         </Paper>
-        {/* Add Extra Due Section */}
-        {selectedDeceased && (
+        {/* Add Extra Due Section - Hidden for auditors since they should only view data */}
+        {selectedDeceased && !roles.includes("auditor") && (
           <Paper 
             elevation={4} 
             sx={{ 

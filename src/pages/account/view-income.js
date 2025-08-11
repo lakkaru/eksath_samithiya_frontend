@@ -60,7 +60,7 @@ export default function ViewIncome() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("treasurer")) {
+    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("auditor"))) {
       navigate("/login/user-login")
     }
   }
@@ -349,7 +349,8 @@ export default function ViewIncome() {
                             <ViewIcon />
                           </IconButton>
                           {/* Only show edit and delete buttons for regular income entries, not membership/fine payments or summaries */}
-                          {income.category !== 'සාමාජික ගාස්තු' && income.category !== 'දඩ මුදල්' && income.type !== 'membership-summary' && income.type !== 'fine-summary' && (
+                          {/* Hide edit/delete buttons for auditors */}
+                          {!roles.includes("auditor") && income.category !== 'සාමාජික ගාස්තු' && income.category !== 'දඩ මුදල්' && income.type !== 'membership-summary' && income.type !== 'fine-summary' && (
                             <>
                               <IconButton
                                 onClick={() => navigate(`/account/edit-income?id=${income._id}`)}

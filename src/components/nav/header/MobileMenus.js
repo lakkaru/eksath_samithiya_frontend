@@ -25,6 +25,7 @@ import ViceSecretaryMobileMenu from "./mobileMenus/ViceSecretaryMobileMenu"
 import TreasurerMobileMenu from "./mobileMenus/TreasurerMobileMenu"
 import LoanMobileMenu from "./mobileMenus/LoanMobileMenu"
 import ChairmanMobileMenu from "./mobileMenus/ChairmanMobileMenu"
+import AuditorMobileMenu from "./mobileMenus/AuditorMobileMenu"
 
 export default function MobileMenuButtons({
   isAuthenticated,
@@ -39,6 +40,7 @@ export default function MobileMenuButtons({
   const isLoanTreasurer = roles.includes("loan-treasurer")
   const isTreasurer = roles.includes("treasurer")
   const isChairman = roles.includes("chairman")
+  const isAuditor = roles.includes("auditor")
   const hasLoanAccess = isLoanTreasurer || isTreasurer
 
   const handleMenuItemClick = (path) => {
@@ -115,9 +117,10 @@ export default function MobileMenuButtons({
                       isTreasurer={isTreasurer}
                       onMenuItemClick={handleMenuItemClick}
                     />
-                    {/* Treasurer Menu */}
-                    <TreasurerMobileMenu
-                      isTreasurer={isTreasurer}
+
+                    {/* Auditor Menu */}
+                    <AuditorMobileMenu
+                      isAuditor={isAuditor}
                       onMenuItemClick={handleMenuItemClick}
                     />
                     

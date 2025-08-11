@@ -9,6 +9,7 @@ import TreasurerMenu from "./desktopMenus/TreasurerMenu"
 import UserAccountMenu from "./desktopMenus/UserAccountMenu"
 import LoanMenu from "./desktopMenus/LoanMenu"
 import ChairmanMenu from "./desktopMenus/ChairmanMenu"
+import AuditorMenu from "./desktopMenus/AuditorMenu"
 
 export default function DesktopButtons({
   isAuthenticated,
@@ -22,6 +23,7 @@ export default function DesktopButtons({
   const isLoanTreasurer = roles.includes("loan-treasurer")
   const isTreasurer = roles.includes("treasurer")
   const isChairman = roles.includes("chairman")
+  const isAuditor = roles.includes("auditor")
   const hasLoanAccess = isLoanTreasurer || isTreasurer
 
   return (
@@ -43,6 +45,9 @@ export default function DesktopButtons({
 
           {/* Treasurer Menu */}
           <TreasurerMenu isTreasurer={isTreasurer} />
+
+          {/* Auditor Menu */}
+          <AuditorMenu isAuditor={isAuditor} />
 
           {/* User Account Menu */}
           <UserAccountMenu 
