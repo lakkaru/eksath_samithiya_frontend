@@ -116,6 +116,24 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
       </Button>
       <Button
         color="inherit"
+        onClick={() => onMenuItemClick("/member/update-member")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • යාවත්කාලීන කිරීම
+      </Button>
+      <Button
+        color="inherit"
         onClick={() => onMenuItemClick("/member/search-by-area")}
         sx={{ 
           textTransform: "none", 

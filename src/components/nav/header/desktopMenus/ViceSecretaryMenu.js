@@ -242,6 +242,14 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
+            navigate("/member/update-member")
+            handleMembershipViceSecMenuClose()
+          }}
+        >
+          සාමාජික තොරතුරු යාවත්කාලීන කිරීම
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
             navigate("/member/search-by-area")
             handleMembershipViceSecMenuClose()
           }}
