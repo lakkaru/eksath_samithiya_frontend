@@ -9,6 +9,7 @@ import {
   MenuItem,
   Grid2,
 } from "@mui/material"
+import DependentForm from "../../components/member/DependentForm"
 import Layout from "../../components/layout"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
@@ -34,6 +35,7 @@ export default function AddMember() {
   const [alert, setAlert] = useState({ open: false, message: "", severity: "success" })
   const [loading, setLoading] = useState(false)
 
+
   // Form state
   const [memberData, setMemberData] = useState({
     member_id: "",
@@ -49,6 +51,18 @@ export default function AddMember() {
     siblingsCount: 0,
     status: "regular",
   })
+
+  // Dependents state
+  const [dependents, setDependents] = useState([
+    { name: "", relationship: "", birthday: null, nic: "", dateOfDeath: null }
+  ])
+
+  // Calculate siblings count from dependents
+  const getSiblingsCount = () => {
+    return dependents.filter(dep => 
+      dep.relationship === "සහෝදරයා" || dep.relationship === "සහෝදරිය"
+    ).length
+  }
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
@@ -116,6 +130,7 @@ export default function AddMember() {
       siblingsCount: 0,
       status: "regular",
     })
+    setDependents([{ name: "", relationship: "", birthday: null, nic: "", dateOfDeath: null }])
     fetchNextMemberId() // Get next ID for new member
   }
 
@@ -124,22 +139,26 @@ export default function AddMember() {
       showAlert("සාමාජික අංකය සහ නම අවශ්‍යයි", "error")
       return false
     }
-
     if (memberData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberData.email)) {
       showAlert("වලංගු Email ලිපිනයක් ඇතුලත් කරන්න", "error")
       return false
     }
-
     if (memberData.mobile && !/^[0-9]{10}$/.test(memberData.mobile)) {
       showAlert("වලංගු ජංගම දුරකථන අංකයක් ඇතුලත් කරන්න (10 digits)", "error")
       return false
     }
-
     if (memberData.nic && !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(memberData.nic)) {
       showAlert("වලංගු ජාතික හැඳුනුම්පත් අංකයක් ඇතුලත් කරන්න", "error")
       return false
     }
-
+    // Validate dependents
+    for (let i = 0; i < dependents.length; i++) {
+      const d = dependents[i]
+      if (!d.name || !d.relationship || !d.birthday) {
+        showAlert(`ආශ්‍රිතයා ${i + 1} සඳහා නම, සබඳතාවය සහ උපන් දිනය අවශ්‍යයි`, "error")
+        return false
+      }
+    }
     return true
   }
 
@@ -152,7 +171,12 @@ export default function AddMember() {
       const submitData = {
         ...memberData,
         birthday: memberData.birthday ? memberData.birthday.format("YYYY-MM-DD") : null,
-        siblingsCount: parseInt(memberData.siblingsCount) || 0,
+        siblingsCount: getSiblingsCount(), // Auto-calculated from dependents
+        dependents: dependents.map(d => ({
+          ...d,
+          birthday: d.birthday ? d.birthday.format("YYYY-MM-DD") : null,
+          dateOfDeath: d.dateOfDeath ? d.dateOfDeath.format("YYYY-MM-DD") : null,
+        }))
       }
 
       const response = await api.post(`${baseUrl}/member/create`, submitData)
@@ -224,7 +248,7 @@ export default function AddMember() {
           </Typography>
 
           <Grid2 container spacing={3}>
-            {/* Member ID */}
+            {/* Member fields ...existing code... */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -237,8 +261,6 @@ export default function AddMember() {
                 disabled // Auto-generated
               />
             </Grid2>
-
-            {/* Name */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -250,8 +272,6 @@ export default function AddMember() {
                 placeholder="සම්පූර්ණ නම ඇතුලත් කරන්න"
               />
             </Grid2>
-
-            {/* Area */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -269,8 +289,6 @@ export default function AddMember() {
                 ))}
               </TextField>
             </Grid2>
-
-            {/* Status */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -287,8 +305,6 @@ export default function AddMember() {
                 ))}
               </TextField>
             </Grid2>
-
-            {/* Phone */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -299,8 +315,6 @@ export default function AddMember() {
                 placeholder="නිවසේ දුරකථන අංකය"
               />
             </Grid2>
-
-            {/* Mobile */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -311,8 +325,6 @@ export default function AddMember() {
                 placeholder="0712345678"
               />
             </Grid2>
-
-            {/* WhatsApp */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -323,8 +335,6 @@ export default function AddMember() {
                 placeholder="0712345678"
               />
             </Grid2>
-
-            {/* Email */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -336,8 +346,6 @@ export default function AddMember() {
                 placeholder="example@email.com"
               />
             </Grid2>
-
-            {/* NIC */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -348,21 +356,6 @@ export default function AddMember() {
                 placeholder="123456789V හෝ 123456789012"
               />
             </Grid2>
-
-            {/* Siblings Count */}
-            <Grid2 size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label="සහෝදරයන්/සහෝදරියන් සංඛ්‍යාව"
-                name="siblingsCount"
-                type="number"
-                value={memberData.siblingsCount}
-                onChange={handleInputChange}
-                inputProps={{ min: 0 }}
-              />
-            </Grid2>
-
-            {/* Birthday */}
             <Grid2 size={{ xs: 12, sm: 6 }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DatePicker"]}>
@@ -380,8 +373,6 @@ export default function AddMember() {
                 </DemoContainer>
               </LocalizationProvider>
             </Grid2>
-
-            {/* Address */}
             <Grid2 size={12}>
               <TextField
                 fullWidth
@@ -393,6 +384,34 @@ export default function AddMember() {
                 rows={3}
                 placeholder="සම්පූර්ණ ලිපිනය ඇතුලත් කරන්න"
               />
+            </Grid2>
+
+            {/* Dependents section */}
+            <Grid2 size={12}>
+              <Box sx={{ mt: 3, mb: 2, p: 2, border: "1px solid #eee", borderRadius: 2, background: "#f9f9f9" }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  යැපෙන්නන් {getSiblingsCount() > 0 && `(සහෝදර සහෝදරියන්: ${getSiblingsCount()})`}
+                </Typography>
+                {dependents.map((dep, idx) => (
+                  <DependentForm
+                    key={idx}
+                    dependent={dep}
+                    onChange={e => {
+                      const { name, value } = e.target
+                      setDependents(prev => prev.map((d, i) => i === idx ? { ...d, [name]: value } : d))
+                    }}
+                    onRemove={() => setDependents(prev => prev.filter((_, i) => i !== idx))}
+                    showRemove={dependents.length > 1}
+                  />
+                ))}
+                <Button
+                  variant="outlined"
+                  onClick={() => setDependents(prev => ([...prev, { name: "", relationship: "", birthday: null, nic: "", dateOfDeath: null }]))}
+                  sx={{ mt: 1 }}
+                >
+                  තවත් අයෙකු එක් කරන්න
+                </Button>
+              </Box>
             </Grid2>
 
             {/* Submit Buttons */}
