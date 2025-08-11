@@ -163,7 +163,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
           textTransform: "none", 
           width: "100%", 
           paddingLeft: "40px",
-          mb: 1.5,
+          mb: 0.5,
           justifyContent: 'flex-start',
           backgroundColor: 'rgba(102, 126, 234, 0.05)',
           '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
@@ -173,6 +173,24 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
         }}
       >
         • අවමංගල්‍ය පැවරීම
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/funeral/extraCollectionList")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 1.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        • අතිරේක එකතු කිරීමේ ලැයිස්තුව
       </Button>
 
       {/* Member Information Section */}
