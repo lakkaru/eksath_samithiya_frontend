@@ -71,19 +71,11 @@ export default function CollectionList() {
     setError("")
 
     try {
-      // Get members from the selected area
-      const response = await api.get(`${baseUrl}/member/searchByArea?area=${selectedArea}`)
+      // Get members for collection using the specialized endpoint
+      const response = await api.get(`${baseUrl}/member/forCollection?area=${selectedArea}`)
       
       if (response.data.success) {
-        // Filter out excluded roles and free members
-        const excludedRoles = ["chairman", "secretary", "treasurer", "loan-treasurer", "vice-secretary", "vice-chairman"]
-        const filteredMembers = response.data.members.filter(member => {
-          return !excludedRoles.includes(member.role) && 
-                 member.status !== "free" && 
-                 member.status === "regular"
-        })
-
-        setMembers(filteredMembers)
+        setMembers(response.data.members)
       } else {
         setError("සාමාජිකයින් ලබා ගැනීමේදී දෝෂයක් සිදුවිය")
       }
