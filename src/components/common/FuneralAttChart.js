@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Box, Typography, Button, Checkbox, Paper, Grid2 } from "@mui/material"
+import { Box, Typography, Button, Checkbox, Paper, Grid2, CircularProgress, Chip } from "@mui/material"
 // import Grid2 from "@mui/material/Unstable_Grid2";
 import BasicDatePicker from "./basicDatePicker"
 
@@ -16,29 +16,92 @@ const AuthComponent = loadable(() =>
 // const Axios = require("axios")
 const baseUrl = process.env.GATSBY_API_BASE_URL
 
-export default function FuneralAttChart({ chartName, saveAttendance }) {
+export default function FuneralAttChart({ chartName, saveAttendance, initialAbsents = [], loading = false }) {
   const chunkSize = 100 // Define 100 cells per group
   const [memberIds, setMemberIds] = useState([])
+  const [membersWithStatus, setMembersWithStatus] = useState([])
   const [attendance, setAttendance] = useState([])
 //   const [selectedDate, setSelectedDate] = useState(dayjs()) // Initialize with today's date
   const [memberIdMap, setMemberIdMap] = useState({}) // Map for quick lookup
+  const [statusMap, setStatusMap] = useState({}) // Map for member statuses
 
   useEffect(() => {
     api.get(`${baseUrl}/member/getMemberIdsForFuneralAttendance`).then(
       response => {
         const ids = response.data.memberIds || []
-        console.log(ids)
+        const membersWithStatusData = response.data.membersWithStatus || []
+        
+        console.log('Member IDs:', ids)
+        console.log('Members with status:', membersWithStatusData)
+        
         setMemberIds(ids)
+        setMembersWithStatus(membersWithStatusData)
+        
         const idMap = {}
+        const statusMap = {}
+        
         ids.forEach(id => {
           idMap[id] = true // Mark valid member IDs
         })
+        
+        membersWithStatusData.forEach(member => {
+          statusMap[member.member_id] = {
+            status: member.status,
+            showStatus: member.showStatus
+          }
+        })
+        
         console.log('idMap: ', idMap)
+        console.log('statusMap: ', statusMap)
+        
         setMemberIdMap(idMap)
-        setAttendance(ids.map(() => false)) // Initialize attendance only for valid IDs
+        setStatusMap(statusMap)
+        
+        // Initialize attendance based on initialAbsents
+        const initialAttendance = ids.map(id => !initialAbsents.includes(id))
+        setAttendance(initialAttendance)
       }
     )
   }, [])
+
+  // Update attendance when initialAbsents changes
+  useEffect(() => {
+    if (memberIds.length > 0) {
+      const updatedAttendance = memberIds.map(id => !initialAbsents.includes(id))
+      setAttendance(updatedAttendance)
+    }
+  }, [initialAbsents, memberIds])
+
+  // Get background color based on member status
+  const getCellBackgroundColor = (cell) => {
+    if (!cell.isEnabled) {
+      return "#e0e0e0" // Disabled color
+    }
+    
+    // Check if member has special status that should be shown
+    if (cell.memberStatus && cell.memberStatus.showStatus) {
+      if (cell.memberStatus.status === 'attendance-free') {
+        return "#fff3cd" // Light yellow for attendance-free (always same color)
+      } else if (cell.memberStatus.status === 'free') {
+        return "#e6f3ff" // Light blue for free (distinct from present color)
+      }
+    }
+    
+    // Normal active members
+    return cell.isChecked ? "#e0fffa" : "#c93330" // Original colors for active members
+  }
+
+  // Check if cell should be disabled (non-editable)
+  const isCellDisabled = (cell) => {
+    if (!cell.isEnabled) return true // Already disabled member
+    
+    // Disable cells for 'attendance-free' and 'free' members
+    if (cell.memberStatus && cell.memberStatus.showStatus) {
+      return cell.memberStatus.status === 'attendance-free' || cell.memberStatus.status === 'free'
+    }
+    
+    return false // Active members are editable
+  }
 // console.log(memberIdMap)
   // Calculate total attendance (checked cells)
   const totalAttendance = attendance.filter(value => value).length
@@ -50,14 +113,28 @@ export default function FuneralAttChart({ chartName, saveAttendance }) {
     setAttendance(updatedAttendance)
   }
 
-  // Check all checkboxes (only for enabled cells)
+  // Check all checkboxes (only for enabled and editable cells)
   const handleCheckAll = () => {
-    setAttendance(attendance.map((_, index) => memberIdMap[memberIds[index]]))
+    setAttendance(attendance.map((_, index) => {
+      const memberId = memberIds[index];
+      const memberStatus = statusMap[memberId];
+      const isDisabled = memberStatus && memberStatus.showStatus && 
+        (memberStatus.status === 'attendance-free' || memberStatus.status === 'free');
+      
+      return memberIdMap[memberId] && !isDisabled; // Only check enabled, non-disabled cells
+    }));
   }
 
-  // Uncheck all checkboxes
+  // Uncheck all checkboxes (only for enabled and editable cells)
   const handleUncheckAll = () => {
-    setAttendance(attendance.map(() => false)) // Uncheck all cells
+    setAttendance(attendance.map((_, index) => {
+      const memberId = memberIds[index];
+      const memberStatus = statusMap[memberId];
+      const isDisabled = memberStatus && memberStatus.showStatus && 
+        (memberStatus.status === 'attendance-free' || memberStatus.status === 'free');
+      
+      return isDisabled ? attendance[index] : false; // Keep disabled cells unchanged, uncheck others
+    }));
   }
 
   const handleSubmit = () => {
@@ -70,7 +147,7 @@ export default function FuneralAttChart({ chartName, saveAttendance }) {
 
     // Pass only the absent member IDs and date to saveAttendance
     saveAttendance({ absentMemberIds })
-    handleUncheckAll()
+    // Don't auto-reset - let parent handle the state
   }
 
   // Generate 100 cells per group, disabling invalid memberIds
@@ -82,6 +159,7 @@ export default function FuneralAttChart({ chartName, saveAttendance }) {
     isChecked: memberIdMap[i + 1]
       ? attendance[memberIds.indexOf(i + 1)]
       : false,
+    memberStatus: statusMap[i + 1] || null, // Get full status info for this member
   }))
 
   const chunks = Array.from(
@@ -112,6 +190,34 @@ console.log('chunk: ', chunks)
       <Typography variant="h6" align="center" gutterBottom>
         Total Attendance: {totalAttendance} / {memberIds.length}
       </Typography>
+
+      {/* Status Color Legend */}
+      <Box sx={{ mb: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+        <Typography variant="subtitle2" gutterBottom align="center">
+          Member Status Color Guide
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: '#e0fffa', border: '1px solid #ddd', borderRadius: '3px' }}></Box>
+            <Typography variant="caption">Present</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: '#c93330', border: '1px solid #ddd', borderRadius: '3px' }}></Box>
+            <Typography variant="caption">Absent</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: '#fff3cd', border: '1px solid #ddd', borderRadius: '3px' }}></Box>
+            <Typography variant="caption">Attendance-Free</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ width: 20, height: 20, backgroundColor: '#e6f3ff', border: '1px solid #ddd', borderRadius: '3px' }}></Box>
+            <Typography variant="caption">Free</Typography>
+          </Box>
+        </Box>
+        <Typography variant="caption" display="block" align="center" sx={{ mt: 1, color: 'text.secondary' }}>
+          Note: Attendance-Free and Free members are non-editable and exempt from fines
+        </Typography>
+      </Box>
 
       {/* Buttons to check/uncheck all */}
       <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
@@ -145,26 +251,24 @@ console.log('chunk: ', chunks)
                     alignItems: "center",
                     border: "2px solid #ddd",
                     padding: 1,
-                    width: 50,
-                    height: 50,
+                    width: 50, // Back to original width
+                    height: 50, // Back to original height
                     justifyContent: "center",
                     borderRadius: "4px",
-                    backgroundColor: cell.isEnabled
-                      ? cell.isChecked
-                        ? "#e0fffa" // Checked color
-                        : "#c93330" // Unchecked color
-                      : "#e0e0e0", // Disabled color
-                    // fontWeight: "bold",
-                    // fontSize: "1.8rem",
+                    backgroundColor: getCellBackgroundColor(cell),
                   }}
                 >
                   <Typography variant="body2" sx={{ marginBottom: 0.5 }}>
-                    {cell.id} {/* Cell number */}
+                    {cell.id} {/* Just member ID, no status code */}
                   </Typography>
                   <Checkbox
                     checked={cell.isChecked}
-                    disabled={!cell.isEnabled}
-                    onChange={() => handleToggle(memberIds.indexOf(cell.id))}
+                    disabled={!cell.isEnabled || isCellDisabled(cell)}
+                    onChange={() => {
+                      if (!isCellDisabled(cell)) {
+                        handleToggle(memberIds.indexOf(cell.id));
+                      }
+                    }}
                     size="small"
                     color="primary"
                   />
@@ -176,9 +280,20 @@ console.log('chunk: ', chunks)
       ))}
 
       {/* Submit Button */}
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-        <Button onClick={handleSubmit} variant="contained" color="success">
-          Submit Attendance
+      <Box sx={{ textAlign: "center" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleSubmit}
+          disabled={loading}
+          sx={{ 
+            px: 4, 
+            py: 1.5,
+            fontSize: '1.1rem'
+          }}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : "පැමිණීම සුරකින්න"}
         </Button>
       </Box>
     </Box>
