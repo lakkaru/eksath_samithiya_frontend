@@ -77,7 +77,7 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            navigate("/")
+            navigate("/funeral/funeralWorkAttendance")
             handleAttendanceMenuClose()
           }}
         >

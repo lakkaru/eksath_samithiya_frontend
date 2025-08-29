@@ -39,14 +39,23 @@ export default function FuneralAttendance() {
   const [funeralId, setFuneralId] = useState("")
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
+    console.log("Auth state change:", { isAuthenticated, roles })
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || !roles.includes("vice-secretary")) {
+    if (!isAuthenticated || !(roles.includes("vice-secretary") || roles.includes("treasurer") || roles.includes("auditor"))) {
+      console.log("Access denied: not authenticated or insufficient roles")
       navigate("/login/user-login")
     }
   }
 
   useEffect(() => {
+    if (!isAuthenticated || !(roles.includes("vice-secretary") || roles.includes("treasurer") || roles.includes("auditor"))) {
+      console.log("Waiting for authentication...")
+      return
+    }
+
+    console.log("Fetching data for authenticated user...")
+    
     // Getting number of members
     api
       .get(`${baseUrl}/member/getNextId`)
@@ -56,23 +65,29 @@ export default function FuneralAttendance() {
       })
       .catch(error => {
         // Handle error
-        console.log("Error: ", error)
+        console.log("Error fetching next ID: ", error)
       })
 
     api
       .get(`${baseUrl}/member/getMemberIdsForFuneralAttendance`)
       .then(response => {
+        console.log("Member IDs response:", response.data)
         const ids = response.data.memberIds || []
-        //   console.log(ids)
         setMemberIds(ids)
         const idMap = {}
         ids.forEach(id => {
           idMap[id] = true // Mark valid member IDs
         })
         setMemberIdMap(idMap)
-        //   setAttendance(ids.map(() => false)) // Initialize attendance only for valid IDs
       })
-  }, [member])
+      .catch(error => {
+        console.error("Error fetching member IDs for funeral attendance:", error)
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          console.log("Authentication failed, redirecting to login")
+          navigate("/login/user-login")
+        }
+      })
+  }, [isAuthenticated, roles, member])
 
   const getMemberById = e => {
     console.log("search:", memberId)

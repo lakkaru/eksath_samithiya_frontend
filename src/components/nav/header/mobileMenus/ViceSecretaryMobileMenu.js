@@ -53,7 +53,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
       </Button>
       <Button
         color="inherit"
-        onClick={() => onMenuItemClick("/")}
+        onClick={() => onMenuItemClick("/funeral/funeralWorkAttendance")}
         sx={{ 
           textTransform: "none", 
           width: "100%", 
