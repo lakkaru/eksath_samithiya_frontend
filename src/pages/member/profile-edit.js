@@ -28,9 +28,7 @@ import {
   Save as SaveIcon,
   Edit as EditIcon
 } from "@mui/icons-material"
-// import Axios from "axios"
 import api from "../../utils/api"
-// import { navigate } from "gatsby"
 
 import Layout from "../../components/layout"
 import { navigate } from "gatsby"

@@ -2,8 +2,7 @@ import React, { useState } from "react"
 import Layout from "../../components/layout"
 import { Box, Button, TextField, Alert, Typography } from "@mui/material"
 import DownloadIcon from '@mui/icons-material/Download';
-// import Axios from "axios"
-import { navigate } from "gatsby" // Import navigate
+import { navigate } from "gatsby"
 import api from '../../utils/api'
 
 const baseUrl = process.env.GATSBY_API_BASE_URL
@@ -15,23 +14,70 @@ export default function UserLogin() {
   const [isLoading, setIsLoading] = useState(false) // Loading state for button
 
   // Function to handle login
-  const getAuthentication = e => {
-    // console.log('Login Page')
+  const getAuthentication = async (e) => {
+    if (e) {
+      e.preventDefault()
+    }
+    
+    if (!member_id || !password) {
+      setError("ඔබගේ තොරතුරු ඇතුල් කරන්න.")
+      return
+    }
+    
     const credentials = { member_id, password }
     setIsLoading(true) // Show loading indicator
+    setError("") // Clear any existing errors
 
-    api.post(`${baseUrl}/auth/login`, credentials)
-      .then(response => {
-        // console.log(response)
-        localStorage.setItem("authToken", response.data.token)
-        setError("") // Clear error on success
-        navigate("/member/home") // Redirect to index page after login
-      })
-      .catch(error => {
-        setIsLoading(false) // Hide loading indicator
-        console.error("Axios error:", error)
+    try {
+      const response = await api.post(`${baseUrl}/auth/login`, credentials)
+      
+      // Store the token
+      localStorage.setItem("authToken", response.data.token)
+      
+      // Check if user is super admin and redirect accordingly
+      const userRoles = response.data.roles || []
+      const userType = response.data.userType
+      
+      console.log("Login successful:", { userType, userRoles, fullResponse: response.data }) // Debug log
+      
+      setIsLoading(false) // Hide loading indicator on success
+      
+      // Dispatch events to clear previous user data and trigger re-authentication
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent('userLoggedOut')) // Clear any cached data first
+        // Trigger new authentication after a small delay
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('userLoggedIn'))
+        }, 50)
+      }
+      
+      // Immediate redirect without delay
+      setTimeout(() => {
+        if (userType === 'admin' && userRoles.includes('super-admin')) {
+          console.log("Redirecting to admin dashboard") // Debug log
+          if (typeof window !== "undefined") {
+            window.location.href = "/admin/dashboard"
+          }
+        } else {
+          console.log("Redirecting to member home") // Debug log
+          if (typeof window !== "undefined") {
+            window.location.href = "/member/home"
+          }
+        }
+      }, 200) // Small delay to allow event processing
+      
+    } catch (error) {
+      setIsLoading(false) // Hide loading indicator on error
+      console.error("Login error:", error)
+      
+      // More detailed error logging
+      if (error.response) {
+        console.error("Error response:", error.response.data)
+        setError(error.response.data.message || "සාමාජික අංකයට මුරපදය නොගැලපේ.")
+      } else {
         setError("සාමාජික අංකයට මුරපදය නොගැලපේ.") // Set error message
-      })
+      }
+    }
   }
 
   // Disable login button until both fields are filled

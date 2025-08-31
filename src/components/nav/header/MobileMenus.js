@@ -26,6 +26,7 @@ import TreasurerMobileMenu from "./mobileMenus/TreasurerMobileMenu"
 import LoanMobileMenu from "./mobileMenus/LoanMobileMenu"
 import ChairmanMobileMenu from "./mobileMenus/ChairmanMobileMenu"
 import AuditorMobileMenu from "./mobileMenus/AuditorMobileMenu"
+import SuperAdminMobileMenu from "./mobileMenus/SuperAdminMobileMenu"
 
 export default function MobileMenuButtons({
   isAuthenticated,
@@ -41,6 +42,7 @@ export default function MobileMenuButtons({
   const isTreasurer = roles.includes("treasurer")
   const isChairman = roles.includes("chairman")
   const isAuditor = roles.includes("auditor")
+  const isSuperAdmin = roles.includes("super-admin")
   const hasLoanAccess = isLoanTreasurer || isTreasurer
 
   const handleMenuItemClick = (path) => {
@@ -92,6 +94,13 @@ export default function MobileMenuButtons({
                       </Box>
                     </Box>
 
+                    {/* Super Admin Menu */}
+                    <SuperAdminMobileMenu
+                      isSuperAdmin={isSuperAdmin}
+                      handleMenuItemClick={handleMenuItemClick}
+                      handleLogout={handleLogout}
+                    />
+
                     {/* Vice Secretary Menu */}
                     <ViceSecretaryMobileMenu 
                       isViceSecretary={isViceSecretary}
@@ -124,17 +133,18 @@ export default function MobileMenuButtons({
                       onMenuItemClick={handleMenuItemClick}
                     />
                     
-                    {/* Common Member Account & Services */}
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="subtitle2" sx={{ 
-                        color: "#666", 
-                        fontSize: "0.875rem", 
-                        fontWeight: 'bold',
-                        mb: 2,
-                        ml: 1
-                      }}>
-                        මගේ ගිණුම
-                      </Typography>
+                    {/* Common Member Account & Services - Hide for super admin */}
+                    {!isSuperAdmin && (
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ 
+                          color: "#666", 
+                          fontSize: "0.875rem", 
+                          fontWeight: 'bold',
+                          mb: 2,
+                          ml: 1
+                        }}>
+                          මගේ ගිණුම
+                        </Typography>
                       <Button
                         color="inherit"
                         onClick={() => handleMenuItemClick("/member/home")}
@@ -289,6 +299,7 @@ export default function MobileMenuButtons({
                         ඉවත් වන්න
                       </Button>
                     </Box>
+                  )}
                   </Box>
                 )}
                 {!isAuthenticated && (

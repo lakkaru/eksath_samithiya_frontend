@@ -117,10 +117,19 @@ const Header = ({ siteTitle }) => {
   }
 
   const handleLogout = () => {
+    // Clear all state and localStorage
     localStorage.removeItem("authToken")
     setRoles([])
     setIsAuthenticated(false)
     setMemberName("")
+    setMemberId("")
+    setHasLoan(false)
+    
+    // Dispatch logout event to clear cached data
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent('userLoggedOut'))
+    }
+    
     navigate("/login/user-login")
   }
 
@@ -133,22 +142,33 @@ const Header = ({ siteTitle }) => {
     navigate(path)
   }
   useEffect(() => {
-    // Only check for loan if user is authenticated
+    // Only check for loan if user is authenticated and not an admin
     if (isAuthenticated) {
-      api
-        .get(`${baseUrl}/member/hasLoan`)
-        .then(response => {
-          console.log(response?.data.loan)
-          setHasLoan(response?.data.loan)
-        })
-        .catch(error => {
-          console.error("Axios error: ", error)
-        })
+      // Check if user is admin - admin users don't need loan checking
+      const isAdmin = roles.some(role => 
+        ['super-admin', 'chairman', 'secretary', 'treasurer', 'vice-secretary', 'auditor', 'loan-treasurer', 'vice-chairman', 'speaker-handler'].includes(role)
+      )
+      
+      if (!isAdmin) {
+        api
+          .get(`${baseUrl}/member/hasLoan`)
+          .then(response => {
+            console.log(response?.data.loan)
+            setHasLoan(response?.data.loan)
+          })
+          .catch(error => {
+            console.error("Axios error: ", error)
+            setHasLoan(false) // Set to false on error
+          })
+      } else {
+        // Admin users don't have loans
+        setHasLoan(false)
+      }
     } else {
       // Reset loan status when not authenticated
       setHasLoan(false)
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, roles])
 
   return (
     <header>
