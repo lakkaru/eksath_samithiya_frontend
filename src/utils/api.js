@@ -22,13 +22,15 @@ api.interceptors.response.use(
   },
   (error) => {
     // Check if it's an authentication error
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Token expired or invalid - logout and redirect
+    if (error.response && error.response.status === 401) {
+      // 401 means token expired or invalid - logout and redirect
       localStorage.removeItem("authToken");
       
-      // Show a brief message before redirecting
+      // Dispatch logout event to clear component states
       if (typeof window !== "undefined") {
-        // Create and show a temporary notification
+        window.dispatchEvent(new CustomEvent('userLoggedOut'));
+        
+        // Show a brief message before redirecting
         const notification = document.createElement("div");
         notification.innerHTML = "ඔබගේ ප්‍රවේශ කාලය අවසන් වී ඇත. ප්‍රවේශ පිටුවට හරවා යමින්...";
         notification.style.cssText = `
@@ -53,6 +55,11 @@ api.interceptors.response.use(
           navigate("/login/user-login");
         }, 2000);
       }
+    } else if (error.response && error.response.status === 403) {
+      // 403 means user is authenticated but doesn't have permission
+      // Don't logout, just show the error message
+      console.log("Access denied - insufficient permissions");
+      // The error will be handled by the calling component
     }
     
     return Promise.reject(error);

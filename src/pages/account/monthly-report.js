@@ -67,11 +67,14 @@ export default function MonthlyReport() {
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
-    if (!isAuthenticated || (!roles.includes("treasurer") && !roles.includes("auditor"))) {
+    if (!isAuthenticated) {
       navigate("/login/user-login")
+    } else if (!roles.includes("treasurer") && !roles.includes("auditor") && !roles.includes("chairman")) {
+      // User is authenticated but doesn't have permission - show error instead of redirecting
+      showNotification("ඔබට මෙම පිටුව බැලීමට අවසර නැත. භාණ්ඩාගාරික, ගණකාධිකාරී හෝ සභාපතිවරුන්ට පමණක් මෙම තොරතුරු ප්‍රවේශ විය හැක.", "error")
     }
-    // Set auditors to only view saved reports
-    if (roles.includes("auditor")) {
+    // Set auditors and chairman to view saved reports by default
+    if (roles.includes("auditor") || roles.includes("chairman")) {
       setViewMode('saved')
     }
   }
@@ -497,6 +500,33 @@ export default function MonthlyReport() {
         <AuthComponent onAuthStateChange={handleAuthStateChange} />
         <Box sx={{ padding: "20px", textAlign: "center" }}>
           <Typography>පුරනය වන්න...</Typography>
+        </Box>
+      </Layout>
+    )
+  }
+
+  // Check if user has permission to view monthly reports
+  if (!roles.includes("treasurer") && !roles.includes("auditor") && !roles.includes("chairman")) {
+    return (
+      <Layout>
+        <AuthComponent onAuthStateChange={handleAuthStateChange} />
+        <Box sx={{ padding: "20px", textAlign: "center" }}>
+          <Paper sx={{ padding: "40px", borderRadius: "10px", maxWidth: "600px", margin: "0 auto" }}>
+            <Typography variant="h5" gutterBottom sx={{ color: "#f44336", marginBottom: "20px" }}>
+              ප්‍රවේශ අවසරයක් නැත
+            </Typography>
+            <Typography variant="body1" sx={{ marginBottom: "20px" }}>
+              මාසික වාර්තා බැලීමට ඔබට අවසර නැත. මෙම තොරතුරු භාණ්ඩාගාරික, ගණකාධිකාරී හෝ සභාපතිවරුන්ට පමණක් ප්‍රවේශ විය හැක.
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={() => navigate("/member/home")}
+              sx={{ marginTop: "10px" }}
+            >
+              මුල් පිටුවට යන්න
+            </Button>
+          </Paper>
         </Box>
       </Layout>
     )
