@@ -136,26 +136,18 @@ export default function Attendance() {
 //       })
 //   }
 
-  const saveAttendance = ({ absentMemberIds , selectedDate}) => {
-    // console.log("Absent received:", absentMemberIds)
-    // console.log(" date:", new Date(selectedDate))
-    // console.log(member)
-    // console.log(first)
+  const saveAttendance = async ({ absentMemberIds , selectedDate}) => {
     const absentData = { date: new Date(selectedDate), absentArray: absentMemberIds }
     console.log(" absentData :", absentData)
-    api
-      .post(`${baseUrl}/meeting/absents`, { absentData })
-      .then(response => {
-        // console.log(response.data)
-        // setMember({})
-        // setMemberId("")
-        // setDeceasedOptions([])
-        // setSelectedDeceased("")
-        // setFuneralId("")
-      })
-      .catch(error => {
-        console.error("Axios error: ", error)
-      })
+    
+    try {
+      const response = await api.post(`${baseUrl}/meeting/absents`, { absentData })
+      console.log("Attendance saved:", response.data)
+      return response.data
+    } catch (error) {
+      console.error("Error saving attendance:", error)
+      throw error
+    }
   }
 
   return (
