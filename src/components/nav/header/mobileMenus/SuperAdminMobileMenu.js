@@ -71,7 +71,7 @@ export default function SuperAdminMobileMenu({ isSuperAdmin, handleMenuItemClick
           fullWidth
           variant="outlined"
           startIcon={<SettingsIcon />}
-          onClick={() => handleMenuItemClick("/admin/settings")}
+          onClick={() => handleMenuItemClick("/admin/system-settings")}
           sx={{
             justifyContent: "flex-start",
             mb: 1,

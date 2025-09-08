@@ -19,6 +19,7 @@ import FuneralAttChart from "../../components/common/FuneralAttChart"
 
 import { navigate } from "gatsby"
 import api from "../../utils/api"
+import { getFineSettings } from "../../utils/settingsHelper"
 import loadable from "@loadable/component"
 const AuthComponent = loadable(() =>
   import("../../components/common/AuthComponent")
@@ -49,6 +50,13 @@ export default function FuneralAttendance() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [hasChanges, setHasChanges] = useState(false)
+  
+  // Fine settings
+  const [fineSettings, setFineSettings] = useState({
+    funeralAttendanceFine: 100,
+    funeralWorkFine: 1000,
+    cemeteryWorkFine: 1000
+  })
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
     console.log("Auth state change:", { isAuthenticated, roles })
@@ -67,6 +75,18 @@ export default function FuneralAttendance() {
     }
 
     console.log("Fetching data for authenticated user...")
+    
+    // Fetch fine settings first
+    const loadFineSettings = async () => {
+      try {
+        const settings = await getFineSettings()
+        setFineSettings(settings)
+      } catch (error) {
+        console.error("Error fetching fine settings:", error)
+        // Keep default values if fetch fails
+      }
+    }
+    loadFineSettings()
     
     // Getting number of members
     api
@@ -319,7 +339,7 @@ export default function FuneralAttendance() {
     
     // Count only absent members who are eligible for fines
     const fineEligibleAbsents = eventAbsents.filter(memberId => !excludedFromFines.includes(memberId))
-    const fineAmount = parseInt(process.env.GATSBY_FUNERAL_ATTENDANCE_FINE_VALUE) || 100
+    const fineAmount = fineSettings.funeralAttendanceFine
     
     // Calculate breakdown of excluded members
     const cemeteryExcluded = eventAbsents.filter(memberId => cemeteryAssignedIds.includes(memberId)).length

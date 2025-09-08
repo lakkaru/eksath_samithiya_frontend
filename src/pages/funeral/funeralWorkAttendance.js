@@ -19,6 +19,7 @@ import {
 import Layout from "../../components/layout"
 import { navigate } from "gatsby"
 import api from "../../utils/api"
+import { getFineSettings } from "../../utils/settingsHelper"
 import loadable from "@loadable/component"
 
 const AuthComponent = loadable(() =>
@@ -39,11 +40,20 @@ export default function FuneralWorkAttendance() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
+  // Fine amounts from database
+  const [fineAmounts, setFineAmounts] = useState({
+    funeralWorkFine: 1000,
+    cemeteryWorkFine: 1000,
+    funeralAttendanceFine: 100
+  })
+
   // Attendance tracking
   const [cemeteryAttendance, setCemeteryAttendance] = useState({})
   const [funeralAttendance, setFuneralAttendance] = useState({})
-  const [assignmentAbsents, setAssignmentAbsents] = useState([])
-  const [originalAssignmentAbsents, setOriginalAssignmentAbsents] = useState([])
+  const [funeralWorkAbsents, setFuneralWorkAbsents] = useState([])
+  const [cemeteryWorkAbsents, setCemeteryWorkAbsents] = useState([])
+  const [originalFuneralWorkAbsents, setOriginalFuneralWorkAbsents] = useState([])
+  const [originalCemeteryWorkAbsents, setOriginalCemeteryWorkAbsents] = useState([])
   const [hasChanges, setHasChanges] = useState(false)
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
@@ -62,9 +72,21 @@ export default function FuneralWorkAttendance() {
       return
     }
 
-    console.log("Fetching available funerals...")
+    console.log("Fetching available funerals and fine settings...")
     fetchAvailableFunerals()
+    fetchFineSettings()
   }, [isAuthenticated, roles])
+
+  const fetchFineSettings = async () => {
+    try {
+      const settings = await getFineSettings()
+      setFineAmounts(settings)
+      console.log("Fine settings loaded:", settings)
+    } catch (error) {
+      console.error("Error fetching fine settings:", error)
+      // Keep default values if fetch fails
+    }
+  }
 
   const fetchAvailableFunerals = async () => {
     try {
@@ -101,20 +123,23 @@ export default function FuneralWorkAttendance() {
       // Initialize attendance states with current saved data
       const cemeteryAtt = {}
       const funeralAtt = {}
-      const absents = funeral.assignmentAbsents || []
+      const funeralAbsents = funeral.funeralWorkAbsents || []
+      const cemeteryAbsents = funeral.cemeteryWorkAbsents || []
       
       funeral.cemeteryAssignments?.forEach(member => {
-        cemeteryAtt[member.member_id] = !absents.includes(member.member_id)
+        cemeteryAtt[member.member_id] = !cemeteryAbsents.includes(member.member_id)
       })
       
       funeral.funeralAssignments?.forEach(member => {
-        funeralAtt[member.member_id] = !absents.includes(member.member_id)
+        funeralAtt[member.member_id] = !funeralAbsents.includes(member.member_id)
       })
       
       setCemeteryAttendance(cemeteryAtt)
       setFuneralAttendance(funeralAtt)
-      setAssignmentAbsents([...absents])
-      setOriginalAssignmentAbsents([...absents])
+      setFuneralWorkAbsents([...funeralAbsents])
+      setCemeteryWorkAbsents([...cemeteryAbsents])
+      setOriginalFuneralWorkAbsents([...funeralAbsents])
+      setOriginalCemeteryWorkAbsents([...cemeteryAbsents])
       setHasChanges(false)
       
     } catch (error) {
@@ -143,8 +168,10 @@ export default function FuneralWorkAttendance() {
       setSelectedFuneral(null)
       setCemeteryAttendance({})
       setFuneralAttendance({})
-      setAssignmentAbsents([])
-      setOriginalAssignmentAbsents([])
+      setFuneralWorkAbsents([])
+      setCemeteryWorkAbsents([])
+      setOriginalFuneralWorkAbsents([])
+      setOriginalCemeteryWorkAbsents([])
       setHasChanges(false)
     }
     setError("")
@@ -157,16 +184,17 @@ export default function FuneralWorkAttendance() {
       [memberId]: isPresent
     }))
     
-    // Update assignment absents
+    // Update cemetery work absents
     const newAbsents = isPresent
-      ? assignmentAbsents.filter(id => id !== memberId)
-      : assignmentAbsents.includes(memberId) ? assignmentAbsents : [...assignmentAbsents, memberId]
+      ? cemeteryWorkAbsents.filter(id => id !== memberId)
+      : cemeteryWorkAbsents.includes(memberId) ? cemeteryWorkAbsents : [...cemeteryWorkAbsents, memberId]
     
-    setAssignmentAbsents(newAbsents)
+    setCemeteryWorkAbsents(newAbsents)
     
     // Check if there are changes
-    const hasChanged = JSON.stringify(newAbsents.sort()) !== JSON.stringify(originalAssignmentAbsents.sort())
-    setHasChanges(hasChanged)
+    const funeralChanged = JSON.stringify(funeralWorkAbsents.sort()) !== JSON.stringify(originalFuneralWorkAbsents.sort())
+    const cemeteryChanged = JSON.stringify(newAbsents.sort()) !== JSON.stringify(originalCemeteryWorkAbsents.sort())
+    setHasChanges(funeralChanged || cemeteryChanged)
   }
 
   const handleFuneralAttendanceChange = (memberId, isPresent) => {
@@ -175,16 +203,17 @@ export default function FuneralWorkAttendance() {
       [memberId]: isPresent
     }))
     
-    // Update assignment absents
+    // Update funeral work absents
     const newAbsents = isPresent
-      ? assignmentAbsents.filter(id => id !== memberId)
-      : assignmentAbsents.includes(memberId) ? assignmentAbsents : [...assignmentAbsents, memberId]
+      ? funeralWorkAbsents.filter(id => id !== memberId)
+      : funeralWorkAbsents.includes(memberId) ? funeralWorkAbsents : [...funeralWorkAbsents, memberId]
     
-    setAssignmentAbsents(newAbsents)
+    setFuneralWorkAbsents(newAbsents)
     
     // Check if there are changes
-    const hasChanged = JSON.stringify(newAbsents.sort()) !== JSON.stringify(originalAssignmentAbsents.sort())
-    setHasChanges(hasChanged)
+    const funeralChanged = JSON.stringify(newAbsents.sort()) !== JSON.stringify(originalFuneralWorkAbsents.sort())
+    const cemeteryChanged = JSON.stringify(cemeteryWorkAbsents.sort()) !== JSON.stringify(originalCemeteryWorkAbsents.sort())
+    setHasChanges(funeralChanged || cemeteryChanged)
   }
 
   const handleSaveAttendance = async () => {
@@ -200,27 +229,37 @@ export default function FuneralWorkAttendance() {
       
       const attendanceData = {
         funeralId: selectedFuneralId,
-        assignmentAbsents: assignmentAbsents
+        funeralWorkAbsents: funeralWorkAbsents,
+        cemeteryWorkAbsents: cemeteryWorkAbsents
       }
 
       const response = await api.post(`${baseUrl}/funeral/updateWorkAttendance`, attendanceData)
       
-      const { finesAdded = 0, finesRemoved = 0 } = response.data
+      const { 
+        funeralFinesAdded = 0, 
+        funeralFinesRemoved = 0,
+        cemeteryFinesAdded = 0,
+        cemeteryFinesRemoved = 0
+      } = response.data
       
       let successMsg = "අවමංගල්‍ය කටයුතු පැමිණීම සාර්ථකව යාවත්කාලීන කරන ලදී"
       
-      if (finesAdded > 0 && finesRemoved > 0) {
-        successMsg += ` (දඩ ${finesAdded}ක් එකතු කර ${finesRemoved}ක් ඉවත් කරන ලදී)`
-      } else if (finesAdded > 0) {
-        successMsg += ` (දඩ ${finesAdded}ක් එකතු කරන ලදී)`
-      } else if (finesRemoved > 0) {
-        successMsg += ` (දඩ ${finesRemoved}ක් ඉවත් කරන ලදී)`
+      const totalFinesAdded = funeralFinesAdded + cemeteryFinesAdded
+      const totalFinesRemoved = funeralFinesRemoved + cemeteryFinesRemoved
+      
+      if (totalFinesAdded > 0 && totalFinesRemoved > 0) {
+        successMsg += ` (දඩ ${totalFinesAdded}ක් එකතු කර ${totalFinesRemoved}ක් ඉවත් කරන ලදී)`
+      } else if (totalFinesAdded > 0) {
+        successMsg += ` (දඩ ${totalFinesAdded}ක් එකතු කරන ලදී)`
+      } else if (totalFinesRemoved > 0) {
+        successMsg += ` (දඩ ${totalFinesRemoved}ක් ඉවත් කරන ලදී)`
       }
       
       setSuccess(successMsg)
       
       // Update original data to reflect current state
-      setOriginalAssignmentAbsents([...assignmentAbsents])
+      setOriginalFuneralWorkAbsents([...funeralWorkAbsents])
+      setOriginalCemeteryWorkAbsents([...cemeteryWorkAbsents])
       setHasChanges(false)
       
       // Clear success message after 5 seconds
@@ -334,7 +373,7 @@ export default function FuneralWorkAttendance() {
               <Card sx={{ mb: 3 }}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-                    සුසන භූමි කටයුතු පැවරීම්
+                    සුසන භූමි කටයුතු පැවරීම් (දඩ රු.{fineAmounts.cemeteryWorkFine.toLocaleString()})
                   </Typography>
                   <Grid container spacing={2}>
                     {selectedFuneral.cemeteryAssignments.map((member) => (
@@ -355,7 +394,7 @@ export default function FuneralWorkAttendance() {
                               {!cemeteryAttendance[member.member_id] && (
                                 <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
                                   <Chip size="small" color="error" label="නොපැමිණි" />
-                                  <Chip size="small" color="warning" label={`දඩ රු.${process.env.GATSBY_FUNERAL_WORK_FINE_VALUE || 500}`} />
+                                  <Chip size="small" color="warning" label={`දඩ රු.${fineAmounts.cemeteryWorkFine.toLocaleString()}`} />
                                 </Box>
                               )}
                             </Box>
@@ -373,7 +412,7 @@ export default function FuneralWorkAttendance() {
               <Card sx={{ mb: 3 }}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-                    අවමංගල්‍ය උත්සව කටයුතු පැවරීම්
+                    අවමංගල්‍ය උත්සව කටයුතු පැවරීම් (දඩ රු.{fineAmounts.funeralWorkFine.toLocaleString()})
                   </Typography>
                   <Grid container spacing={2}>
                     {selectedFuneral.funeralAssignments.map((member) => (
@@ -394,7 +433,7 @@ export default function FuneralWorkAttendance() {
                               {!funeralAttendance[member.member_id] && (
                                 <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
                                   <Chip size="small" color="error" label="නොපැමිණි" />
-                                  <Chip size="small" color="warning" label={`දඩ රු.${process.env.GATSBY_FUNERAL_WORK_FINE_VALUE || 500}`} />
+                                  <Chip size="small" color="warning" label={`දඩ රු.${fineAmounts.funeralWorkFine.toLocaleString()}`} />
                                 </Box>
                               )}
                             </Box>
@@ -421,7 +460,7 @@ export default function FuneralWorkAttendance() {
                   </Grid>
                   <Grid item xs={12} sm={4}>
                     <Typography>
-                      <strong>සුසන භූමි - නොපැමිණි:</strong> {selectedFuneral.cemeteryAssignments?.length - Object.values(cemeteryAttendance).filter(Boolean).length || 0}
+                      <strong>සුසන භූමි - නොපැමිණි:</strong> {cemeteryWorkAbsents.length}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={4}>
@@ -436,7 +475,7 @@ export default function FuneralWorkAttendance() {
                   </Grid>
                   <Grid item xs={12} sm={4}>
                     <Typography>
-                      <strong>අවමංගල්‍ය - නොපැමිණි:</strong> {selectedFuneral.funeralAssignments?.length - Object.values(funeralAttendance).filter(Boolean).length || 0}
+                      <strong>අවමංගල්‍ය - නොපැමිණි:</strong> {funeralWorkAbsents.length}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={4}>
@@ -446,13 +485,16 @@ export default function FuneralWorkAttendance() {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography sx={{ mt: 2 }}>
-                      <strong>මුළු නොපැමිණි සාමාජිකයන්:</strong> {assignmentAbsents.length}
+                      <strong>මුළු නොපැමිණි සාමාජිකයන්:</strong> {funeralWorkAbsents.length + cemeteryWorkAbsents.length}
                     </Typography>
                     <Typography color="error" sx={{ fontSize: '0.9rem' }}>
-                      <strong>දඩ මුදල (එක් අයෙකු සඳහා):</strong> රු. {process.env.GATSBY_FUNERAL_WORK_FINE_VALUE || 500}
+                      <strong>අවමංගල්‍ය කටයුතු දඩ:</strong> රු. {fineAmounts.funeralWorkFine.toLocaleString()} × {funeralWorkAbsents.length} = රු. {(funeralWorkAbsents.length * fineAmounts.funeralWorkFine).toLocaleString()}
                     </Typography>
                     <Typography color="error" sx={{ fontSize: '0.9rem' }}>
-                      <strong>මුළු දඩ මුදල:</strong> රු. {assignmentAbsents.length * (parseInt(process.env.GATSBY_FUNERAL_WORK_FINE_VALUE) || 500)}
+                      <strong>සුසන භූමි කටයුතු දඩ:</strong> රු. {fineAmounts.cemeteryWorkFine.toLocaleString()} × {cemeteryWorkAbsents.length} = රු. {(cemeteryWorkAbsents.length * fineAmounts.cemeteryWorkFine).toLocaleString()}
+                    </Typography>
+                    <Typography color="error" sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
+                      <strong>මුළු දඩ මුදල:</strong> රු. {((funeralWorkAbsents.length * fineAmounts.funeralWorkFine) + (cemeteryWorkAbsents.length * fineAmounts.cemeteryWorkFine)).toLocaleString()}
                     </Typography>
                   </Grid>
                 </Grid>

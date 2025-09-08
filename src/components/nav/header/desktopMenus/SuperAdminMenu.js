@@ -93,7 +93,7 @@ export default function SuperAdminMenu({ isSuperAdmin, handleLogout }) {
         
         <Divider sx={{ my: 1 }} />
         
-        <MenuItem onClick={() => handleNavigate("/admin/settings")}>
+        <MenuItem onClick={() => handleNavigate("/admin/system-settings")}>
           <ListItemIcon>
             <SettingsIcon fontSize="small" color="secondary" />
           </ListItemIcon>

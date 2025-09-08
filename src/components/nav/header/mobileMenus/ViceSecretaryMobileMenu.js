@@ -33,60 +33,24 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
         <GroupsIcon fontSize="small" />
         පැමිණීම
       </Typography>
-      <Button
-        color="inherit"
-        onClick={() => onMenuItemClick("/funeral/funeralAttendance")}
-        sx={{ 
-          textTransform: "none", 
-          width: "100%", 
-          paddingLeft: "40px",
-          mb: 0.5,
-          justifyContent: 'flex-start',
-          backgroundColor: 'rgba(102, 126, 234, 0.05)',
-          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
-          borderRadius: 1,
-          py: 1,
-          color: '#555'
-        }}
-      >
-        • අවමංගල්‍ය උත්සවය
-      </Button>
-      <Button
-        color="inherit"
-        onClick={() => onMenuItemClick("/funeral/funeralWorkAttendance")}
-        sx={{ 
-          textTransform: "none", 
-          width: "100%", 
-          paddingLeft: "40px",
-          mb: 0.5,
-          justifyContent: 'flex-start',
-          backgroundColor: 'rgba(102, 126, 234, 0.05)',
-          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
-          borderRadius: 1,
-          py: 1,
-          color: '#555'
-        }}
-      >
-        • සුසන භුමි කටයුතු
-      </Button>
-      <Button
-        color="inherit"
-        onClick={() => onMenuItemClick("/meeting/Attendance")}
-        sx={{ 
-          textTransform: "none", 
-          width: "100%", 
-          paddingLeft: "40px",
-          mb: 0.5,
-          justifyContent: 'flex-start',
-          backgroundColor: 'rgba(102, 126, 234, 0.05)',
-          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
-          borderRadius: 1,
-          py: 1,
-          color: '#555'
-        }}
-      >
-        • මහා සභාව
-      </Button>
+
+      {/* Printing Category */}
+      <Typography variant="caption" sx={{ 
+        px: 2, 
+        py: 0.5, 
+        color: 'text.secondary', 
+        fontWeight: 'bold',
+        fontSize: '0.65rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        display: 'block',
+        backgroundColor: 'rgba(102, 126, 234, 0.08)',
+        borderRadius: 1,
+        mb: 0.5,
+        ml: 2
+      }}>
+        මුද්‍රණය
+      </Typography>
       <Button
         color="inherit"
         onClick={() => onMenuItemClick("/forms/MeetingSheet")}
@@ -130,7 +94,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
           textTransform: "none", 
           width: "100%", 
           paddingLeft: "40px",
-          mb: 0.5,
+          mb: 1,
           justifyContent: 'flex-start',
           backgroundColor: 'rgba(102, 126, 234, 0.05)',
           '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
@@ -141,6 +105,96 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
       >
         📋 පොදු වැඩ පැමිණීම ලේඛණය
       </Button>
+
+      {/* Marking Category */}
+      <Typography variant="caption" sx={{ 
+        px: 2, 
+        py: 0.5, 
+        color: 'text.secondary', 
+        fontWeight: 'bold',
+        fontSize: '0.65rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        display: 'block',
+        backgroundColor: 'rgba(102, 126, 234, 0.08)',
+        borderRadius: 1,
+        mb: 0.5,
+        ml: 2
+      }}>
+        සලකුණු කිරීම
+      </Typography>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/funeral/funeralAttendance")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        ✓ අවමංගල්‍ය උත්සවය
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/funeral/funeralWorkAttendance")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 0.5,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        ✓ සුසන භුමි කටයුතු
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/meeting/Attendance")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 1,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        ✓ මහා සභාව
+      </Button>
+
+      {/* Monitoring Category */}
+      <Typography variant="caption" sx={{ 
+        px: 2, 
+        py: 0.5, 
+        color: 'text.secondary', 
+        fontWeight: 'bold',
+        fontSize: '0.65rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        display: 'block',
+        backgroundColor: 'rgba(102, 126, 234, 0.08)',
+        borderRadius: 1,
+        mb: 0.5,
+        ml: 2
+      }}>
+        නිරීක්ෂණය
+      </Typography>
       <Button
         color="inherit"
         onClick={() => onMenuItemClick("/reports/meetingAttendance")}

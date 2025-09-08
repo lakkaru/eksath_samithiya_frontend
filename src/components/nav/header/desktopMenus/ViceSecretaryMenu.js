@@ -5,6 +5,7 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Typography,
 } from "@mui/material"
 import {
   Groups as GroupsIcon,
@@ -67,31 +68,20 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
           },
         }}
       >
-        <MenuItem
-          onClick={() => {
-            navigate("/funeral/funeralAttendance")
-            handleAttendanceMenuClose()
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            px: 2, 
+            py: 0.5, 
+            color: 'text.secondary', 
+            fontWeight: 'bold',
+            fontSize: '0.7rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}
         >
-          අවමංගල්‍ය උත්සවය
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            navigate("/funeral/funeralWorkAttendance")
-            handleAttendanceMenuClose()
-          }}
-        >
-          සුසන භුමි කටයුතු
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            navigate("/meeting/Attendance")
-            handleAttendanceMenuClose()
-          }}
-        >
-          මහා සභාව
-        </MenuItem>
-        <hr/>
+          මුද්‍රණය
+        </Typography>
         <MenuItem
           onClick={() => {
             navigate("/forms/MeetingSheet")
@@ -116,6 +106,60 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         >
           📋 පොදු වැඩ පැමිණීම ලේඛණය
         </MenuItem>
+        <Divider sx={{ my: 1 }} />
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            px: 2, 
+            py: 0.5, 
+            color: 'text.secondary', 
+            fontWeight: 'bold',
+            fontSize: '0.7rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}
+        >
+          සලකුණු කිරීම
+        </Typography>
+         <MenuItem
+          onClick={() => {
+            navigate("/funeral/funeralAttendance")
+            handleAttendanceMenuClose()
+          }}
+        >
+          ✓ අවමංගල්‍ය උත්සවය
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/funeral/funeralWorkAttendance")
+            handleAttendanceMenuClose()
+          }}
+        >
+          ✓ සුසන භුමි කටයුතු
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/meeting/Attendance")
+            handleAttendanceMenuClose()
+          }}
+        >
+          ✓ මහා සභාව
+        </MenuItem>
+        <Divider sx={{ my: 1 }} />
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            px: 2, 
+            py: 0.5, 
+            color: 'text.secondary', 
+            fontWeight: 'bold',
+            fontSize: '0.7rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}
+        >
+          නිරීක්ෂණය
+        </Typography>
         <MenuItem
           onClick={() => {
             navigate("/reports/meetingAttendance")
