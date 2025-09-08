@@ -52,7 +52,7 @@ const FuneralAttendanceSheet = () => {
   const fetchMembers = async (funeralId) => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.GATSBY_API_BASE_URL}/member/getMembersForFuneralDocument`, {
+      const response = await fetch(`${process.env.GATSBY_API_BASE_URL}/member/getMembersForCommonWorkDocument`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
@@ -375,8 +375,7 @@ const FuneralAttendanceSheet = () => {
                               border: '1px solid #333',
                               borderLeft: 'none',
                               p: 0.6,
-                              fontSize: '12px',
-                              pl: 1
+                              fontSize: '12px'
                             }}>
                               ප්‍රදේශය
                             </Box>
@@ -400,8 +399,15 @@ const FuneralAttendanceSheet = () => {
                             gap: 0
                           }}>
                             {columnMembers.map((member, memberIndex) => {
-                              const isSpecialStatus = member.status === 'free' || member.status === 'attendance-free';
-                              const rowStyle = isSpecialStatus ? { 
+                              // Determine if member should be grayed out (only officers and status-based exemptions)
+                              const isGrayedOut = member.status === 'free' || 
+                                                member.status === 'attendance-free' ||
+                                                member.isOfficer;
+                              
+                              // Determine if row should be blank (deactivated/deceased members)
+                              const isBlankRow = member.isDeactivated || member.isDeceased;
+                              
+                              const rowStyle = isGrayedOut ? { 
                                 bgcolor: '#e8e8e8', 
                                 color: '#666',
                                 fontStyle: 'italic'
@@ -441,7 +447,7 @@ const FuneralAttendanceSheet = () => {
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap'
                                   }}>
-                                    {member.name}
+                                    {isBlankRow ? '' : member.name}
                                   </Box>
                                   <Box sx={{ 
                                     textAlign: 'left',
@@ -450,7 +456,6 @@ const FuneralAttendanceSheet = () => {
                                     borderTop: memberIndex === 0 ? '1px solid #333' : 'none',
                                     borderBottom: isLastRow ? '1px solid #333' : '1px solid #ccc',
                                     p: 0.3,
-                                    pl: 1,
                                     fontSize: '9px',
                                     minHeight: '20px',
                                     display: 'flex',
@@ -460,7 +465,7 @@ const FuneralAttendanceSheet = () => {
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap'
                                   }}>
-                                    {member.area}
+                                    {isBlankRow ? '' : member.area}
                                   </Box>
                                   <Box sx={{ 
                                     textAlign: 'center',
@@ -475,9 +480,11 @@ const FuneralAttendanceSheet = () => {
                                     justifyContent: 'center',
                                     ...rowStyle
                                   }}>
-                                    {isSpecialStatus ? (
+                                    {!isBlankRow && isGrayedOut ? (
                                       <Typography variant="caption" sx={{ color: '#888', fontSize: '8px', fontWeight: 'bold' }}>
-                                        {member.status === 'free' ? 'නිදහස්' : 'පැ.නිදහස්'}
+                                        {member.status === 'free' ? 'නිදහස්' : 
+                                         member.status === 'attendance-free' ? 'පැ.නිදහස්' :
+                                         member.isOfficer ? 'නිලධාරී' : ''}
                                       </Typography>
                                     ) : null}
                                   </Box>

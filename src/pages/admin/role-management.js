@@ -52,11 +52,11 @@ const RoleManagement = () => {
     { value: "chairman", label: "Chairman", color: "#1976d2" },
     { value: "secretary", label: "Secretary", color: "#388e3c" },
     { value: "treasurer", label: "Treasurer", color: "#f57c00" },
-    { value: "vice-chairman", label: "Vice Chairman", color: "#7b1fa2" },
-    { value: "vice-secretary", label: "Vice Secretary", color: "#5d4037" },
-    { value: "loan-treasurer", label: "Loan Treasurer", color: "#c2185b" },
+    { value: "viceChairman", label: "Vice Chairman", color: "#7b1fa2" },
+    { value: "viceSecretary", label: "Vice Secretary", color: "#5d4037" },
+    { value: "loanTreasurer", label: "Loan Treasurer", color: "#c2185b" },
     { value: "auditor", label: "Auditor", color: "#00796b" },
-    { value: "speaker-handler", label: "Speaker Handler", color: "#455a64" },
+    { value: "speakerHandler", label: "Speaker Handler", color: "#455a64" },
   ]
 
   const areaRoles = [
@@ -91,11 +91,10 @@ const RoleManagement = () => {
       // Fetch admin structure
       const adminResponse = await api.get(`${baseUrl}/admin-management/admin-structure`)
       
-      // Filter members who currently have officer roles
-      const officers = membersResponse.data.filter(member => 
-        member.roles && member.roles.some(role => role !== "member")
-      )
-      setCurrentOfficers(officers)
+      // Set main officers from admin collection
+      if (adminResponse.data.mainOfficers) {
+        setCurrentOfficers(adminResponse.data.mainOfficers)
+      }
       
       // Set area officers from admin structure
       if (adminResponse.data.areaOfficers) {
@@ -112,7 +111,7 @@ const RoleManagement = () => {
 
   const handleOpenDialog = (member = null) => {
     setSelectedMember(member)
-    setSelectedRoles(member ? member.roles.filter(role => role !== "member") : [])
+    setSelectedRoles(member ? member.roles || [] : [])
     setOpenDialog(true)
     setError("")
     setSuccess("")
@@ -149,12 +148,10 @@ const RoleManagement = () => {
     try {
       setLoading(true)
       
-      // Always include "member" as base role
-      const finalRoles = ["member", ...selectedRoles]
-      
+      // Send roles as is (backend will handle filtering)
       await api.put(`${baseUrl}/admin-management/assign-role`, {
         member_id: selectedMember.member_id,
-        roles: finalRoles,
+        roles: ["member", ...selectedRoles], // Always include member as base role
         name: selectedMember.name
       })
 
@@ -203,11 +200,11 @@ const RoleManagement = () => {
       setLoading(true)
       
       // Remove the specific role but keep others
-      const newRoles = member.roles.filter(role => role !== roleToRemove)
+      const newRoles = (member.roles || []).filter(role => role !== roleToRemove)
       
       await api.put(`${baseUrl}/admin-management/assign-role`, {
         member_id: member.member_id,
-        roles: newRoles,
+        roles: ["member", ...newRoles], // Always include member as base role
         name: member.name
       })
 

@@ -110,6 +110,14 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
+            navigate("/forms/CommonWorkAttendanceSheet")
+            handleAttendanceMenuClose()
+          }}
+        >
+          📋 පොදු වැඩ පැමිණීම ලේඛණය
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
             navigate("/reports/meetingAttendance")
             handleAttendanceMenuClose()
           }}
