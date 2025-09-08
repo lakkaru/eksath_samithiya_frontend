@@ -145,6 +145,14 @@ const ViceSecretaryMenu = ({ isViceSecretary }) => {
         >
           ✓ මහා සභාව
         </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/commonworks/attendance")
+            handleAttendanceMenuClose()
+          }}
+        >
+          ✓ පොදු වැඩ
+        </MenuItem>
         <Divider sx={{ my: 1 }} />
         <Typography 
           variant="caption" 

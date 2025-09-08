@@ -59,23 +59,18 @@ export default function FuneralAttendance() {
   })
 
   const handleAuthStateChange = ({ isAuthenticated, roles }) => {
-    console.log("Auth state change:", { isAuthenticated, roles })
     setIsAuthenticated(isAuthenticated)
     setRoles(roles)
     if (!isAuthenticated || !(roles.includes("vice-secretary") || roles.includes("treasurer") || roles.includes("auditor"))) {
-      console.log("Access denied: not authenticated or insufficient roles")
       navigate("/login/user-login")
     }
   }
 
   useEffect(() => {
     if (!isAuthenticated || !(roles.includes("vice-secretary") || roles.includes("treasurer") || roles.includes("auditor"))) {
-      console.log("Waiting for authentication...")
       return
     }
 
-    console.log("Fetching data for authenticated user...")
-    
     // Fetch fine settings first
     const loadFineSettings = async () => {
       try {

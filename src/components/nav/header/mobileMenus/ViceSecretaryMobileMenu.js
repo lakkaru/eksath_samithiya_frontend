@@ -166,7 +166,7 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
           textTransform: "none", 
           width: "100%", 
           paddingLeft: "40px",
-          mb: 1,
+          mb: 0.5,
           justifyContent: 'flex-start',
           backgroundColor: 'rgba(102, 126, 234, 0.05)',
           '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
@@ -176,6 +176,24 @@ export default function ViceSecretaryMobileMenu({ isViceSecretary, onMenuItemCli
         }}
       >
         ✓ මහා සභාව
+      </Button>
+      <Button
+        color="inherit"
+        onClick={() => onMenuItemClick("/commonworks/attendance")}
+        sx={{ 
+          textTransform: "none", 
+          width: "100%", 
+          paddingLeft: "40px",
+          mb: 1,
+          justifyContent: 'flex-start',
+          backgroundColor: 'rgba(102, 126, 234, 0.05)',
+          '&:hover': { backgroundColor: 'rgba(102, 126, 234, 0.1)' },
+          borderRadius: 1,
+          py: 1,
+          color: '#555'
+        }}
+      >
+        ✓ පොදු වැඩ
       </Button>
 
       {/* Monitoring Category */}

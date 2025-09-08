@@ -41,7 +41,6 @@ export default function AttendanceChart({ chartName, saveAttendance }) {
         setAttendance(ids.map(() => false)) // Initialize attendance only for valid IDs
       })
       .catch(error => {
-        console.error("Error fetching member IDs:", error)
         setMessage({ type: 'error', text: 'Failed to load member data' })
       })
   }, [])
@@ -79,7 +78,6 @@ export default function AttendanceChart({ chartName, saveAttendance }) {
         setMessage({ type: 'info', text: 'No existing meeting found for this date' })
       }
     } catch (error) {
-      console.error("Error fetching meeting by date:", error)
       setExistingMeeting(null)
       setAttendance(memberIds.map(() => false))
       setMessage({ type: 'error', text: 'Failed to load meeting data' })
@@ -134,7 +132,6 @@ export default function AttendanceChart({ chartName, saveAttendance }) {
       await fetchMeetingByDate(selectedDate.format("YYYY-MM-DD"))
       
     } catch (error) {
-      console.error("Error saving attendance:", error)
       setMessage({ type: 'error', text: 'Failed to save attendance' })
     } finally {
       setIsLoading(false)

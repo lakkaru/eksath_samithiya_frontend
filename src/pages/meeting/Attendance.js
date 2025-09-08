@@ -51,12 +51,10 @@ export default function Attendance() {
     api
       .get(`${baseUrl}/member/getNextId`)
       .then(response => {
-        console.log("Next Id : ", response.data.nextMemberId)
         setTotalMembers(response?.data?.nextMemberId - 1 || "Not Available")
       })
       .catch(error => {
         // Handle error
-        console.log("Error: ", error)
       })
 
     // api
@@ -138,11 +136,9 @@ export default function Attendance() {
 
   const saveAttendance = async ({ absentMemberIds , selectedDate}) => {
     const absentData = { date: new Date(selectedDate), absentArray: absentMemberIds }
-    console.log(" absentData :", absentData)
     
     try {
       const response = await api.post(`${baseUrl}/meeting/absents`, { absentData })
-      console.log("Attendance saved:", response.data)
       return response.data
     } catch (error) {
       console.error("Error saving attendance:", error)
